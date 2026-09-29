@@ -1,0 +1,26 @@
+# Root .gitignore for TheCeo
+
+# Ignore environment variables
+.env
+.env.*
+*/.env
+*/.env.*
+
+# Ignore backend environments
+backend/venv/
+backend/__pycache__/
+backend/*.sqlite3
+backend/uploads/
+backend/media/
+backend/staticfiles/
+backend/logs/
+
+# Ignore frontend environments
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.vite/
+
+# Mac specific
+.DS_Store
+**/.DS_Store
