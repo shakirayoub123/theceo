@@ -1,0 +1,60 @@
+import {
+  Home,
+  Users,
+  BookOpen,
+  LogOut,
+  Calendar,
+  CircleUserRound,
+  LaptopMinimal,
+  FilePenLine,
+  Newspaper,
+  CirclePlus,
+  Search,
+  ShoppingCart,
+  MessageCircle,
+  FileText,
+} from 'lucide-react'
+import { URLS } from './urls'
+export const sidebarConfigs = {
+  admin: [
+    { label: 'Overview', icon: Home, href: URLS.master.overview },
+    { label: 'Clients', icon: CircleUserRound, href: URLS.master.clients },
+    { label: 'Services', icon: LaptopMinimal, href: URLS.master.services },
+    { label: 'Ebooks', icon: BookOpen, href: URLS.master.ebooks },
+    { label: 'Series', icon: BookOpen, href: URLS.master.series },
+    { label: 'Blogs', icon: FilePenLine, href: URLS.master.blogs },
+    { label: 'Newsletters', icon: Newspaper, href: URLS.master.newsletters },
+    { label: 'Referrals', icon: Newspaper, href: URLS.master.referrals },
+    { label: 'Chat', icon: MessageCircle, href: URLS.chat },
+
+    { label: 'Logout', icon: LogOut, href: URLS.logout },
+  ],
+  sales: [
+    { label: 'Overview', icon: Home, href: URLS.sales.overview },
+    { label: 'New Clients', icon: CirclePlus, href: URLS.sales.newClients },
+    {
+      label: 'Existing Clients',
+      icon: Users,
+      href: URLS.sales.existingClients,
+    },
+    { label: 'Potential Leads', icon: Search, href: URLS.sales.potentialLeads },
+    { label: 'Calendar', icon: Calendar, href: URLS.sales.calendar },
+    { label: 'Chat', icon: MessageCircle, href: URLS.chat },
+    { label: 'Logout', icon: LogOut, href: URLS.logout },
+  ],
+  coaching: [
+    { label: 'Overview', icon: Home, href: URLS.coaching.overview },
+    { label: 'Clients', icon: CirclePlus, href: URLS.coaching.clients },
+    { label: 'Calendar', icon: Calendar, href: URLS.coaching.calendar },
+    { label: 'Chat', icon: MessageCircle, href: URLS.chat },
+    { label: 'Logout', icon: LogOut, href: URLS.logout },
+  ],
+  client: [
+    { label: 'Dashboard', icon: Home, href: URLS.client.dashboard },
+    { label: 'Services', icon: LaptopMinimal, href: URLS.client.programs },
+    { label: 'Calendar', icon: Calendar, href: URLS.client.calendar },
+    { label: 'Products', icon: ShoppingCart, href: URLS.client.products },
+    { label: 'Chat', icon: MessageCircle, href: URLS.chat },
+    { label: 'Logout', icon: LogOut, href: URLS.logout },
+  ],
+}

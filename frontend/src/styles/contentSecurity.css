@@ -1,0 +1,101 @@
+/* Content Security Styles - Prevent unauthorized copying and downloading */
+
+/* Prevent printing */
+@media print {
+  * {
+    display: none !important;
+  }
+
+  body::after {
+    content: 'This content is protected and cannot be printed.';
+    display: block !important;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: red;
+    z-index: 9999;
+  }
+}
+
+/* Prevent text selection and copying */
+.content-security-wrapper,
+.content-security-wrapper * {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Allow videos to be interactive */
+.content-security-wrapper video {
+  -webkit-user-select: auto !important;
+  -moz-user-select: auto !important;
+  -ms-user-select: auto !important;
+  user-select: auto !important;
+}
+
+/* Prevent dragging */
+.content-security-wrapper img,
+.content-security-wrapper video {
+  -webkit-user-drag: none !important;
+  -khtml-user-drag: none !important;
+  -moz-user-drag: none !important;
+  -o-user-drag: none !important;
+  pointer-events: auto;
+}
+
+/* Disable context menu on images and videos */
+.content-security-wrapper img,
+.content-security-wrapper video {
+  pointer-events: auto;
+}
+
+/* Prevent screenshot tools from capturing clean content */
+.content-security-wrapper {
+  position: relative;
+}
+
+.content-security-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent; /* Removed gradient to not interfere with videos */
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Watermark for additional protection */
+/* .content-security-watermark {
+  position: fixed !important;
+  top: 10% !important;
+  left: 10% !important;
+  transform: rotate(-45deg) !important;
+  font-size: 48px !important;
+  color: rgba(255, 0, 0, 0.03) !important;
+  font-weight: bold !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  text-shadow: none !important;
+} */
+
+/* Disable download buttons */
+.content-security-wrapper .download-btn,
+.content-security-wrapper button[onclick*='download'],
+.content-security-wrapper a[download] {
+  display: none !important;
+}
+
+/* Prevent iframe embedding */
+.content-security-wrapper iframe {
+  pointer-events: none !important;
+  opacity: 0.5 !important;
+}

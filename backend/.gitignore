@@ -1,0 +1,40 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+.env
+*.sqlite3
+
+# Media and static files
+/media/
+/staticfiles/
+
+# VS Code
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Node modules
+node_modules/
+
+# Coverage reports
+htmlcov/
+.coverage
+
+# Test and build outputs
+*.egg-info/
+dist/
+build/
+
+# Other
+*.swp
+*.swo
+.idea/
+
+
+*.rdb
+
+uploads/

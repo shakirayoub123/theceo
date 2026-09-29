@@ -1,0 +1,83 @@
+[
+  {
+    "id": "holistic-leadership",
+    "key": "holisticLeadership",
+    "slug": "holistic-360-leadership-development",
+    "square": 1,
+    "summary": [
+      "Holistic 360° Leadership Development",
+      "Two-To-One Advantage™ with expert mentors",
+      "APO-Aligned Performance Optimization",
+      "LLM-Linear Leadership Model™",
+      "Data-Driven Diagnosis",
+      "Verifiable Results & Flexibility",
+      "Transform communication into influence"
+    ]
+  },
+  {
+    "id": "long-term-profitability",
+    "key": "profitability",
+    "slug": "long-term-profitability",
+    "square": 2,
+    "summary": [
+      "Sustainable growth through ethical leadership",
+      "Build stakeholder trust and loyalty",
+      "Neuroscience-driven empathy training",
+      "Long-term strategic decision-making",
+      "Attract purpose-driven talent",
+      "Embed ethics in strategy and AI"
+    ]
+  },
+  {
+    "id": "global-expertise-local-impact",
+    "key": "globalExpertise",
+    "slug": "global-expertise-local-impact",
+    "square": 3,
+    "summary": [
+      "5,000+ executives mentored in 186+ industries",
+      "International insights for local impact",
+      "Anticipate market trends",
+      "Balance global awareness with local precision",
+      "Measurable executive outcomes"
+    ]
+  },
+  {
+    "id": "empathy-at-the-core",
+    "key": "empathy",
+    "slug": "empathy-at-the-core",
+    "square": 4,
+    "summary": [
+      "Empathy as strategic advantage",
+      "Foster inclusive cultures",
+      "Active listening for better leadership",
+      "Connect diverse voices around shared goals",
+      "Unlock stakeholder performance potential"
+    ]
+  },
+  {
+    "id": "strategic-partnerships-alliances",
+    "key": "partnerships",
+    "slug": "strategic-partnerships-alliances",
+    "square": 5,
+    "summary": [
+      "21st Century strategic partnerships",
+      "Value-aligned alliances",
+      "Expand capabilities and enter new markets",
+      "Mitigate risk and accelerate innovation",
+      "Win/win outcomes for all"
+    ]
+  },
+  {
+    "id": "maximizing-ai-technology-strategy",
+    "key": "aiTechnology",
+    "slug": "maximizing-ai-technology-strategy",
+    "square": 6,
+    "summary": [
+      "AI-driven strategy optimization",
+      "Transform data into foresight",
+      "Mitigate AI risks and threats",
+      "Faster insights and smarter execution",
+      "Ensure compliance and ethical AI use"
+    ]
+  }
+]
