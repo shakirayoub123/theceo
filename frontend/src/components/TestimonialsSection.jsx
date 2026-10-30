@@ -75,7 +75,7 @@ export default function TestimonialsSection() {
   // Optional: Auto-rotate logic could be placed here if desired
 
   return (
-    <section className='py-16 md:py-24 relative overflow-hidden bg-white font-jakarta'>
+    <section className='py-8 lg:py-10 min-h-[calc(100vh-140px)] flex flex-col justify-center relative overflow-hidden bg-white font-jakarta'>
 
       {/* Background Map Pattern */}
       <div
@@ -88,23 +88,23 @@ export default function TestimonialsSection() {
         }}
       ></div>
 
-      <div className='max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
+      <div className='max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full'>
         {/* Header */}
-        <div className='text-center mb-12'>
-          <div className='inline-block border border-gray-300 rounded-full px-5 py-[2px] mb-6 bg-white'>
+        <div className='text-center mb-6'>
+          <div className='inline-block border border-gray-300 rounded-full px-5 py-[2px] mb-4 bg-white'>
             <span className='text-[#4B5563] font-bold tracking-widest text-[11px] uppercase'>
               TESTIMONIALS
             </span>
           </div>
 
-          <h2 className='text-[36px] md:text-[44px] font-bold leading-tight tracking-tight'>
+          <h2 className='text-[30px] md:text-[38px] font-bold leading-tight tracking-tight'>
             <span className='text-black'>Our Client </span>
             <span className='text-[#F6B72D]'>Testimonials</span>
           </h2>
         </div>
 
         {/* Tab Selection */}
-        <div className='flex flex-wrap items-center justify-center gap-4 mb-12'>
+        <div className='flex flex-wrap items-center justify-center gap-3 mb-6'>
           {testimonialGroups.map((group, index) => {
             const isActive = activeMentor === index
 
@@ -115,7 +115,7 @@ export default function TestimonialsSection() {
                   setActiveMentor(index)
                   setActiveTestimonial(0)
                 }}
-                className={`px-8 py-3 rounded-full font-bold text-[13px] tracking-wide transition-all duration-300 ${isActive
+                className={`px-6 py-2.5 rounded-full font-bold text-[11px] tracking-wide transition-all duration-300 ${isActive
                   ? 'bg-[#0B132B] text-white border border-[#F6B72D] shadow-[0_0_15px_rgba(246,183,45,0.15)]'
                   : 'bg-white text-[#111827] border border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                   }`}
@@ -127,19 +127,19 @@ export default function TestimonialsSection() {
         </div>
 
         {/* Testimonial Box */}
-        <div className='bg-[#010125] rounded-[32px] p-8 md:p-14 shadow-2xl relative flex flex-col md:flex-row gap-8 md:gap-14'>
+        <div className='bg-[#010125] rounded-[24px] lg:rounded-[32px] p-6 md:p-10 shadow-2xl relative flex flex-col md:flex-row gap-6 md:gap-10'>
 
           {/* Left Column: Quote Visuals */}
           <div className='flex flex-col items-center shrink-0'>
             {/* Quote Block */}
-            <div className='w-[70px] h-[70px] bg-[#FDF5DF] rounded-[20px] flex items-center justify-center shadow-lg relative z-10'>
-              <svg width="34" height="34" viewBox="0 0 40 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div className='w-[48px] h-[48px] sm:w-[60px] sm:h-[60px] bg-[#FDF5DF] rounded-[16px] flex items-center justify-center shadow-lg relative z-10'>
+              <svg width="24" height="24" viewBox="0 0 40 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 32V19.2C0 8.533 5.867 2.133 17.6 0L20.8 4.8C15.467 6.4 12.8 9.6 12.8 14.4V16H20.8V32H0ZM19.2 32V19.2C19.2 8.533 25.067 2.133 36.8 0L40 4.8C34.667 6.4 32 9.6 32 14.4V16H40V32H19.2Z" fill="#F6B72D" />
               </svg>
             </div>
 
             {/* Vertical Line */}
-            <div className='w-px h-[80px] md:h-[120px] bg-gradient-to-b from-white/40 to-white/5 my-2'></div>
+            <div className='w-px h-[40px] md:h-[60px] bg-gradient-to-b from-white/40 to-white/5 my-2'></div>
 
             {/* Verified Badge */}
             <div className='border border-[#F6B72D]/50 bg-[#F6B72D]/10 rounded-full px-3 py-1 flex items-center'>
@@ -162,17 +162,17 @@ export default function TestimonialsSection() {
               </div>
             ) : (
               <div className='relative'>
-                <p className='text-[#E2E8F0] font-jakarta text-[16px] md:text-[20px] leading-[32px] md:leading-[38px] font-normal mb-10'>
+                <p className='text-[#E2E8F0] font-jakarta text-[14px] md:text-[16px] xl:text-[17px] leading-[26px] md:leading-[32px] font-normal mb-8 max-h-[160px] md:max-h-[200px] overflow-y-auto pr-2'>
                   {currentTestimonial.text}
                 </p>
 
                 {/* Subtle Divider Line */}
-                <div className='w-full h-px bg-gradient-to-r from-white/10 to-transparent mb-8'></div>
+                <div className='w-full h-px bg-gradient-to-r from-white/10 to-transparent mb-6'></div>
 
                 {/* Author Block */}
-                <div className='flex items-center gap-5'>
+                <div className='flex items-center gap-4'>
                   {/* Avatar */}
-                  <div className='w-[60px] h-[60px] rounded-full p-[2px] bg-gradient-to-tr from-[#F6B72D] to-[#F6B72D] shrink-0'>
+                  <div className='w-[48px] h-[48px] sm:w-[54px] sm:h-[54px] rounded-full p-[2px] bg-gradient-to-tr from-[#F6B72D] to-[#F6B72D] shrink-0'>
                     <img
                       src={
                         currentGroup.mentor === 'DR. CLAIRE KEOGH'
@@ -187,10 +187,10 @@ export default function TestimonialsSection() {
 
                   {/* Author Meta */}
                   <div>
-                    <h4 className='text-white text-[18px] md:text-[22px] font-bold tracking-tight mb-1'>
+                    <h4 className='text-white text-[16px] md:text-[18px] font-bold tracking-tight mb-1'>
                       {currentTestimonial.client}
                     </h4>
-                    <p className='text-[#9CA3AF] text-[13px] md:text-[14px] font-medium'>
+                    <p className='text-[#9CA3AF] text-[12px] md:text-[13px] font-medium'>
                       {currentTestimonial.title} {currentTestimonial.company ? ` ${currentTestimonial.company}` : ''}
                     </p>
                   </div>
@@ -200,7 +200,7 @@ export default function TestimonialsSection() {
 
             {/* Minimal Sub-Controls for traversing testimonials inside a group */}
             {currentGroup.items.length > 1 && (
-              <div className='flex items-center gap-3 mt-8 opacity-60 hover:opacity-100 transition-opacity'>
+              <div className='flex items-center gap-3 mt-5 opacity-60 hover:opacity-100 transition-opacity'>
                 {currentGroup.items.map((_, idx) => (
                   <button
                     key={idx}

@@ -269,13 +269,17 @@ WSGI_APPLICATION = "tci_backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+_db_password = os.getenv("DB_PASSWORD", "").strip()
+if not _db_password:
+    raise ImproperlyConfigured("The DB_PASSWORD environment variable must be set")
+
 DATABASES = {
     "default": {
         "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),
-        "NAME": os.getenv("DB_NAME", "your_db_name"),
-        "USER": os.getenv("DB_USER", "your_db_user"),
-        "PASSWORD": os.getenv("DB_PASSWORD", "your_db_password"),
-        "HOST": os.getenv("DB_HOST", "localhost"),
+        "NAME": os.getenv("DB_NAME", "ceoinfluencers_db"),
+        "USER": os.getenv("DB_USER", "ceoinfluencers_user"),
+        "PASSWORD": _db_password,
+        "HOST": os.getenv("DB_HOST", "127.0.0.1"),
         "PORT": os.getenv("DB_PORT", "5432"),
     }
 }

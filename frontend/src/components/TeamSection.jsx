@@ -1,4 +1,4 @@
-import { ArrowUpRight, ArrowRight } from 'lucide-react'
+import { ArrowUpRight, ArrowRight, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useState, useEffect } from 'react'
@@ -35,6 +35,7 @@ function CountUp({ end, duration = 3000, suffix = '', decimals = 0 }) {
 
 export default function TeamSection() {
   const { t } = useTranslation()
+  const [activeVideo, setActiveVideo] = useState(null)
 
   const teamMembers = [
     {
@@ -43,6 +44,7 @@ export default function TeamSection() {
       image: '/images/james.jpg',
       stats: { clients: '5,000+', years: '25+' },
       link: '/biography/james-armstrong',
+      videoUrl: '/videos/intro-video.mp4',
       iconTheme: 'orange'
     },
     {
@@ -51,42 +53,43 @@ export default function TeamSection() {
       image: '/images/claire.jpeg',
       stats: { clients: '2500+', years: '20+' },
       link: '/biography/claire-keogh',
+      videoUrl: '/videos/intro-video.mp4',
       iconTheme: 'white'
     },
   ]
 
   return (
-    <section id='team' className='py-12 lg:py-20 relative overflow-hidden bg-[#FCFBF7] font-jakarta'>
+    <section id='team' className='py-6 lg:py-8 relative overflow-hidden bg-[#FCFBF7] font-jakarta min-h-[calc(100vh-140px)] flex flex-col justify-center'>
       <div className='w-full max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
 
         {/* Header */}
-        <div className='mb-12 text-center'>
-          <div className='inline-block border border-gray-400 rounded-full px-5 py-1 mb-5'>
+        <div className='mb-5 md:mb-6 text-center'>
+          <div className='inline-block border border-gray-400 rounded-full px-5 py-0.5 mb-3'>
             <span className='text-[#111827] font-semibold tracking-widest text-[9px] uppercase'>
               Who We Are
             </span>
           </div>
-          <h2 className='text-[40px] leading-[51px] tracking-[-1.01px] font-bold text-[#111827] mb-2 uppercase'>
+          <h2 className='text-[28px] lg:text-[34px] leading-[1.1] tracking-[-1.01px] font-bold text-[#111827] mb-2 uppercase'>
             Our <span className='text-[#F6B72D]'>Influencers</span>
           </h2>
-          <p className='text-[16px] leading-[28px] tracking-[0px] font-normal text-[#4B5563] max-w-2xl mx-auto'>
+          <p className='text-[13px] lg:text-[15px] leading-[24px] font-normal text-[#4B5563] max-w-2xl mx-auto'>
             Our expert coaching advisors provide cutting edge, personalized 2-on-1 coaching.
           </p>
         </div>
 
         {/* Team Members Grid */}
-        <div className='grid md:grid-cols-2 gap-6 lg:gap-8 mb-12'>
+        <div className='grid md:grid-cols-2 gap-4 lg:gap-6 mb-5 md:mb-6'>
           {teamMembers.map((member, index) => (
-            <div key={index} className='bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-3 sm:p-4 flex flex-col sm:flex-row relative group hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)] transition-all duration-300'>
-              {/* Link Overlay */}
+            <div key={index} className='bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-2.5 sm:p-3 flex flex-col sm:flex-row relative group hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)] transition-all duration-300'>
+              {/* Link Overlay — z-10, sits below the video button */}
               <Link to={member.link} className="absolute inset-0 z-10" />
 
               <div className='w-full sm:w-[38%] flex-shrink-0'>
-                <img src={member.image} className='w-full h-[250px] sm:h-full object-cover rounded-[16px]' alt={member.name} />
+                <img src={member.image} className='w-full h-[200px] sm:h-[100%] sm:min-h-[220px] object-cover rounded-[16px]' alt={member.name} />
               </div>
 
-              <div className='p-4 md:px-7 md:py-3 flex flex-col justify-center w-full relative'>
-                {/* Arrow icon absolute positioned */}
+              <div className='p-3 md:px-5 md:py-2 flex flex-col justify-center w-full relative'>
+                {/* Arrow icon */}
                 <Link to={member.link} className='hidden sm:flex absolute top-1 right-2 z-20 hover:scale-110 transition-transform duration-200'>
                   {member.iconTheme === 'orange' ? (
                     <div className='w-7 h-7 rounded-full bg-[#F6B72D] flex items-center justify-center shadow-sm'>
@@ -99,40 +102,48 @@ export default function TeamSection() {
                   )}
                 </Link>
 
-                <h3 className='text-[22px] md:text-[25px] font-extrabold text-[#111827] font-jakarta mb-1 leading-tight tracking-tight'>
+                <h3 className='text-[18px] md:text-[20px] font-extrabold text-[#111827] font-jakarta mb-1 leading-tight tracking-tight'>
                   {member.name}
                 </h3>
-                <p className='text-[10px] md:text-[11px] text-gray-500 font-semibold tracking-wider uppercase mb-7 leading-relaxed max-w-[90%]'>
+                <p className='text-[8.5px] md:text-[9.5px] text-gray-500 font-semibold tracking-wider uppercase mb-3 leading-relaxed max-w-[95%]'>
                   {member.title}
                 </p>
 
-                <div className='flex justify-between items-center border border-gray-100 rounded-[14px] px-6 py-4 w-full md:w-[95%] mb-5'>
+                <div className='flex justify-between items-center border border-gray-100 rounded-[12px] px-3 py-2 w-full md:w-[95%] mb-3 mt-auto'>
                   <div className='flex flex-col'>
-                    <span className='text-[18px] md:text-[22px] font-extrabold text-[#111827]'>
+                    <span className='text-[16px] md:text-[20px] font-extrabold text-[#111827] leading-none'>
                       {member.stats.clients}
                     </span>
-                    <span className='text-[7.5px] md:text-[8px] uppercase tracking-[0.2em] text-gray-400 font-bold mt-1'>
+                    <span className='text-[7px] md:text-[8px] uppercase tracking-[0.1em] text-gray-400 font-bold mt-1'>
                       Clients Advised
                     </span>
                   </div>
-                  <div className='w-px h-10 bg-gray-200'></div>
+                  <div className='w-px h-8 bg-gray-200'></div>
                   <div className='flex flex-col'>
-                    <span className='text-[18px] md:text-[22px] font-extrabold text-[#111827]'>
+                    <span className='text-[16px] md:text-[20px] font-extrabold text-[#111827] leading-none'>
                       {member.stats.years}
                     </span>
-                    <span className='text-[7.5px] md:text-[8px] uppercase tracking-[0.2em] text-gray-400 font-bold mt-1'>
+                    <span className='text-[7px] md:text-[8px] uppercase tracking-[0.1em] text-gray-400 font-bold mt-1'>
                       Years Experience
                     </span>
                   </div>
                 </div>
 
-                <div className="w-full md:w-[95%]">
-                  <div className="flex items-center gap-3 bg-[#FCFBF7] border border-gray-200 rounded-full py-1.5 px-2 hover:bg-gray-50 transition-colors w-max transition-all duration-300">
+                {/* View Introduction Video — z-20 so it's above the Link overlay */}
+                <div className="w-full md:w-[95%] relative z-20">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setActiveVideo(member.videoUrl)
+                    }}
+                    className="flex items-center gap-3 bg-[#FCFBF7] border border-gray-200 rounded-full py-1.5 px-2 hover:bg-gray-50 transition-colors w-max transition-all duration-300"
+                  >
                     <div className="w-8 h-8 rounded-full bg-[#F6B72D] flex items-center justify-center flex-shrink-0">
                       <ArrowRight className="w-4 h-4 text-white" />
                     </div>
                     <span className="text-[13px] font-bold text-[#111827] pr-4">View Introduction Video</span>
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
@@ -141,7 +152,7 @@ export default function TeamSection() {
 
         {/* Bottom Stats Container */}
         <div className='w-full'>
-          <div className='relative w-full bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 py-6 md:py-[24px] px-8 flex flex-col sm:flex-row items-center justify-around gap-8 md:gap-4 overflow-hidden'>
+          <div className='relative w-full bg-white rounded-[20px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 py-3 md:py-4 px-8 flex flex-col sm:flex-row items-center justify-around gap-3 md:gap-4 overflow-hidden'>
 
             {/* Top-Left gold underline decoration */}
             <div className='absolute top-0 left-[6%] w-[25%] h-[3px] bg-[#F6B72D] rounded-b-sm'></div>
@@ -151,40 +162,66 @@ export default function TeamSection() {
 
             {/* Item 1 */}
             <div className='flex flex-col items-center justify-center text-center w-full sm:w-1/3'>
-              <div className='text-[34px] md:text-[42px] font-extrabold text-[#F6B72D] font-jakarta tracking-tight leading-none mb-[10px]'>
+              <div className='text-[28px] md:text-[36px] font-extrabold text-[#F6B72D] font-jakarta tracking-tight leading-none mb-1 md:mb-[6px]'>
                 <CountUp end={5000} suffix={''} />+
               </div>
-              <div className='text-[#111827] text-[10px] md:text-[11px] font-bold tracking-[0.15em] uppercase'>Total Clients</div>
+              <div className='text-[#111827] text-[9.5px] md:text-[10px] font-bold tracking-[0.15em] uppercase'>Total Clients</div>
             </div>
 
             {/* Divider */}
-            <div className='hidden sm:block w-px h-12 bg-gray-200'></div>
+            <div className='hidden sm:block w-px h-10 bg-gray-200'></div>
 
             {/* Item 2 */}
             <div className='flex flex-col items-center justify-center text-center w-full sm:w-1/3'>
-              <div className='flex items-center gap-1.5 justify-center text-[34px] md:text-[42px] font-extrabold text-[#F6B72D] font-jakarta tracking-tight leading-none mb-[10px]'>
+              <div className='flex items-center gap-1.5 justify-center text-[28px] md:text-[36px] font-extrabold text-[#F6B72D] font-jakarta tracking-tight leading-none mb-1 md:mb-[6px]'>
                 <span><CountUp end={4.9} decimals={1} /></span>
-                <svg className="w-7 h-7 md:w-[32px] md:h-[32px] fill-[#F6B72D] text-[#F6B72D] transform -translate-y-[1px]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <svg className="w-5 h-5 md:w-[24px] md:h-[24px] fill-[#F6B72D] text-[#F6B72D] transform -translate-y-[1px]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
               </div>
-              <div className='text-[#111827] text-[10px] md:text-[11px] font-bold tracking-[0.15em] uppercase'>Avg Rating</div>
+              <div className='text-[#111827] text-[9.5px] md:text-[10px] font-bold tracking-[0.15em] uppercase'>Avg Rating</div>
             </div>
 
             {/* Divider */}
-            <div className='hidden sm:block w-px h-12 bg-gray-200'></div>
+            <div className='hidden sm:block w-px h-10 bg-gray-200'></div>
 
             {/* Item 3 */}
             <div className='flex flex-col items-center justify-center text-center w-full sm:w-1/3'>
-              <div className='text-[34px] md:text-[42px] font-extrabold text-[#F6B72D] font-jakarta tracking-tight leading-none mb-[10px]'>
+              <div className='text-[28px] md:text-[36px] font-extrabold text-[#F6B72D] font-jakarta tracking-tight leading-none mb-1 md:mb-[6px]'>
                 <CountUp end={45} />+
               </div>
-              <div className='text-[#111827] text-[10px] md:text-[11px] font-bold tracking-[0.15em] uppercase'>Years Combined</div>
+              <div className='text-[#111827] text-[9.5px] md:text-[10px] font-bold tracking-[0.15em] uppercase'>Years Combined</div>
             </div>
           </div>
         </div>
 
       </div>
+
+      {/* Video Modal */}
+      {activeVideo && (
+        <div
+          className='fixed inset-0 z-50 flex items-center justify-center bg-black/80'
+          onClick={() => setActiveVideo(null)}
+        >
+          <div
+            className='relative w-full max-w-4xl aspect-video bg-black'
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className='absolute -top-10 right-0 text-white hover:text-gray-300'
+              onClick={() => setActiveVideo(null)}
+            >
+              <X size={32} />
+            </button>
+            <video
+              src={activeVideo}
+              controls
+              autoPlay
+              className='w-full h-full'
+            />
+          </div>
+        </div>
+      )}
     </section>
   )
 }

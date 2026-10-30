@@ -29,6 +29,7 @@ export default function AddBlog() {
     short_description: '',
     content: '',
     time_to_read: '',
+    is_featured: false,
   })
 
   useEffect(() => {
@@ -44,6 +45,7 @@ export default function AddBlog() {
               short_description: blog.short_description || '',
               content: blog.content || '',
               time_to_read: blog.time_to_read || '',
+              is_featured: blog.is_featured || false,
             })
             console.log(blog)
             setExistingThumbnail(getAssetUrl(blog?.thumbnailImageUrl))
@@ -71,6 +73,7 @@ export default function AddBlog() {
       formDataToSend.append('short_description', formData.short_description)
       formDataToSend.append('content', editorData)
       formDataToSend.append('time_to_read', formData.time_to_read)
+      formDataToSend.append('is_featured', String(formData.is_featured))
 
       if (thumbnail) {
         formDataToSend.append('thumbnailImage', thumbnail)
@@ -174,6 +177,26 @@ export default function AddBlog() {
           required
         />
       </div>
+
+      {/* Featured placement */}
+      <label className='flex items-start gap-3 rounded-lg border border-[#F6B72D] bg-amber-50 p-4 cursor-pointer'>
+        <input
+          type='checkbox'
+          checked={formData.is_featured}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, is_featured: e.target.checked }))
+          }
+          className='mt-1 h-4 w-4 accent-[#F6B72D]'
+        />
+        <span>
+          <span className='block text-sm font-semibold text-gray-800'>
+            Feature this blog on the homepage
+          </span>
+          <span className='block text-xs text-gray-600 mt-1'>
+            Featured blogs appear in the large left-side card. Only one blog can be featured at a time.
+          </span>
+        </span>
+      </label>
 
       {/* Content */}
       <div className='space-y-2'>

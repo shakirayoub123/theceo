@@ -1,3 +1,4 @@
+
 export default function BlogContent({ content, inlineImage }) {
   const normalizedContent = (content || '').replace(
     /https?:\/\/(?:www\.)?mckinsey\.com\/[^"'\s<)]*2020[^"'\s<)]*/gi,

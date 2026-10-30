@@ -507,6 +507,7 @@ class Blog(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
+    is_featured = models.BooleanField(default=False, help_text="Show this blog as the featured post on the homepage")
 
     def __str__(self):
         return self.title
@@ -527,6 +528,10 @@ class Blog(models.Model):
                 counter += 1
             self.slug = slug
         super().save(*args, **kwargs)
+        if self.is_featured:
+            Blog.objects.exclude(pk=self.pk).filter(is_featured=True).update(
+                is_featured=False
+            )
 
     @property
     def total_views(self):

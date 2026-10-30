@@ -73,7 +73,7 @@ export default function StatsSection() {
   }, [])
 
   return (
-    <section ref={sectionRef} className='relative bg-[#FBF9F5] font-jakarta overflow-hidden pt-20 pb-16 md:pt-32 md:pb-24 border-b border-gray-200/50'>
+    <section ref={sectionRef} className='relative bg-[#FBF9F5] font-jakarta overflow-hidden py-10 lg:py-12 min-h-[calc(100vh-140px)] flex flex-col justify-center border-b border-gray-200/50'>
 
       {/* Map Background Pattern */}
       <div
@@ -88,17 +88,17 @@ export default function StatsSection() {
 
       <div className='max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
         {/* Header Section */}
-        <div className='flex flex-col items-center text-center mb-16 md:mb-24'>
-          <div className='inline-block border border-gray-400/60 rounded-full px-5 py-[2px] mb-6 bg-transparent'>
+        <div className='flex flex-col items-center text-center mb-10 md:mb-12'>
+          <div className='inline-block border border-gray-400/60 rounded-full px-5 py-0.5 mb-4 bg-transparent'>
             <span className='text-[#4B5563] font-bold tracking-widest text-[11px] uppercase'>
               WHY US
             </span>
           </div>
 
-          <h2 className='text-[38px] md:text-[48px] font-bold text-[#111827] leading-[1.1] tracking-tight mb-1'>
+          <h2 className='text-[32px] md:text-[40px] font-bold text-[#111827] leading-[1.1] tracking-tight mb-1'>
             Real Numbers. Real Impact.
           </h2>
-          <h2 className='text-[38px] md:text-[48px] font-bold text-[#F6B72D] leading-[1.1] tracking-tight'>
+          <h2 className='text-[32px] md:text-[40px] font-bold text-[#F6B72D] leading-[1.1] tracking-tight'>
             Real Transformation.
           </h2>
         </div>
@@ -108,15 +108,15 @@ export default function StatsSection() {
           {stats.map((stat, idx) => (
             <div
               key={idx}
-              className='flex-1 flex flex-col items-center text-center w-full py-10 md:py-4 px-2'
+              className='flex-1 flex flex-col items-center text-center w-full py-6 md:py-4 px-2'
             >
               {/* Circular Icon */}
-              <div className='w-[60px] h-[60px] rounded-full bg-white shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100/50 flex items-center justify-center mb-6 transition-transform duration-300 hover:scale-110'>
-                <stat.icon className='w-6 h-6 text-[#F6B72D]' strokeWidth={1.5} />
+              <div className='w-[46px] h-[46px] md:w-[50px] md:h-[50px] rounded-full bg-white shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100/50 flex items-center justify-center mb-4 transition-transform duration-300 hover:scale-110'>
+                <stat.icon className='w-5 h-5 text-[#F6B72D]' strokeWidth={1.5} />
               </div>
 
               {/* Number with CountUp */}
-              <div className='text-[46px] md:text-[54px] font-extrabold text-[#111827] leading-none mb-3 tracking-tighter'>
+              <div className='text-[36px] md:text-[44px] font-extrabold text-[#111827] leading-none mb-2.5 tracking-tighter'>
                 <CountUp
                   end={stat.number}
                   suffix={stat.suffix}
@@ -125,7 +125,7 @@ export default function StatsSection() {
               </div>
 
               {/* Label */}
-              <p className='text-[11px] md:text-[12px] font-bold text-[#64748B] uppercase tracking-[0.15em]'>
+              <p className='text-[10px] md:text-[11px] font-bold text-[#64748B] uppercase tracking-[0.15em]'>
                 {stat.label}
               </p>
             </div>

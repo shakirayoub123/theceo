@@ -79,103 +79,105 @@ export default function Header() {
 
   return (
     <>
-      <div className='sticky top-0 w-full z-50 transition-all duration-300'>
-        <header className='bg-[#000023] w-full h-[72px] flex items-center shadow-xl font-jakarta'>
-          <div className='max-w-[1400px] w-full mx-auto px-6 lg:px-8 flex items-center justify-between'>
+      <div className='sticky top-2 md:top-4 w-full z-50 transition-all duration-300 pb-2 flex justify-center'>
+        <div className='max-w-[1400px] w-full mx-auto px-4 md:px-6 lg:px-8'>
+          <header className='bg-[#000023] w-full h-[72px] flex items-center shadow-2xl font-jakarta rounded-[16px] md:rounded-[20px]'>
+            <div className='w-full px-4 md:px-8 flex items-center justify-between'>
 
-            {/* Left: Logo */}
-            <div className='flex items-center'>
-              <Link to='/'>
-                <img
-                  src={'/images/fullLogo.svg'}
-                  alt={'Full Logo'}
-                  className='h-8 md:h-10 w-auto'
-                />
-              </Link>
-            </div>
-
-            {/* Center: Navigation Links */}
-            <div className='hidden lg:flex items-center space-x-6 xl:space-x-8'>
-              <Link to='/' className='text-[#F6B72D] text-[15.15px] font-normal leading-normal tracking-normal hover:text-[#F6B72D]/80 transition-colors'>
-                Home
-              </Link>
-              <a href='/#services-section' className='text-white text-[15.15px] font-normal leading-normal tracking-normal hover:text-[#F6B72D] transition-colors'>
-                Services
-              </a>
-              <a href='/#our-team' className='text-white text-[15.15px] font-normal leading-normal tracking-normal hover:text-[#F6B72D] transition-colors'>
-                Influencers
-              </a>
-              <a href='/#testimonials-section' className='text-white text-[15.15px] font-normal leading-normal tracking-normal hover:text-[#F6B72D] transition-colors'>
-                Testimonials
-              </a>
-              <a href='/#blog' className='text-white text-[15.15px] font-normal leading-normal tracking-normal hover:text-[#F6B72D] transition-colors'>
-                Insights
-              </a>
-              <a href='/#case-studies-section' className='text-white text-[15.15px] font-normal leading-normal tracking-normal hover:text-[#F6B72D] transition-colors'>
-                Case Studies
-              </a>
-              <a href='/#footer' className='text-white text-[15.15px] font-normal leading-normal tracking-normal hover:text-[#F6B72D] transition-colors'>
-                Connect
-              </a>
-            </div>
-
-            {/* Right Actions */}
-            <div className='flex items-center space-x-4 lg:space-x-5'>
-              {/* Shopping Cart */}
-              <Link
-                to='/cart'
-                className='relative p-2 hover:bg-white/10 rounded-full transition-colors duration-300'
-              >
-                <ShoppingCart className='h-5 w-5 text-white' />
-                {cartCount > 0 && (
-                  <span className='absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center'>
-                    {cartCount > 99 ? '99+' : cartCount}
-                  </span>
-                )}
-              </Link>
-
-              {/* Language Selector */}
-              <LanguageSelector />
-
-              {/* Login / Dashboard Button */}
-              <div className='hidden md:block'>
-                {isAuthenticated ? (
-                  <Link to={getDashboardRoute()}>
-                    <Button className='bg-white hover:bg-gray-100 text-[#161616] rounded-full pl-1.5 pr-6 h-10 flex items-center gap-3 transition-all duration-300'>
-                      <div className='bg-[#F6B72D] h-7 w-7 rounded-full flex items-center justify-center'>
-                        <ArrowRight className='h-4 w-4 text-black' />
-                      </div>
-                      <span className='font-bold text-sm'>{t('nav.dashboard', 'Dashboard')}</span>
-                    </Button>
-                  </Link>
-                ) : (
-                  <Link to='/login'>
-                    <Button className='bg-white hover:bg-gray-100 text-[#161616] rounded-full pl-1.5 pr-6 h-10 flex items-center gap-3 transition-all duration-300'>
-                      <div className='bg-[#F6B72D] h-7 w-7 rounded-full flex items-center justify-center'>
-                        <ArrowRight className='h-4 w-4 text-black' />
-                      </div>
-                      <span className='font-bold text-sm'>{t('nav.login')}</span>
-                    </Button>
-                  </Link>
-                )}
+              {/* Left: Logo */}
+              <div className='flex items-center'>
+                <Link to='/'>
+                  <img
+                    src={'/images/fullLogo.svg'}
+                    alt={'Full Logo'}
+                    className='h-8 md:h-10 w-auto'
+                  />
+                </Link>
               </div>
 
-              {/* Mobile Menu Toggle */}
-              <Button
-                variant='ghost'
-                size='sm'
-                className='lg:hidden text-white hover:bg-white/10 p-2 rounded-full'
-                onClick={toggleMenu}
-              >
-                {isMenuOpen ? (
-                  <X className='h-6 w-6' />
-                ) : (
-                  <Menu className='h-6 w-6' />
-                )}
-              </Button>
+              {/* Center: Navigation Links */}
+              <div className='hidden lg:flex items-center space-x-3 lg:space-x-4 xl:space-x-6'>
+                <Link to='/' className='text-[#F6B72D] text-[13px] xl:text-[14px] font-normal leading-normal tracking-normal hover:text-[#F6B72D]/80 transition-colors whitespace-nowrap'>
+                  Home
+                </Link>
+                <a href='/#services-section' className='text-white text-[13px] xl:text-[14px] font-normal leading-normal tracking-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap'>
+                  Services
+                </a>
+                <a href='/#our-team' className='text-white text-[13px] xl:text-[14px] font-normal leading-normal tracking-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap'>
+                  Influencers
+                </a>
+                <a href='/#testimonials-section' className='text-white text-[13px] xl:text-[14px] font-normal leading-normal tracking-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap'>
+                  Testimonials
+                </a>
+                <a href='/#blog' className='text-white text-[13px] xl:text-[14px] font-normal leading-normal tracking-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap'>
+                  Insights
+                </a>
+                <a href='/#case-studies-section' className='text-white text-[13px] xl:text-[14px] font-normal leading-normal tracking-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap'>
+                  Case Studies
+                </a>
+                <a href='/#footer' className='text-white text-[13px] xl:text-[14px] font-normal leading-normal tracking-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap'>
+                  Connect
+                </a>
+              </div>
+
+              {/* Right Actions */}
+              <div className='flex items-center space-x-4 lg:space-x-5'>
+                {/* Shopping Cart */}
+                <Link
+                  to='/cart'
+                  className='relative p-2 hover:bg-white/10 rounded-full transition-colors duration-300'
+                >
+                  <ShoppingCart className='h-5 w-5 text-white' />
+                  {cartCount > 0 && (
+                    <span className='absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center'>
+                      {cartCount > 99 ? '99+' : cartCount}
+                    </span>
+                  )}
+                </Link>
+
+                {/* Language Selector */}
+                <LanguageSelector />
+
+                {/* Login / Dashboard Button */}
+                <div className='hidden md:block'>
+                  {isAuthenticated ? (
+                    <Link to={getDashboardRoute()}>
+                      <Button className='bg-white hover:bg-gray-100 text-[#161616] rounded-full pl-1.5 pr-6 h-10 flex items-center gap-3 transition-all duration-300'>
+                        <div className='bg-[#F6B72D] h-7 w-7 rounded-full flex items-center justify-center'>
+                          <ArrowRight className='h-4 w-4 text-black' />
+                        </div>
+                        <span className='font-bold text-sm'>{t('nav.dashboard', 'Dashboard')}</span>
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Link to='/login'>
+                      <Button className='bg-white hover:bg-gray-100 text-[#161616] rounded-full pl-1.5 pr-6 h-10 flex items-center gap-3 transition-all duration-300'>
+                        <div className='bg-[#F6B72D] h-7 w-7 rounded-full flex items-center justify-center'>
+                          <ArrowRight className='h-4 w-4 text-black' />
+                        </div>
+                        <span className='font-bold text-sm'>{t('nav.login')}</span>
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+
+                {/* Mobile Menu Toggle */}
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  className='lg:hidden text-white hover:bg-white/10 p-2 rounded-full'
+                  onClick={toggleMenu}
+                >
+                  {isMenuOpen ? (
+                    <X className='h-6 w-6' />
+                  ) : (
+                    <Menu className='h-6 w-6' />
+                  )}
+                </Button>
+              </div>
             </div>
-          </div>
-        </header>
+          </header>
+        </div>
       </div>
       <Sidebar isOpen={isMenuOpen} onClose={closeSidebar} />
     </>

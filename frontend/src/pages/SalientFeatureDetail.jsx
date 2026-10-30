@@ -108,30 +108,30 @@ export default function SalientFeatureDetail() {
       </Helmet>
 
       {/* Hero Section */}
-      <div className='relative w-full px-4 md:px-8 pt-4 pb-0'>
+      <div className='relative w-full px-4 md:px-8 pt-6 pb-0 max-w-screen-xl mx-auto'>
         <div
-          className='w-full max-w-[1400px] mx-auto rounded-[16px] md:rounded-[24px] overflow-hidden relative flex flex-col justify-center shadow-xl'
+          className='w-full rounded-[16px] md:rounded-[20px] overflow-hidden relative flex flex-col justify-center shadow-xl'
           style={{
-            backgroundImage: `url(/images/hero.png)`, // Default fallback representing an office/coaching
+            backgroundImage: `url(/images/hero.png)`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            minHeight: '480px'
+            minHeight: '360px'
           }}
         >
           {/* Overlay mask */}
           <div className='absolute inset-0 bg-black/75 z-0' />
 
-          <div className='relative z-10 w-full px-8 md:px-16 py-16 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-12'>
+          <div className='relative z-10 w-full px-8 md:px-12 py-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8'>
 
             {/* Left Content */}
-            <div className='max-w-2xl flex-1'>
-              <div className='inline-flex items-center px-4 py-1.5 rounded-full border border-white/40 mb-6'>
+            <div className='max-w-xl flex-1'>
+              <div className='inline-flex items-center px-4 py-1.5 rounded-full border border-white/40 mb-4'>
                 <span className='text-[10px] font-semibold tracking-[0.15em] text-white uppercase'>
                   SALIENT FEATURES
                 </span>
               </div>
 
-              <h1 className='text-3xl md:text-5xl lg:text-[52px] font-bold text-white tracking-tight leading-[1.1] mb-6'>
+              <h1 className='text-3xl md:text-4xl lg:text-[44px] font-bold text-white tracking-tight leading-[1.1] mb-5'>
                 {title}
               </h1>
 
@@ -147,15 +147,15 @@ export default function SalientFeatureDetail() {
             </div>
 
             {/* Right Card */}
-            <div className='w-full lg:w-[450px] shrink-0 bg-[#0B132B]/80 backdrop-blur-sm border border-[#1A2332] rounded-[16px] p-8 relative overflow-hidden'>
+            <div className='w-full lg:w-[400px] shrink-0 bg-[#0B132B]/80 backdrop-blur-sm border border-[#1A2332] rounded-[16px] p-6 relative overflow-hidden'>
               {/* Decorative border matching Figma */}
-              <div className='absolute top-0 left-0 w-1 h-32 bg-[#F6B72D] rounded-br-[4px]' />
+              <div className='absolute top-0 left-0 w-1 h-24 bg-[#F6B72D] rounded-br-[4px]' />
               <div className='absolute bottom-0 right-0 w-12 h-1 bg-[#F6B72D] rounded-tl-[4px]' />
 
-              <h3 className='text-[14px] font-bold text-[#F6B72D] uppercase tracking-widest mb-4'>
+              <h3 className='text-[13px] font-bold text-[#F6B72D] uppercase tracking-widest mb-3'>
                 Why this feature matters
               </h3>
-              <p className='text-[15px] leading-[26px] text-gray-200'>
+              <p className='text-[14.5px] leading-[24px] text-gray-200'>
                 {shortDescription}
               </p>
             </div>

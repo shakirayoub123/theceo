@@ -135,33 +135,38 @@ export default function ServicesSection() {
 
   return (
     <section
-      className='py-16 md:py-24 relative overflow-hidden bg-[#FCFBF7] bg-repeat bg-top font-jakarta'
-      style={{ backgroundImage: `url("${mapBg}")` }}
+      id='services-section'
+      className='py-8 lg:py-10 relative overflow-hidden bg-[#FCFBF7] font-jakarta min-h-[calc(100svh-72px)] flex flex-col justify-center'
     >
+      <div
+        aria-hidden='true'
+        className='absolute inset-0 pointer-events-none bg-no-repeat bg-center bg-cover opacity-80'
+        style={{ backgroundImage: `url("${mapBg}")` }}
+      />
       <div className='w-full max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
 
         {/* Header Section */}
-        <div className='flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6'>
+        <div className='flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-10 gap-4'>
           <div className='flex-1'>
-            <div className='inline-block border border-gray-400 rounded-full px-5 py-1 mb-5'>
-              <span className='text-[#111827] font-semibold tracking-widest text-[9px] uppercase'>
+            <div className='inline-block border border-[#334155]/60 rounded-full px-4 py-1 mb-3'>
+              <span className='text-[#334155] font-semibold tracking-[0.08em] text-[10px] uppercase'>
                 What We Provide
               </span>
             </div>
-            <h2 className='text-[40px] leading-[51px] tracking-[-1.01px] font-bold text-[#111827] mb-2 uppercase font-jakarta'>
+            <h2 className='text-[30px] lg:text-[40px] leading-[1.1] tracking-[-1.01px] font-bold text-[#000023] mb-2 uppercase font-jakarta'>
               Our <span className='text-[#F6B72D]'>Services</span>
             </h2>
-            <p className='text-[16px] leading-[28px] tracking-[0px] font-normal text-[#4B5563] max-w-2xl'>
+            <p className='text-[13px] lg:text-[15px] leading-[24px] font-normal text-[#4B5563] max-w-2xl'>
               We deliver tailored leadership and performance programs empowering leaders with clarity and confidence.
             </p>
           </div>
 
           {/* Top Right Arrows */}
           <div className='flex gap-4 items-center'>
-            <button className='w-12 h-12 rounded-full border border-gray-200 bg-white flex items-center justify-center hover:bg-gray-50 transition-colors'>
+            <button aria-label='Previous services' className='w-12 h-12 rounded-full border border-[#CBD5E1] bg-white flex items-center justify-center hover:bg-[#F8FAFC] transition-colors'>
               <ChevronLeft className='w-5 h-5 text-[#111827]' />
             </button>
-            <button className='w-12 h-12 rounded-full bg-[#111827] flex items-center justify-center hover:bg-gray-900 transition-colors'>
+            <button aria-label='Next services' className='w-12 h-12 rounded-full bg-[#000023] flex items-center justify-center hover:bg-[#11113A] transition-colors'>
               <ChevronRight className='w-5 h-5 text-white' />
             </button>
           </div>
@@ -174,36 +179,37 @@ export default function ServicesSection() {
           </div>
         )}
 
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8'>
+        <div className='grid grid-cols-1 md:grid-cols-3 items-stretch gap-5 lg:gap-6'>
           {displayPrograms.map((program, index) => {
             return (
               <div
                 key={program.id}
-                className='rounded-[20px] flex flex-col justify-between p-6 sm:p-7 relative group transition-all duration-500 ease-out transform bg-[#FBF9F5] border border-[#E7E6E2] shadow-sm hover:scale-[1.04] hover:-translate-y-1 hover:z-20 hover:bg-[#0B132B] hover:border-[#0B132B] hover:shadow-2xl'
+                className='min-h-[390px] md:h-[420px] lg:h-[450px] rounded-[20px] flex flex-col p-5 lg:p-7 relative group transition-all duration-300 ease-out bg-white/95 border border-[#E5E7EB] shadow-[0_12px_30px_rgba(0,0,35,0.06)] hover:scale-[1.035] hover:-translate-y-1 hover:z-20 hover:bg-[#000023] hover:border-[#312E81]/40 hover:shadow-[0_24px_48px_rgba(0,0,35,0.2)]'
               >
                 {/* Arrow icon absolute positioned at top-right */}
-                <Link to={program.id ? `/service/${program.id}` : '#'} className='absolute top-6 right-6 z-20 group-hover:scale-110 transition-transform duration-300'>
-                  <div className='w-[38px] h-[38px] rounded-full border border-[#E7E6E2] bg-white flex items-center justify-center shadow-sm group-hover:border-white'>
-                    <ArrowUpRight className="w-4 h-4 text-[#0B132B]" />
+                <Link to={program.id ? `/service/${program.id}` : '#'} aria-label={`View ${formatProgramTitle(program.title, index)}`} className='absolute top-5 right-5 z-20 group-hover:scale-110 transition-transform duration-300'>
+                  <div className='w-[38px] h-[38px] rounded-full border border-[#E5E7EB] bg-white flex items-center justify-center shadow-sm group-hover:border-white'>
+                    <ArrowUpRight className="w-3.5 h-3.5 text-[#0B132B]" />
                   </div>
                 </Link>
 
                 {/* Top Content */}
-                <div className='mb-8 pr-12 text-left'>
-                  <h3 className='text-[20.72px] leading-[29px] tracking-[0px] font-bold font-jakarta mb-4 text-[#0B132B] group-hover:text-white transition-colors duration-300'>
+                <div className='mb-5 pr-10 text-left'>
+                  <h3 className='text-[17px] lg:text-[20px] leading-[25px] lg:leading-[29px] font-bold font-jakarta mb-3 text-[#000023] group-hover:text-white transition-colors duration-300'>
                     {formatProgramTitle(program.title, index)}
                   </h3>
-                  <p className='text-[14.44px] leading-[21.2px] tracking-[0px] font-medium font-jakarta pr-2 text-[#475569] group-hover:text-[#E7E6E2] transition-colors duration-300'>
+                  <p className='text-[13px] lg:text-[14px] leading-[21px] lg:leading-[23px] font-normal font-jakarta pr-1 text-[#334155]/80 group-hover:text-[#CBD5E1] transition-colors duration-300 line-clamp-3'>
                     {stripHtml(program.shortDesc || program.description) || 'Details coming soon.'}
                   </p>
                 </div>
 
                 {/* Cover Image at Bottom */}
-                <div className='mt-auto relative w-full overflow-hidden rounded-[16px]'>
+                <div className='mt-auto relative w-full h-[175px] lg:h-[200px] shrink-0 overflow-hidden rounded-[16px]'>
                   <img
                     src={getAssetUrl(program.thumbnailImage) || '/images/services.svg'}
                     alt={program.title}
-                    className='w-full h-[220px] object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]'
+                    className='w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]'
+                    onError={(e) => { e.currentTarget.src = '/images/services.svg' }}
                   />
                   {/* Invisible interactive overlay trigger just in case */}
                   <Link to={program.id ? `/service/${program.id}` : '#'} className='absolute inset-0 z-10' />

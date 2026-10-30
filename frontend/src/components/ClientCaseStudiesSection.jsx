@@ -7,7 +7,7 @@ export default function ClientCaseStudiesSection() {
   const displayStudies = featuredCaseStudies.slice(0, 3)
 
   return (
-    <section className='py-12 lg:py-[6vh] min-h-screen flex flex-col justify-center bg-[#FBF9F5] font-jakarta relative overflow-hidden'>
+    <section className='py-8 lg:py-10 min-h-[calc(100vh-140px)] flex flex-col justify-center bg-[#FBF9F5] font-jakarta relative overflow-hidden'>
 
       {/* Background Topo */}
       <div
@@ -23,16 +23,16 @@ export default function ClientCaseStudiesSection() {
       <div className='max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
 
         {/* Header */}
-        <div className='flex flex-col items-center text-center justify-center mb-8 lg:mb-[4vh]'>
-          <div className='inline-block border border-gray-400 rounded-full px-4 py-1 mb-4 lg:mb-5 bg-white'>
+        <div className='flex flex-col items-center text-center justify-center mb-6 lg:mb-8'>
+          <div className='inline-block border border-gray-400 rounded-full px-4 py-0.5 mb-3 lg:mb-4 bg-white'>
             <span className='text-[#4B5563] font-bold tracking-widest text-[9px] lg:text-[10px] uppercase'>
               CLIENT SUCCESS STORIES
             </span>
           </div>
 
-          <h2 className='text-[32px] lg:text-[42px] font-bold leading-none mb-4'>
+          <h2 className='text-[28px] lg:text-[36px] font-bold leading-none mb-3'>
             <span className='text-black'>Client </span>
-            <span className='text-[#F6B72D] font-sans text-[34px] lg:text-[46px]'>Case Studies</span>
+            <span className='text-[#F6B72D] font-sans text-[30px] lg:text-[38px]'>Case Studies</span>
           </h2>
 
           <p className='text-[#6B7280] text-[14px] lg:text-[15px] leading-relaxed max-w-2xl font-medium mx-auto line-clamp-2'>
@@ -43,7 +43,7 @@ export default function ClientCaseStudiesSection() {
         </div>
 
         {/* 3 Grid Layout */}
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 mb-8 lg:mb-[4vh]'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 lg:mb-8'>
           {displayStudies.map((cs, idx) => (
             <CaseStudyCard key={cs.id} cs={cs} index={idx} />
           ))}
@@ -72,44 +72,44 @@ function CaseStudyCard({ cs, index }) {
   const displayId = String(index + 1).padStart(2, '0')
 
   return (
-    <div className='bg-white rounded-[20px] lg:rounded-[28px] overflow-hidden flex flex-col shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 h-full max-h-[500px] lg:max-h-[580px] relative'>
+    <div className='bg-white rounded-[20px] lg:rounded-[24px] overflow-hidden flex flex-col shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 h-full max-h-[460px] lg:max-h-[440px] relative'>
 
       {/* Top Graphic Border */}
-      <div className='h-1.5 w-full bg-[#F6B72D] absolute top-0 left-0 right-0'></div>
+      <div className='h-1 w-full bg-[#F6B72D] absolute top-0 left-0 right-0'></div>
 
-      <div className='p-6 lg:p-8 flex flex-col flex-1 mt-1'>
+      <div className='p-4 lg:p-5 flex flex-col flex-1 mt-0.5'>
 
         {/* Identifier Badge */}
-        <div className='mb-3 lg:mb-4'>
-          <span className='bg-[#0B132B] text-white text-[9px] sm:text-[10px] font-bold px-3 py-1.5 rounded-sm tracking-wider uppercase inline-block'>
+        <div className='mb-2.5 lg:mb-3'>
+          <span className='bg-[#0B132B] text-white text-[9px] font-bold px-2.5 py-1 rounded-sm tracking-wider uppercase inline-block'>
             CASE STUDY {displayId}
           </span>
         </div>
 
         {/* Subtitle Line */}
-        <div className='flex items-center gap-2 mb-2 lg:mb-3'>
-          <span className='text-[#F6B72D] text-sm lg:text-lg leading-none'>•</span>
-          <span className='text-[#F6B72D] text-[9px] sm:text-[10px] font-bold uppercase tracking-widest truncate line-clamp-1'>
+        <div className='flex items-center gap-1.5 mb-2'>
+          <span className='text-[#F6B72D] text-xs lg:text-sm leading-none'>•</span>
+          <span className='text-[#F6B72D] text-[9px] font-bold uppercase tracking-widest truncate line-clamp-1'>
             {cs.subtitle}
           </span>
         </div>
 
         {/* Title */}
-        <h3 className='text-[18px] lg:text-[22px] font-bold text-black mb-3 lg:mb-4 leading-tight'>
+        <h3 className='text-[16px] lg:text-[18px] font-bold text-black mb-2 lg:mb-3 leading-tight'>
           {cs.title}
         </h3>
 
         {/* Excerpt */}
-        <p className='text-[#4B5563] text-[13px] lg:text-[14px] leading-relaxed font-medium flex-1 mb-5 lg:mb-6 line-clamp-3'>
+        <p className='text-[#4B5563] text-[12px] lg:text-[13px] leading-relaxed font-medium flex-1 mb-4 lg:mb-5 line-clamp-3'>
           {cs.excerpt}
         </p>
 
         {/* Key Result Box */}
-        <div className='bg-[#0B132B] rounded-[14px] p-4 lg:p-5 mb-5 lg:mb-6 border-l-4 border-l-[#F6B72D] w-full'>
-          <p className='text-[#F6B72D] text-[9px] font-bold uppercase tracking-widest mb-1'>
+        <div className='bg-[#0B132B] rounded-[12px] p-3 lg:p-4 mb-4 lg:mb-5 border-l-[3px] border-l-[#F6B72D] w-full'>
+          <p className='text-[#F6B72D] text-[8px] font-bold uppercase tracking-widest mb-1'>
             KEY RESULT
           </p>
-          <p className='text-white font-bold text-[13px] lg:text-[14px] leading-snug line-clamp-2'>
+          <p className='text-white font-bold text-[12px] lg:text-[13px] leading-snug line-clamp-2'>
             {cs.keyResult}
           </p>
         </div>

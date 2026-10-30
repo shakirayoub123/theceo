@@ -29,6 +29,7 @@ export default function AddNewsletter() {
 
   const [file, setFile] = useState(null)
   const [thumbnail, setThumbnail] = useState(null)
+  const [existingFile, setExistingFile] = useState(null)      // existing PDF info
   const [existingThumbnail, setExistingThumbnail] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -56,7 +57,15 @@ export default function AddNewsletter() {
                 ? new Date(newsletter.schedule_on).toISOString().slice(0, 16)
                 : '',
             })
-            setExistingThumbnail(getAssetUrl(newsletter.thumbnail))
+            // PDF: fileUrl and file are both plain string URLs; filename is in fileDetails.name
+            const pdfUrl = newsletter.fileUrl || newsletter.file || null
+            if (pdfUrl) setExistingFile({
+              url: getAssetUrl(pdfUrl),
+              name: newsletter.fileDetails?.name?.split('/').pop() || pdfUrl.split('/').pop(),
+            })
+            // Thumbnail — API returns thumbnailImageUrl or thumbnailImage.url
+            const thumbUrl = newsletter.thumbnailImageUrl || newsletter.thumbnailImage?.url || null
+            if (thumbUrl) setExistingThumbnail(getAssetUrl(thumbUrl))
           }
         } catch (err) {
           console.error('Failed to fetch newsletter:', err)
@@ -78,7 +87,8 @@ export default function AddNewsletter() {
       setError('Title is required')
       return
     }
-    if (!file) {
+    // Require PDF only when creating a new newsletter
+    if (!isEditing && !file) {
       setError('PDF file is required')
       return
     }
@@ -97,7 +107,8 @@ export default function AddNewsletter() {
         )
       }
 
-      formDataToSend.append('file', file)
+      // Only send the file if the admin chose a new one
+      if (file) formDataToSend.append('file', file)
 
       if (thumbnail) {
         formDataToSend.append('thumbnailImage', thumbnail)
@@ -241,12 +252,30 @@ export default function AddNewsletter() {
       <div className='space-y-2'>
         <label className='text-sm font-semibold text-gray-700'>PDF File</label>
         <div className='border-2 border-[#F6B72D] rounded-xl p-6 text-center hover:border-[#F6B72D] transition'>
-          <div className='w-20 h-20 border border-gray-300 rounded mx-auto mb-4 flex items-center justify-center'>
+          <div className='w-20 h-20 border border-gray-300 rounded mx-auto mb-4 flex items-center justify-center bg-gray-50'>
             <FileText className='w-8 h-8 text-gray-400' />
           </div>
-          <p className='text-sm text-gray-500 mb-3'>Upload PDF file</p>
+
+          {/* Show existing PDF when editing */}
+          {existingFile && !file && (
+            <div className='mb-3 p-2 bg-green-50 border border-green-200 rounded-lg'>
+              <p className='text-xs text-green-700 font-semibold mb-1'>✅ Current PDF</p>
+              <a
+                href={existingFile.url}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='text-xs text-blue-600 underline break-all'
+              >
+                {existingFile.name}
+              </a>
+            </div>
+          )}
+
+          <p className='text-sm text-gray-500 mb-1'>
+            {isEditing ? 'Upload a new PDF to replace the current one (optional)' : 'Upload PDF file'}
+          </p>
           <p className='text-xs text-gray-400 mb-3'>
-            {file ? file.name : 'No file chosen'}
+            {file ? file.name : existingFile ? 'Keeping current PDF' : 'No file chosen'}
           </p>
           <Input
             type='file'
@@ -256,12 +285,10 @@ export default function AddNewsletter() {
             onChange={(e) => {
               const selectedFile = e.target.files?.[0]
               if (selectedFile) {
-                // Check file size (max 50MB)
                 if (selectedFile.size > 50 * 1024 * 1024) {
                   alert('File size must be less than 50MB')
                   return
                 }
-                // Check file type
                 if (selectedFile.type !== 'application/pdf') {
                   alert('Please select a valid PDF file')
                   return
@@ -269,13 +296,12 @@ export default function AddNewsletter() {
               }
               setFile(selectedFile || null)
             }}
-            required={!isEditing}
           />
           <label
             htmlFor='file'
             className='cursor-pointer bg-[#F6B72D] text-white px-4 py-2 rounded-full font-medium hover:bg-[#e6b82a] inline-block'
           >
-            Choose File
+            {existingFile ? 'Replace PDF' : 'Choose File'}
           </label>
         </div>
       </div>

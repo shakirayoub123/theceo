@@ -192,15 +192,15 @@ export default function AppointmentModal({ isOpen, onClose }) {
         `}</style>
 
         {/* Header */}
-        <div className='relative px-6 md:px-8 pt-8 pb-5 border-b border-gray-100 flex items-start justify-between'>
-          <div className='flex gap-4'>
+        <div className='relative px-6 md:px-8 pt-6 pb-4 border-b border-gray-100 flex items-start justify-between'>
+          <div className='flex gap-3'>
             {/* Orange Vertical Line */}
-            <div className='w-2 rounded bg-[#F6B72D] flex-shrink-0 mt-1 mb-1'></div>
+            <div className='w-1.5 rounded bg-[#F6B72D] flex-shrink-0 mt-1 mb-1'></div>
             <div className='flex flex-col'>
-              <span className='text-[10px] md:text-[11px] font-bold text-[#F6B72D] tracking-widest uppercase mb-1 font-jakarta'>
+              <span className='text-[9px] md:text-[10px] font-bold text-[#F6B72D] tracking-widest uppercase mb-0.5 font-jakarta'>
                 Private Advisory Session
               </span>
-              <h2 className='text-2xl md:text-3xl font-extrabold text-[#111827] tracking-tight uppercase font-jakarta'>
+              <h2 className='text-[20px] md:text-[24px] font-extrabold text-[#111827] tracking-tight uppercase font-jakarta'>
                 Schedule a Discovery Call
               </h2>
             </div>
@@ -218,12 +218,12 @@ export default function AppointmentModal({ isOpen, onClose }) {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className='p-6 md:p-8 font-jakarta'>
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5'>
+        <form onSubmit={handleSubmit} className='p-5 md:p-6 font-jakarta'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-3.5'>
 
             {/* FULL NAME */}
             <div>
-              <label className='block text-[11px] font-bold text-[#111827] uppercase tracking-wide mb-1.5 font-jakarta'>
+              <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
                 {t('appointment.fullName', 'Full Name')} <span className='text-[#F6B72D]'>*</span>
               </label>
               <Input
@@ -231,14 +231,14 @@ export default function AppointmentModal({ isOpen, onClose }) {
                 value={formData.fullName}
                 onChange={(e) => handleInputChange('fullName', e.target.value)}
                 required
-                className='w-full h-11 border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-sm px-4 placeholder:text-gray-400'
+                className='w-full h-[38px] border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-[13px] px-3 placeholder:text-gray-400'
                 placeholder={t('appointment.fullNamePlaceholder', 'Enter your full name')}
               />
             </div>
 
             {/* EMAIL ADDRESS */}
             <div>
-              <label className='block text-[11px] font-bold text-[#111827] uppercase tracking-wide mb-1.5 font-jakarta'>
+              <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
                 {t('appointment.email', 'Email Address')} <span className='text-[#F6B72D]'>*</span>
               </label>
               <Input
@@ -246,17 +246,17 @@ export default function AppointmentModal({ isOpen, onClose }) {
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
                 required
-                className='w-full h-11 border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-sm px-4 placeholder:text-gray-400'
+                className='w-full h-[38px] border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-[13px] px-3 placeholder:text-gray-400'
                 placeholder={t('appointment.emailPlaceholder', 'Enter your email address')}
               />
             </div>
 
             {/* PHONE NUMBER */}
             <div>
-              <label className='block text-[11px] font-bold text-[#111827] uppercase tracking-wide mb-1.5 font-jakarta'>
+              <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
                 {t('appointment.phone', 'Phone Number')} <span className='text-[#F6B72D]'>*</span>
               </label>
-              <div className='w-full h-11 px-3 py-2 border border-gray-200 rounded-lg focus-within:border-[#F6B72D] focus-within:ring-1 focus-within:ring-[#F6B72D] transition-all duration-200 bg-white flex items-center'>
+              <div className='w-full h-[38px] px-3 py-1.5 border border-gray-200 rounded-lg focus-within:border-[#F6B72D] focus-within:ring-1 focus-within:ring-[#F6B72D] transition-all duration-200 bg-white flex items-center'>
                 <PhoneInput
                   international
                   countryCallingCodeEditable={false}
@@ -264,13 +264,13 @@ export default function AppointmentModal({ isOpen, onClose }) {
                   value={formData.phone}
                   onChange={(value) => handleInputChange('phone', value)}
                   className='w-full'
-                  inputClassName='w-full border-0 focus:ring-0 focus:outline-none bg-transparent font-jakarta text-[#111827] placeholder:text-gray-400 text-sm'
+                  inputClassName='w-full border-0 focus:ring-0 focus:outline-none bg-transparent font-jakarta text-[#111827] placeholder:text-gray-400 text-[13px]'
                   containerClassName='w-full flex items-center'
                   countrySelectProps={{
-                    className: 'bg-transparent text-gray-700 font-jakarta border-0 focus:ring-0 text-sm mr-2',
+                    className: 'bg-transparent text-gray-700 font-jakarta border-0 focus:ring-0 text-[13px] mr-2',
                   }}
                   numberInputProps={{
-                    className: 'bg-transparent font-jakarta flex-1 placeholder:text-gray-400 outline-none hover:outline-none focus:outline-none',
+                    className: 'bg-transparent font-jakarta flex-1 placeholder:text-gray-400 outline-none hover:outline-none focus:outline-none text-[13px]',
                   }}
                 />
               </div>
@@ -278,7 +278,7 @@ export default function AppointmentModal({ isOpen, onClose }) {
 
             {/* COUNTRY */}
             <div>
-              <label className='block text-[11px] font-bold text-[#111827] uppercase tracking-wide mb-1.5 font-jakarta'>
+              <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
                 Country <span className='text-[#F6B72D]'>*</span>
               </label>
               <div className='relative'>
@@ -287,91 +287,91 @@ export default function AppointmentModal({ isOpen, onClose }) {
                   value={formData.country}
                   onChange={(e) => handleInputChange('country', e.target.value)}
                   required
-                  className='w-full h-11 border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-sm px-4 pr-10 placeholder:text-gray-400'
+                  className='w-full h-[38px] border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-[13px] px-3 pr-10 placeholder:text-gray-400'
                   placeholder='Country'
                 />
-                <Globe className='absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none' />
+                <Globe className='absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none' />
               </div>
             </div>
 
             {/* ADDRESS */}
             <div>
-              <label className='block text-[11px] font-bold text-[#111827] uppercase tracking-wide mb-1.5 font-jakarta'>
+              <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
                 Address
               </label>
               <Input
                 type='text'
                 value={formData.address}
                 onChange={(e) => handleInputChange('address', e.target.value)}
-                className='w-full h-11 border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-sm px-4 placeholder:text-gray-400'
+                className='w-full h-[38px] border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-[13px] px-3 placeholder:text-gray-400'
                 placeholder='Address'
               />
             </div>
 
             {/* JOB TITLE */}
             <div>
-              <label className='block text-[11px] font-bold text-[#111827] uppercase tracking-wide mb-1.5 font-jakarta'>
+              <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
                 Job Title
               </label>
               <Input
                 type='text'
                 value={formData.jobTitle}
                 onChange={(e) => handleInputChange('jobTitle', e.target.value)}
-                className='w-full h-11 border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-sm px-4 placeholder:text-gray-400'
+                className='w-full h-[38px] border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-[13px] px-3 placeholder:text-gray-400'
                 placeholder='Job title'
               />
             </div>
 
             {/* COMPANY NAME */}
             <div>
-              <label className='block text-[11px] font-bold text-[#111827] uppercase tracking-wide mb-1.5 font-jakarta'>
+              <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
                 Company Name
               </label>
               <Input
                 type='text'
                 value={formData.position}
                 onChange={(e) => handleInputChange('position', e.target.value)}
-                className='w-full h-11 border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-sm px-4 placeholder:text-gray-400'
+                className='w-full h-[38px] border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-[13px] px-3 placeholder:text-gray-400'
                 placeholder='Company name'
               />
             </div>
 
             {/* INDUSTRY */}
             <div>
-              <label className='block text-[11px] font-bold text-[#111827] uppercase tracking-wide mb-1.5 font-jakarta'>
+              <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
                 Industry
               </label>
               <Input
                 type='text'
                 value={formData.industry}
                 onChange={(e) => handleInputChange('industry', e.target.value)}
-                className='w-full h-11 border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-sm px-4 placeholder:text-gray-400'
+                className='w-full h-[38px] border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-[13px] px-3 placeholder:text-gray-400'
                 placeholder='Industry'
               />
             </div>
 
             {/* REFERRED BY */}
-            <div className='col-span-1 border-b border-white pb-3 sm:pb-0'>
-              <label className='block text-[11px] font-bold text-[#111827] uppercase tracking-wide mb-1.5 font-jakarta'>
+            <div className='col-span-1 border-b border-white pb-1 sm:pb-0'>
+              <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
                 Referred By
               </label>
               <Input
                 type='text'
                 value={formData.referredBy}
                 onChange={(e) => handleInputChange('referredBy', e.target.value)}
-                className='w-full h-11 border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-sm px-4 placeholder:text-gray-400'
+                className='w-full h-[38px] border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-[13px] px-3 placeholder:text-gray-400'
                 placeholder='Referral source'
               />
             </div>
           </div>
 
           {/* Divider */}
-          <div className='border-t border-gray-100 my-6'></div>
+          <div className='border-t border-gray-100 my-4'></div>
 
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-3.5'>
             {/* PREFERRED DATE */}
             <div>
-              <label className='block text-[11px] font-bold text-[#111827] uppercase tracking-wide mb-1.5 font-jakarta'>
+              <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
                 {t('appointment.date', 'Preferred Date')} <span className='text-[#F6B72D]'>*</span>
               </label>
               <div className='relative'>
@@ -381,14 +381,14 @@ export default function AppointmentModal({ isOpen, onClose }) {
                   onChange={(e) => handleInputChange('date', e.target.value)}
                   required
                   min={new Date().toISOString().split('T')[0]}
-                  className='w-full h-11 border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-sm px-4 pr-10 text-[#111827]'
+                  className='w-full h-[38px] border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-[13px] px-3 pr-10 text-[#111827]'
                 />
               </div>
             </div>
 
             {/* PREFERRED TIME */}
             <div>
-              <label className='block text-[11px] font-bold text-[#111827] uppercase tracking-wide mb-1.5 font-jakarta'>
+              <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
                 {t('appointment.time', 'Preferred Time')} <span className='text-[#F6B72D]'>*</span>
               </label>
               <div className='relative'>
@@ -396,7 +396,7 @@ export default function AppointmentModal({ isOpen, onClose }) {
                   value={formData.time}
                   onChange={(e) => handleInputChange('time', e.target.value)}
                   required
-                  className='w-full h-11 px-4 py-2 border border-gray-200 rounded-lg focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] focus:outline-none font-jakarta text-sm appearance-none bg-white text-[#111827]'
+                  className='w-full h-[38px] px-3 py-1.5 border border-gray-200 rounded-lg focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] focus:outline-none font-jakarta text-[13px] appearance-none bg-white text-[#111827]'
                 >
                   <option value='' disabled hidden>
                     {t('appointment.selectTime', 'Select a time')}
@@ -414,11 +414,11 @@ export default function AppointmentModal({ isOpen, onClose }) {
             </div>
           </div>
 
-          <div className='pt-6'>
+          <div className='pt-5'>
             <Button
               type='submit'
               disabled={isSubmitting}
-              className='w-full bg-[#F6B72D] hover:bg-[#e6b82a] text-[#111827] font-extrabold font-jakarta uppercase tracking-wider py-6 px-6 rounded-lg transition-all duration-300 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-[13px] md:text-sm'
+              className='w-full bg-[#F6B72D] hover:bg-[#e6b82a] text-[#111827] font-extrabold font-jakarta uppercase tracking-wider py-4 md:py-5 px-6 rounded-lg transition-all duration-300 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-[12px] md:text-sm'
             >
               {isSubmitting
                 ? t('appointment.submitting', 'Scheduling...')

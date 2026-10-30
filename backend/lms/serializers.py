@@ -1551,7 +1551,15 @@ class BlogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Blog
-        fields = ["id", "title", "status", "timeToRead", "uploadedOn", "slug"]
+        fields = [
+            "id",
+            "title",
+            "status",
+            "timeToRead",
+            "uploadedOn",
+            "slug",
+            "is_featured",
+        ]
 
 
 class AdminBlogsResponseSerializer(serializers.Serializer):
@@ -1584,6 +1592,7 @@ class AdminBlogDetailSerializer(serializers.ModelSerializer):
             "content",
             "status",
             "statusDisplay",
+            "is_featured",
             "slug",
             "thumbnailImage",
             "thumbnailImageUrl",
@@ -1681,6 +1690,7 @@ class AddBlogSerializer(serializers.ModelSerializer):
             "thumbnailImage",
             "time_to_read",
             "schedule_on",
+            "is_featured",
         ]
 
     def validate_thumbnailImage(self, value):
@@ -1725,6 +1735,7 @@ class EditBlogSerializer(serializers.ModelSerializer):
             "time_to_read",
             "schedule_on",
             "status",
+            "is_featured",
         ]
 
     def validate_thumbnailImage(self, value):
@@ -2121,6 +2132,7 @@ class ClientBlogSerializer(serializers.ModelSerializer):
     publishedAt = serializers.DateTimeField(source="published_at")
     author = serializers.CharField(source="author.get_full_name")
     viewsCount = serializers.IntegerField(source="views_count")
+    isFeatured = serializers.BooleanField(source="is_featured")
     slug = serializers.SlugField()
 
     class Meta:
@@ -2135,6 +2147,7 @@ class ClientBlogSerializer(serializers.ModelSerializer):
             "publishedAt",
             "author",
             "viewsCount",
+            "isFeatured",
             "slug",
         ]
 

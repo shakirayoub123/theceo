@@ -325,7 +325,7 @@ const ClaireBiography = () => {
       <div className='w-full'>
         <div className='w-full bg-[#F5F4F2] pt-6'>
           {/* AUTHOR PROFILE HERO BANNER */}
-          <div className='relative w-full max-w-[1383px] mx-auto h-[423px] bg-[#FFFBF0] flex flex-col items-center justify-center overflow-hidden rounded-[28px] shadow-sm mb-12'>
+          <div className='relative w-full max-w-[1383px] mx-auto h-[200px] md:h-[260px] bg-[#FFFBF0] flex flex-col items-center justify-center overflow-hidden rounded-[20px] shadow-sm mb-8'>
             {/* Topographic Background */}
             <div
               className='absolute inset-0 z-0 opacity-40 pointer-events-none'
@@ -335,9 +335,9 @@ const ClaireBiography = () => {
                 backgroundPosition: 'center',
               }}
             ></div>
-            <div className='relative z-10 text-center flex flex-col items-center px-4 mt-6'>
-              <h1 className='text-4xl md:text-[54px] font-bold font-jakarta text-[#000023] mb-6 tracking-tight'>Author Profile</h1>
-              <div className='flex items-center text-[15px] font-semibold font-jakarta'>
+            <div className='relative z-10 text-center flex flex-col items-center px-4'>
+              <h1 className='text-3xl md:text-[42px] font-bold font-jakarta text-[#000023] mb-4 tracking-tight'>Author Profile</h1>
+              <div className='flex items-center text-[14px] md:text-[15px] font-semibold font-jakarta'>
                 <a href='/' className='text-[#161616] hover:text-[#F6B72D] transition-colors'>Home</a>
                 <span className='mx-3 text-[#161616] tracking-widest'>&gt;</span>
                 <a href='/#our-team' className='text-[#F6B72D] hover:text-[#e6a820] transition-colors'>Team</a>
