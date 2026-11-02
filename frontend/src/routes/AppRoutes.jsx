@@ -43,6 +43,7 @@ import SalesClientDetails from '@/pages/dashboard/sales/SalesClientDetails'
 import SalesDashboard from '@/pages/dashboard/sales/SalesDashboard'
 import { Route, Routes } from 'react-router-dom'
 import Blog from '../pages/Blog'
+import Articles from '../pages/Articles'
 import Cart from '../pages/Cart'
 import CaseStudies from '../pages/CaseStudies'
 import CaseStudyDetail from '../pages/CaseStudyDetail'
@@ -65,6 +66,7 @@ const AppRoutes = () => {
         <Route path='/biography/james-armstrong' element={<JamesBiography />} />
         <Route path='/biography/claire-keogh' element={<ClaireBiography />} />
         <Route path='/blog/:slug' element={<Blog />} />
+        <Route path='/articles' element={<Articles />} />
         <Route path='/ebook-detail/:id' element={<EbookDetail />} />
         <Route path='/ebook-series' element={<EbookSeries />} />
         <Route path='/ebook-series/:seriesId' element={<EbookSeries />} />

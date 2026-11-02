@@ -85,7 +85,12 @@ export default function CaseStudies() {
       <div className='max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8'>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8'>
           {allCaseStudies.map((cs, idx) => (
-            <Link to={`/case-studies/${cs.id}`} key={cs.id} className='block group h-full cursor-pointer'>
+            <Link
+              to={`/case-studies/${cs.id}`}
+              key={cs.id}
+              aria-label={`Read case study ${idx + 1}: ${cs.title}`}
+              className='block group h-full cursor-pointer rounded-[24px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6B72D]'
+            >
               <CaseStudyCard cs={cs} index={idx} />
             </Link>
           ))}
@@ -99,52 +104,53 @@ function CaseStudyCard({ cs, index }) {
   const displayId = String(index + 1).padStart(2, '0')
 
   return (
-    <div className='bg-[#FFFFFF] rounded-[24px] lg:rounded-[28px] overflow-hidden flex flex-col shadow-sm border border-[#CACACA] group-hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] group-hover:-translate-y-1.5 transition-all duration-300 h-full max-h-[600px] relative'>
+    <div className='bg-[#FFFFFF] rounded-[24px] lg:rounded-[28px] overflow-hidden flex flex-col shadow-sm border border-[#CACACA] group-hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] group-hover:-translate-y-1.5 transition-all duration-300 h-full min-h-[410px] lg:min-h-[430px] max-h-[480px] relative'>
       {/* Top Graphic Border */}
       <div className='h-[6px] w-full bg-[#F6B72D] absolute top-0 left-0 right-0 group-hover:bg-[#e6b82a] transition-colors'></div>
 
-      <div className='p-6 lg:p-8 flex flex-col flex-1 mt-1'>
+      <div className='p-5 lg:p-6 flex flex-col flex-1 mt-1 min-h-0'>
         {/* Identifier Badge */}
-        <div className='mb-3 lg:mb-5'>
+        <div className='mb-2 lg:mb-3'>
           <span className='bg-[#0B132B] text-white text-[9px] sm:text-[10px] font-bold px-3 py-1.5 rounded-[4px] tracking-wider uppercase inline-block'>
             CASE STUDY {displayId}
           </span>
         </div>
 
         {/* Subtitle Line */}
-        <div className='flex items-start gap-2 mb-2 lg:mb-3'>
-          <span className='text-[#F6B72D] text-[18px] leading-none mt-[-2px]'>•</span>
-          <span className='text-[#F6B72D] text-[10px] font-bold uppercase tracking-widest line-clamp-2'>
+        <div className='flex min-w-0 items-center gap-2 mb-2'>
+          <span aria-hidden='true' className='text-[#F6B72D] text-[18px] leading-none shrink-0'>•</span>
+          <span title={cs.subtitle} className='text-[#F6B72D] text-[10px] font-bold uppercase tracking-widest truncate'>
             {cs.subtitle}
           </span>
         </div>
 
         {/* Title */}
-        <h3 className='text-[20px] lg:text-[23px] font-bold text-[#000000] mb-4 leading-snug font-jakarta line-clamp-2 min-h-[58px]'>
+        <h3 title={cs.title} className='text-[20px] lg:text-[22px] font-bold text-[#000000] mb-2 lg:mb-3 leading-snug font-jakarta line-clamp-2 min-h-[3.5rem] lg:min-h-[3.9rem]'>
           {cs.title}
         </h3>
 
         {/* Excerpt */}
-        <p className='text-[#4B5563] text-[14px] leading-relaxed font-medium flex-1 mb-6 line-clamp-4 font-jakarta'>
+        <p title={cs.excerpt} className='text-[#4B5563] text-[14px] leading-relaxed font-medium flex-1 min-h-0 mb-3 lg:mb-4 line-clamp-4 font-jakarta'>
           {cs.excerpt}
         </p>
 
         {/* Key Result Box */}
-        <div className='bg-[#0B132B] rounded-[14px] p-5 mb-6 border-l-[3px] border-l-[#F6B72D] w-full group-hover:bg-[#161f3d] transition-colors'>
-          <p className='text-[#F6B72D] text-[9px] font-bold uppercase tracking-widest mb-1.5'>
+        <div className='bg-[#0B132B] rounded-[14px] p-4 mb-3 lg:mb-4 border-l-[3px] border-l-[#F6B72D] w-full group-hover:bg-[#161f3d] transition-colors shrink-0'>
+          <p className='text-[#F6B72D] text-[9px] font-bold uppercase tracking-widest mb-1'>
             KEY RESULT
           </p>
-          <p className='text-white font-bold text-[13px] lg:text-[14px] leading-snug line-clamp-3'>
+          <p title={cs.keyResult} className='text-white font-bold text-[13px] lg:text-[14px] leading-snug line-clamp-2'>
             {cs.keyResult}
           </p>
         </div>
 
         {/* Footer Tags */}
-        <div className='flex flex-wrap gap-2 mt-auto h-[26px] overflow-hidden'>
-          {cs.tags.map((tag, idx) => (
+        <div className='flex flex-nowrap gap-2 mt-auto h-[26px] overflow-hidden shrink-0'>
+          {cs.tags.slice(0, 3).map((tag, idx) => (
             <span
               key={idx}
-              className='text-[9px] font-bold text-[#797979] bg-[#F8F8F8] border border-[#E5E7EB] px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap'
+              title={tag}
+              className='min-w-0 truncate text-[9px] font-bold text-[#797979] bg-[#F8F8F8] border border-[#E5E7EB] px-2.5 py-1 rounded-full uppercase tracking-wider whitespace-nowrap'
             >
               {tag}
             </span>

@@ -30,6 +30,7 @@ export default function AddNewsletter() {
   const [file, setFile] = useState(null)
   const [thumbnail, setThumbnail] = useState(null)
   const [existingFile, setExistingFile] = useState(null)      // existing PDF info
+  const [missingExistingFile, setMissingExistingFile] = useState(false)
   const [existingThumbnail, setExistingThumbnail] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -63,6 +64,7 @@ export default function AddNewsletter() {
               url: getAssetUrl(pdfUrl),
               name: newsletter.fileDetails?.name?.split('/').pop() || pdfUrl.split('/').pop(),
             })
+            setMissingExistingFile(newsletter.fileDetails?.available === false)
             // Thumbnail — API returns thumbnailImageUrl or thumbnailImage.url
             const thumbUrl = newsletter.thumbnailImageUrl || newsletter.thumbnailImage?.url || null
             if (thumbUrl) setExistingThumbnail(getAssetUrl(thumbUrl))
@@ -271,6 +273,12 @@ export default function AddNewsletter() {
             </div>
           )}
 
+          {missingExistingFile && !file && (
+            <p className='mb-3 rounded-lg border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800'>
+              The previously uploaded PDF is missing from server storage. Upload a replacement if this newsletter needs a PDF.
+            </p>
+          )}
+
           <p className='text-sm text-gray-500 mb-1'>
             {isEditing ? 'Upload a new PDF to replace the current one (optional)' : 'Upload PDF file'}
           </p>
@@ -295,6 +303,7 @@ export default function AddNewsletter() {
                 }
               }
               setFile(selectedFile || null)
+              if (selectedFile) setMissingExistingFile(false)
             }}
           />
           <label

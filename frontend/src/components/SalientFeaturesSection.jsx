@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import vectorImg from '@/assets/Vector.png'
 import groupBg from '@/assets/Group.png'
+import yellowBackground from '@/assets/bg yellow.png'
 
 export default function SalientFeaturesSection() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -98,7 +99,7 @@ export default function SalientFeaturesSection() {
               <Link
                 to={`/salient-features/${feature.slug}`}
                 key={feature.slug}
-                className='min-h-[190px] lg:min-h-[205px] w-full group rounded-[20px] p-5 lg:p-5 relative flex flex-col transition-all duration-300 border bg-[#010125]/90 border-[#CBD5E1]/40 hover:bg-white hover:shadow-xl hover:border-[#F6B72D]'
+                className='min-h-[210px] lg:min-h-[225px] w-full group rounded-[20px] p-6 relative flex flex-col transition-all duration-300 border bg-[#010125]/90 border-[#CBD5E1]/40 hover:bg-white hover:shadow-xl hover:border-[#F6B72D]'
               >
                 {/* Optional Link Overlay / Arrow icon */}
                 <div className='absolute top-5 right-5'>
@@ -108,18 +109,18 @@ export default function SalientFeaturesSection() {
                 </div>
 
                 {/* Icon Container */}
-                <div className='mb-3'>
-                  <div className='w-[40px] h-[40px] rounded-[12px] border bg-[#11112F] border-[#312E81]/50 flex items-center justify-center group-hover:bg-[#FFF8EB] group-hover:border-[#FFF8EB] transition-colors duration-300'>
+                <div className='mb-4'>
+                  <div className='w-[44px] h-[44px] rounded-[12px] border bg-[#11112F] border-[#312E81]/50 flex items-center justify-center group-hover:bg-[#FFF8EB] group-hover:border-[#FFF8EB] transition-colors duration-300'>
                     <feature.icon className='w-5 h-5 text-[#F6B72D]' />
                   </div>
                 </div>
 
                 {/* Content */}
-                <h3 className='text-[15px] md:text-[16px] font-bold leading-[21px] mb-2 text-white group-hover:text-[#111827] transition-colors duration-300'>
+                <h3 className='text-[16px] md:text-[17px] font-bold leading-[22px] mb-2 text-white group-hover:text-[#111827] transition-colors duration-300'>
                   {feature.title}
                 </h3>
 
-                <div className='text-[11px] lg:text-[11.5px] leading-[17px] text-gray-400 group-hover:text-[#4B5563] transition-colors duration-300'>
+                <div className='text-[12px] lg:text-[12.5px] leading-[18px] text-gray-400 group-hover:text-[#4B5563] transition-colors duration-300'>
                   {Array.isArray(feature.description) ? (
                     <ul className='space-y-0.5'>
                       {feature.description.slice(0, 4).map((item, i) => (
@@ -143,20 +144,16 @@ export default function SalientFeaturesSection() {
       {/* CTA — matches reference design */}
       <section className='w-full relative overflow-hidden font-jakarta rounded-b-[20px]'>
 
-        {/* Gold gradient background */}
-        <div className='absolute inset-0' style={{
-          background: 'linear-gradient(110deg, #D4B84A 0%, #CFA329 35%, #A8820F 100%)'
-        }} />
-
-        {/* Chevron / arrow shapes overlay */}
-        <div className='absolute inset-0 overflow-hidden'>
-          <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 1000 200" xmlns="http://www.w3.org/2000/svg">
-            <polygon fill="rgba(255,255,255,0.12)" points="0,0 170,0 270,100 170,200 0,200" />
-            <polygon fill="rgba(255,255,255,0.10)" points="140,0 310,0 410,100 310,200 140,200" />
-            <polygon fill="rgba(255,255,255,0.08)" points="280,0 450,0 550,100 450,200 280,200" />
-            <polygon fill="rgba(255,255,255,0.06)" points="420,0 580,0 680,100 580,200 420,200" />
-          </svg>
-        </div>
+        {/* Gold chevron background image */}
+        <div
+          className='absolute inset-0'
+          style={{
+            backgroundImage: `url("${yellowBackground}")`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
 
         <div className='relative z-10 py-10 md:py-14 flex flex-col md:flex-row items-center justify-between gap-8 px-6 sm:px-10 lg:px-16 max-w-[1300px] mx-auto'>
 

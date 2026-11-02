@@ -69,13 +69,16 @@ export default function ServiceDetail() {
     shortDesc,
     description,
     featuredImageUrl,
+    thumbnailImage,
+    thumbnail_image,
     introVideo,
     advisors = [],
     chapters = [],
   } = service
 
   const actualShortDesc = short_description || shortDesc || ''
-  const backgroundImage = featuredImageUrl ? getAssetUrl(featuredImageUrl) : '/images/services.svg'
+  const serviceImage = featuredImageUrl || thumbnailImage || thumbnail_image
+  const backgroundImage = serviceImage ? getAssetUrl(serviceImage) : '/images/services.svg'
   const introVideoUrl = introVideo ? getAssetUrl(introVideo) : null
   const breadcrumbItems = [
     { label: 'Home', href: '/' },
@@ -94,14 +97,14 @@ export default function ServiceDetail() {
           style={{
             backgroundImage: `url(${backgroundImage})`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            minHeight: '520px'
+            backgroundPosition: 'center center',
+            minHeight: 'clamp(340px, 31vw, 440px)'
           }}
         >
           {/* Overlay mask */}
           <div className='absolute inset-0 bg-black/60 z-0' />
 
-          <div className='relative z-10 max-w-4xl px-4 flex flex-col items-center mt-12'>
+          <div className='relative z-10 max-w-4xl px-5 sm:px-8 flex flex-col items-center'>
             {/* Pill */}
             <div className='inline-flex items-center px-4 py-1.5 rounded-full border border-white/40 mb-6'>
               <span className='text-[11px] font-medium tracking-[0.15em] text-white uppercase'>
@@ -110,13 +113,13 @@ export default function ServiceDetail() {
             </div>
 
             {/* Title */}
-            <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.1] mb-6'>
+            <h1 className='max-w-4xl text-[clamp(1.75rem,3.4vw,3.25rem)] font-bold text-white tracking-tight leading-[1.12] mb-4 text-balance'>
               {title}
             </h1>
 
             {/* Subtitle */}
             {actualShortDesc && (
-              <p className='text-[16px] leading-[26px] text-gray-200 max-w-2xl font-normal'>
+              <p className='text-[14px] md:text-[16px] leading-[1.55] text-gray-200 max-w-2xl font-normal text-balance'>
                 {actualShortDesc}
               </p>
             )}

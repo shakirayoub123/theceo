@@ -189,6 +189,22 @@ class PublicContentSecurityTests(TestCase):
         self.assertIsNone(response.data["newsletter"]["fileUrl"])
         self.assertIsNone(response.data["newsletter"]["downloadUrl"])
 
+    def test_admin_newsletter_detail_handles_missing_uploaded_file(self):
+        self.auth_client.force_authenticate(user=self.admin_user)
+        storage = self.newsletter.file.storage
+
+        with patch.object(storage, "size", side_effect=FileNotFoundError):
+            response = self.auth_client.get(
+                f"/api/lms/admin/newsletter/{self.newsletter.id}/"
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["title"], self.newsletter.title)
+        self.assertIsNone(response.data["file"])
+        self.assertIsNone(response.data["fileUrl"])
+        self.assertFalse(response.data["fileDetails"]["available"])
+        self.assertIsNone(response.data["fileDetails"]["size"])
+
     def test_public_ebook_responses_do_not_expose_direct_file_urls(self):
         response = self.public_client.get("/api/lms/people/ebooks/")
 

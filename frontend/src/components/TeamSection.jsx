@@ -44,7 +44,7 @@ export default function TeamSection() {
       image: '/images/james.jpg',
       stats: { clients: '5,000+', years: '25+' },
       link: '/biography/james-armstrong',
-      videoUrl: '/videos/intro-video.mp4',
+      videoUrl: '/videos/JamesBio.mp4',
       iconTheme: 'orange'
     },
     {
@@ -53,7 +53,7 @@ export default function TeamSection() {
       image: '/images/claire.jpeg',
       stats: { clients: '2500+', years: '20+' },
       link: '/biography/claire-keogh',
-      videoUrl: '/videos/intro-video.mp4',
+      videoUrl: '/videos/CliareBio.mp4',
       iconTheme: 'white'
     },
   ]

@@ -1622,7 +1622,9 @@ class AdminBlogDetailSerializer(serializers.ModelSerializer):
         }
 
     def get_thumbnailImage(self, obj):
-        if obj.thumbnail_image:
+        if obj.thumbnail_image and obj.thumbnail_image.storage.exists(
+            obj.thumbnail_image.name
+        ):
             return {
                 "name": obj.thumbnail_image.name,
                 "size": obj.thumbnail_image.size,
@@ -1631,7 +1633,9 @@ class AdminBlogDetailSerializer(serializers.ModelSerializer):
         return None
 
     def get_thumbnailImageUrl(self, obj):
-        if obj.thumbnail_image:
+        if obj.thumbnail_image and obj.thumbnail_image.storage.exists(
+            obj.thumbnail_image.name
+        ):
             return obj.thumbnail_image.url
         return None
 
@@ -1781,6 +1785,7 @@ class AdminNewsletterDetailSerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
     thumbnailImage = serializers.SerializerMethodField()
     thumbnailImageUrl = serializers.SerializerMethodField()
+    file = serializers.SerializerMethodField()
     fileUrl = serializers.SerializerMethodField()
     fileDetails = serializers.SerializerMethodField()
     totalViews = serializers.SerializerMethodField()
@@ -1828,34 +1833,59 @@ class AdminNewsletterDetailSerializer(serializers.ModelSerializer):
 
     def get_thumbnailImage(self, obj):
         if obj.thumbnail_image:
+            try:
+                size = obj.thumbnail_image.size
+                url = obj.thumbnail_image.url
+            except (OSError, ValueError):
+                size = None
+                url = None
             return {
                 "name": obj.thumbnail_image.name,
-                "size": obj.thumbnail_image.size,
-                "url": obj.thumbnail_image.url,
+                "size": size,
+                "url": url,
+                "available": size is not None,
             }
         return None
 
     def get_thumbnailImageUrl(self, obj):
         if obj.thumbnail_image:
-            return obj.thumbnail_image.url
+            try:
+                obj.thumbnail_image.size
+                return obj.thumbnail_image.url
+            except (OSError, ValueError):
+                return None
         return None
+
+    def get_file(self, obj):
+        return self.get_fileUrl(obj)
 
     def get_fileUrl(self, obj):
         if obj.file:
-            return obj.file.url
+            try:
+                obj.file.size
+                return obj.file.url
+            except (OSError, ValueError):
+                return None
         return None
 
     def get_fileDetails(self, obj):
         if obj.file:
+            try:
+                size = obj.file.size
+                url = obj.file.url
+            except (OSError, ValueError):
+                size = None
+                url = None
             return {
                 "name": obj.file.name,
-                "size": obj.file.size,
+                "size": size,
                 "type": (
                     obj.file.name.split(".")[-1].upper()
                     if "." in obj.file.name
                     else "PDF"
                 ),
-                "url": obj.file.url,
+                "url": url,
+                "available": size is not None,
             }
         return None
 
