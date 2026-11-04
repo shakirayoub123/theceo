@@ -215,6 +215,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://www.theceoinfluencers.com",
     "https://assessment.theceoinfluencers.com",
     "https://marketing.theceoinfluencers.com",
+    "http://localhost:5173",  # dev server origin for local testing
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + ["range"]

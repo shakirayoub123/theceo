@@ -20,45 +20,40 @@ export default function SalientFeaturesSection() {
 
   const features = [
     {
-      title: 'Holistic 360° Leadership Development',
+      title: 'Comprehensive Holistic 360° Leadership Development',
       icon: Lightbulb,
       slug: 'holistic-360-leadership-development',
-      description: [
-        'Holistic 360° Leadership Development',
-        'Two-To-One Advantage™ with expert mentors',
-        'APO-Aligned Performance Optimization',
-        'LLM-Linear Leadership Model™'
-      ]
+      description: 'Our Two-To-One Advantage™ brings two expert mentors together with APO-aligned optimization, the LLM-Linear Leadership Model™, a six-part data-driven assessment, and full-cycle support.'
     },
     {
       title: 'Global Expertise, Local Impact',
       icon: Map,
       slug: 'global-expertise-local-impact',
-      description: 'We translate international insights into actionable, market-specific strategies. Mentoring 5,000+ executives across 186 industries...'
+      description: 'Claire and James have successfully served 7,500+ executive clients combined over 20+ years, bringing experience across more than 186 industries.'
     },
     {
       title: 'Long-Term Profitability',
       icon: Building,
       slug: 'long-term-profitability',
-      description: 'Sustainable growth stems from empathetic, ethical leadership. We prioritize transparency and responsibility to build resilient cultures and brand loyalty...'
+      description: 'Empathetic, ethical leadership builds stakeholder trust, resilient cultures, brand loyalty, and sustainable long-term profitability.'
     },
     {
       title: 'Empathy at the Core',
       icon: Zap,
       slug: 'empathy-at-the-core',
-      description: 'Empathy is a strategic imperative that fosters inclusive cultures and inspires trust. We help executives unlock engagement and drive...'
+      description: 'Empathy strengthens inclusion, collaboration, and trust, helping leaders unlock engagement, innovation, resilience, and purposeful performance.'
     },
     {
-      title: 'Building Strategic Partnerships & Alliances',
+      title: 'Building 21st Century Strategic Partnerships and Alliances',
       icon: Globe,
       slug: 'strategic-partnerships-alliances',
-      description: 'Strategic alliances are essential for resilience and growth. We coach leaders to develop partnerships that expand capabilities...'
+      description: 'We help leaders build values-aligned alliances that expand capabilities, open markets, mitigate risk, and create sustainable win/win outcomes.'
     },
     {
-      title: 'Maximizing AI Technology Strategy',
+      title: 'Maximizing Comprehensive Technology Strategy',
       icon: BarChart3,
       slug: 'maximizing-ai-technology-strategy',
-      description: 'AI is a strategic enabler. We advise leaders on harnessing AI to optimize decision-making and uncover growth opportunities...'
+      description: 'We help leaders use human and technology-driven insights to optimize decisions, strengthen governance, and build lasting competitive advantage.'
     }
   ]
 
@@ -89,7 +84,7 @@ export default function SalientFeaturesSection() {
               Salient <span className='text-[#F6B72D]'>Features</span>
             </h2>
             <p className='text-[12px] md:text-[13px] leading-[19px] md:leading-[21px] text-gray-300 max-w-[820px] mx-auto'>
-              We believe true leadership is about people, not power. We empower next-gen leaders with the skills and mindset for long-term success. Our programs cultivate visionary leadership rooted in empathy, integrity, and purpose. We help leaders develop their moral compass to drive business success and social impact globally.
+              Together, Claire and James have successfully served 7,500+ executive clients over 20+ years. We believe true leadership is about people, not power, and empower next-generation leaders with the skills, values, and mindset to create lasting business and social impact.
             </p>
           </div>
 
@@ -99,10 +94,11 @@ export default function SalientFeaturesSection() {
               <Link
                 to={`/salient-features/${feature.slug}`}
                 key={feature.slug}
-                className='min-h-[210px] lg:min-h-[225px] w-full group rounded-[20px] p-6 relative flex flex-col transition-all duration-300 border bg-[#010125]/90 border-[#CBD5E1]/40 hover:bg-white hover:shadow-xl hover:border-[#F6B72D]'
+                aria-label={`Read more about ${feature.title}`}
+                className='min-h-[210px] lg:min-h-[225px] w-full group rounded-[20px] p-6 relative flex flex-col cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6B72D] transition-all duration-300 border bg-[#010125]/90 border-[#CBD5E1]/40 hover:bg-white hover:shadow-xl hover:border-[#F6B72D]'
               >
-                {/* Optional Link Overlay / Arrow icon */}
-                <div className='absolute top-5 right-5'>
+                {/* The card and arrow share this link to the feature detail page. */}
+                <div aria-hidden='true' className='absolute top-5 right-5'>
                   <div className='w-8 h-8 rounded-full border flex items-center justify-center transition-colors duration-300 border-white/10 bg-[#010125]/50 group-hover:border-gray-200 group-hover:bg-white'>
                     <ArrowUpRight className='w-3.5 h-3.5 text-white group-hover:text-black transition-colors duration-300' />
                   </div>

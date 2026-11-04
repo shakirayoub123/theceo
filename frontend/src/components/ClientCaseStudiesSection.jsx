@@ -45,7 +45,14 @@ export default function ClientCaseStudiesSection() {
         {/* 3 Grid Layout */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-stretch gap-4 lg:gap-5 mb-5 lg:mb-6'>
           {displayStudies.map((cs, idx) => (
-            <CaseStudyCard key={cs.id} cs={cs} index={idx} />
+            <Link
+              key={cs.id}
+              to={`/case-studies/${cs.id}`}
+              aria-label={`Read case study ${idx + 1}: ${cs.title}`}
+              className='block h-full cursor-pointer rounded-[24px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6B72D]'
+            >
+              <CaseStudyCard cs={cs} index={idx} />
+            </Link>
           ))}
         </div>
 

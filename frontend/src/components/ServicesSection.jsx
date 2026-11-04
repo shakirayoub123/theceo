@@ -15,11 +15,19 @@ export default function ServicesSection() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const stripHtml = (text) => (text ? text.replace(/<[^>]*>/g, '') : '')
-  const formatProgramTitle = (title, index) => {
-    const cleanTitle = (title || 'Program').replace(/^P\.?\s*\d+\s*/i, '')
-    return `P.${index + 1} ${cleanTitle}`
-  }
+  const stripHtml = (text) =>
+    text
+      ? text
+          .replace(/<\/(p|div|li|h[1-6])\s*>/gi, ' ')
+          .replace(/<br\s*\/?>/gi, ' ')
+          .replace(/<[^>]*>/g, '')
+          .replace(/&nbsp;/gi, ' ')
+          .replace(/&amp;/gi, '&')
+          .replace(/&quot;/gi, '"')
+          .replace(/&#39;|&apos;/gi, "'")
+          .replace(/\s+/g, ' ')
+          .trim()
+      : ''
 
   useEffect(() => {
     const fetchPrograms = async () => {
@@ -163,9 +171,7 @@ export default function ServicesSection() {
             <h2 className='text-[30px] lg:text-[40px] leading-[1.1] tracking-[-1.01px] font-bold text-[#000023] mb-2 uppercase font-jakarta'>
               Our <span className='text-[#F6B72D]'>Services</span>
             </h2>
-            <p className='text-[13px] lg:text-[15px] leading-[24px] font-normal text-[#4B5563] max-w-2xl'>
-              We deliver tailored leadership and performance programs empowering leaders with clarity and confidence.
-            </p>
+            <p className='text-[13px] lg:text-[15px] leading-[24px] font-normal text-[#4B5563] max-w-full whitespace-nowrap overflow-hidden text-ellipsis'>We deliver tailored leadership and performance programs empowering leaders with clarity and confidence.</p>
           </div>
 
           {/* Top Right Arrows */}
@@ -199,13 +205,30 @@ export default function ServicesSection() {
         <div className='grid grid-cols-1 md:grid-cols-3 items-stretch gap-5 lg:gap-6'>
           {visiblePrograms.map((program, index) => {
             const programIndex = currentPage * programsPerPage + index
+            const programTitle = (program.title || program.name || 'Program').replace(
+              /^P\.?\s*\d+\s*/i,
+              '',
+            )
+            const programDescription = stripHtml(
+              program.description ||
+                program.fullDescription ||
+                program.shortDesc ||
+                program.shortDescription,
+            )
+            const programImage =
+              program.thumbnailImageUrl ||
+              program.featuredImageUrl ||
+              program.thumbnailImage?.url ||
+              program.thumbnailImage ||
+              program.featured_image
+
             return (
               <div
                 key={program.id}
                 className='h-full rounded-[20px] flex flex-col p-5 lg:p-6 relative group transition-all duration-300 ease-out bg-white/95 border border-[#E5E7EB] shadow-[0_12px_30px_rgba(0,0,35,0.06)] hover:scale-[1.02] hover:-translate-y-1 hover:z-20 hover:bg-[#000023] hover:border-[#312E81]/40 hover:shadow-[0_24px_48px_rgba(0,0,35,0.2)] focus-within:scale-[1.01] focus-within:-translate-y-1 focus-within:z-20 focus-within:bg-[#000023] focus-within:border-[#312E81]/40 focus-within:shadow-[0_24px_48px_rgba(0,0,35,0.2)]'
               >
                 {/* Arrow icon absolute positioned at top-right */}
-                <Link to={program.id ? `/service/${program.id}` : '#'} aria-label={`View ${formatProgramTitle(program.title, programIndex)}`} className='absolute top-5 right-5 z-20 group-hover:scale-110 transition-transform duration-300'>
+                <Link to={program.id ? `/service/${program.id}` : '#'} aria-label={`View Program ${programIndex + 1}: ${programTitle}`} className='absolute top-5 right-5 z-20 group-hover:scale-110 transition-transform duration-300'>
                   <div className='w-[38px] h-[38px] rounded-full border border-[#E5E7EB] bg-white flex items-center justify-center shadow-sm group-hover:border-white'>
                     <ArrowUpRight className="w-3.5 h-3.5 text-[#0B132B]" />
                   </div>
@@ -213,19 +236,22 @@ export default function ServicesSection() {
 
                 {/* Top Content */}
                 <div className='mb-4 pr-10 text-left'>
-                  <h3 className='min-h-[66px] lg:min-h-[75px] text-[16px] lg:text-[18px] leading-[22px] lg:leading-[25px] font-bold font-jakarta mb-2 text-[#000023] group-hover:text-white transition-colors duration-300 line-clamp-3'>
-                    {formatProgramTitle(program.title, programIndex)}
+                  <p className='text-[10px] font-bold tracking-[0.12em] text-[#B77900] group-hover:text-[#F6B72D] uppercase mb-2'>
+                    Program {programIndex + 1}
+                  </p>
+                  <h3 className='text-[16px] lg:text-[18px] leading-[22px] lg:leading-[25px] font-bold font-jakarta mb-3 text-[#000023] group-hover:text-white transition-colors duration-300 line-clamp-3'>
+                    {programTitle}
                   </h3>
-                  <p className='min-h-[57px] lg:min-h-[60px] text-[12px] lg:text-[13px] leading-[19px] lg:leading-[20px] font-normal font-jakarta pr-1 text-[#334155]/80 group-hover:text-[#CBD5E1] transition-colors duration-300 line-clamp-3'>
-                    {stripHtml(program.shortDesc || program.description) || 'Details coming soon.'}
+                  <p className='text-[12px] lg:text-[13px] leading-[19px] lg:leading-[21px] font-normal font-jakarta pr-1 text-[#334155]/80 group-hover:text-[#CBD5E1] transition-colors duration-300 whitespace-pre-line line-clamp-3'>
+                    {programDescription || 'Program details coming soon.'}
                   </p>
                 </div>
 
                 {/* Keep the image close to the text while reserving consistent text space across cards. */}
                 <div className='relative w-full h-[155px] sm:h-[170px] lg:h-[175px] shrink-0 overflow-hidden rounded-[16px]'>
                   <img
-                    src={getAssetUrl(program.thumbnailImage) || '/images/services.svg'}
-                    alt={program.title}
+                    src={getAssetUrl(programImage) || '/images/services.svg'}
+                    alt={programTitle}
                     className='w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]'
                     onError={(e) => { e.currentTarget.src = '/images/services.svg' }}
                   />
@@ -236,6 +262,23 @@ export default function ServicesSection() {
             )
           })}
         </div>
+
+        {/* Pagination Dots */}
+        {pageCount > 1 && (
+          <div className='flex items-center justify-center gap-2.5 mt-6'>
+            {Array.from({ length: pageCount }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i)}
+                aria-label={`Go to page ${i + 1}`}
+                className={`rounded-full transition-all duration-300 ${i === currentPage
+                    ? 'w-6 h-2.5 bg-[#000023]'
+                    : 'w-2.5 h-2.5 bg-[#CBD5E1] hover:bg-[#94A3B8]'
+                  }`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Appointment Modal */}

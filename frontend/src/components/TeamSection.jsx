@@ -36,24 +36,31 @@ function CountUp({ end, duration = 3000, suffix = '', decimals = 0 }) {
 export default function TeamSection() {
   const { t } = useTranslation()
   const [activeVideo, setActiveVideo] = useState(null)
+  const [openVideoMenu, setOpenVideoMenu] = useState(null)
 
   const teamMembers = [
     {
       name: t('team.members.james.name', 'James Armstrong'),
       title: t('team.members.james.title', 'CDC/HPB/RMC INTERNATIONAL - CERTIFIED C-SUITE LEADERSHIP AND BUSINESS MENTOR'),
       image: '/images/james.jpg',
-      stats: { clients: '5,000+', years: '25+' },
+      stats: { clients: '5,000+', years: '20+' },
       link: '/biography/james-armstrong',
-      videoUrl: '/videos/JamesBio.mp4',
+      videos: [
+        { label: 'Biography', url: '/videos/JamesBio.mp4' },
+        { label: 'Business Ethos', url: '/videos/ourJames2.mp4' },
+      ],
       iconTheme: 'orange'
     },
     {
       name: t('team.members.claire.name', 'Dr. Claire Keogh'),
       title: t('team.members.claire.title', 'BSC IT (HONS), PHD. INTERNATIONAL C-SUITE LEADERSHIP AND BUSINESS MENTOR'),
       image: '/images/claire.jpeg',
-      stats: { clients: '2500+', years: '20+' },
+      stats: { clients: '2,500+', years: '20+' },
       link: '/biography/claire-keogh',
-      videoUrl: '/videos/CliareBio.mp4',
+      videos: [
+        { label: 'Biography', url: '/videos/CliareBio.mp4' },
+        { label: 'Business Ethos', url: '/videos/ourcliare2.mp4' },
+      ],
       iconTheme: 'white'
     },
   ]
@@ -132,18 +139,48 @@ export default function TeamSection() {
                 {/* View Introduction Video — z-20 so it's above the Link overlay */}
                 <div className="w-full md:w-[95%] relative z-20">
                   <button
+                    type='button'
+                    aria-haspopup='menu'
+                    aria-expanded={openVideoMenu === member.name}
                     onClick={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
-                      setActiveVideo(member.videoUrl)
+                      setOpenVideoMenu((current) =>
+                        current === member.name ? null : member.name,
+                      )
                     }}
-                    className="flex items-center gap-3 bg-[#FCFBF7] border border-gray-200 rounded-full py-1.5 px-2 hover:bg-gray-50 transition-colors w-max transition-all duration-300"
+                    className="flex items-center gap-3 bg-[#FCFBF7] border border-gray-200 rounded-full py-1.5 px-2 hover:bg-gray-50 w-max transition-all duration-300"
                   >
                     <div className="w-8 h-8 rounded-full bg-[#F6B72D] flex items-center justify-center flex-shrink-0">
                       <ArrowRight className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-[13px] font-bold text-[#111827] pr-4">View Introduction Video</span>
+                    <span className="text-[13px] font-bold text-[#111827] pr-4">View Videos</span>
                   </button>
+
+                  {openVideoMenu === member.name && (
+                    <div
+                      role='menu'
+                      aria-label={`${member.name} videos`}
+                      className='absolute bottom-full left-0 mb-2 min-w-[220px] overflow-hidden rounded-xl border border-gray-200 bg-white p-1.5 shadow-xl'
+                    >
+                      {member.videos.map((video) => (
+                        <button
+                          key={video.url}
+                          type='button'
+                          role='menuitem'
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            setActiveVideo({ ...video, memberName: member.name })
+                            setOpenVideoMenu(null)
+                          }}
+                          className='block w-full rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-[#111827] hover:bg-[#FFF8E8] hover:text-[#946200]'
+                        >
+                          {video.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -163,9 +200,9 @@ export default function TeamSection() {
             {/* Item 1 */}
             <div className='flex flex-col items-center justify-center text-center w-full sm:w-1/3'>
               <div className='text-[28px] md:text-[36px] font-extrabold text-[#F6B72D] font-jakarta tracking-tight leading-none mb-1 md:mb-[6px]'>
-                <CountUp end={5000} suffix={''} />+
+                <CountUp end={7500} suffix={''} />+
               </div>
-              <div className='text-[#111827] text-[9.5px] md:text-[10px] font-bold tracking-[0.15em] uppercase'>Total Clients</div>
+              <div className='text-[#111827] text-[9.5px] md:text-[10px] font-bold tracking-[0.15em] uppercase'>Total Clients Served</div>
             </div>
 
             {/* Divider */}
@@ -188,9 +225,9 @@ export default function TeamSection() {
             {/* Item 3 */}
             <div className='flex flex-col items-center justify-center text-center w-full sm:w-1/3'>
               <div className='text-[28px] md:text-[36px] font-extrabold text-[#F6B72D] font-jakarta tracking-tight leading-none mb-1 md:mb-[6px]'>
-                <CountUp end={45} />+
+                <CountUp end={20} />+
               </div>
-              <div className='text-[#111827] text-[9.5px] md:text-[10px] font-bold tracking-[0.15em] uppercase'>Years Combined</div>
+              <div className='text-[#111827] text-[9.5px] md:text-[10px] font-bold tracking-[0.15em] uppercase'>Years Experience Each</div>
             </div>
           </div>
         </div>
@@ -213,8 +250,11 @@ export default function TeamSection() {
             >
               <X size={32} />
             </button>
+            <p className='absolute -top-10 left-0 text-white text-sm font-semibold'>
+              {activeVideo.memberName}: {activeVideo.label}
+            </p>
             <video
-              src={activeVideo}
+              src={activeVideo.url}
               controls
               autoPlay
               className='w-full h-full'

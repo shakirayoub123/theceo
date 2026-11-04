@@ -25,7 +25,7 @@ const JamesBiography = () => {
       'Highly respected visionary thought leader with extensive experience in coaching top C-level executives.',
     image: '/images/james.jpg',
     languages: ['English', 'Spanish'],
-    experience: '25+ years of experience',
+    experience: '20+ years of experience',
     achievements: 'Coached 5,000+ top executive leaders',
   }
 
@@ -159,7 +159,11 @@ const JamesBiography = () => {
 
               {/* INFLUENCER PROFILE CARD */}
               <div className='bg-white border border-gray-200 rounded-[12px] shadow-sm mb-10 overflow-hidden'>
-                <InfluencerProfile {...influencerData} />
+                <InfluencerProfile
+                  {...influencerData}
+                  email="james@theceoinfluencers.com"
+                  linkedin="https://www.linkedin.com/in/jamesharmstrong/?skipRedirect=true"
+                />
               </div>
 
               {/* ABOUT / REVIEWS CARD */}

@@ -5,11 +5,11 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-        goodtimes: ['"Good Times"', 'sans-serif'],
-        exo: ['"Exo 2"', 'sans-serif'],
-        jakarta: ['"Plus Jakarta Sans"', 'sans-serif'],
-        caslon: ['"Libre Caslon Text"', 'serif'],
+        sans: ['"Plus Jakarta Sans"', 'Arial', 'sans-serif'],
+        goodtimes: ['"Good Times"', 'Arial', 'sans-serif'],
+        exo: ['"Exo 2"', 'Arial', 'sans-serif'],
+        jakarta: ['"Plus Jakarta Sans"', 'Arial', 'sans-serif'],
+        caslon: ['"Libre Caslon Text"', 'Georgia', 'serif'],
       },
       borderRadius: {
         lg: 'var(--radius, 0.5rem)',

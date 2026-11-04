@@ -56,13 +56,13 @@ export default function LanguageSelector() {
   return (
     <div className='relative'>
       <button
+        type='button'
+        aria-label={`Select language, current language: ${currentLanguage.nativeName}`}
+        title='Select language'
         onClick={() => setIsOpen(!isOpen)}
-        className='flex items-center space-x-2 p-2 hover:bg-white/10 rounded-full transition-colors duration-300'
+        className='flex items-center gap-1 p-2 hover:bg-white/10 rounded-full transition-colors duration-300'
       >
         <Globe className='h-5 w-5 text-white' />
-        <span className='text-white text-sm hidden sm:block'>
-          Language
-        </span>
         <ChevronDown className='h-4 w-4 text-white' />
       </button>
 

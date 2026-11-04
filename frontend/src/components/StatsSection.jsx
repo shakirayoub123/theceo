@@ -17,9 +17,9 @@ export default function StatsSection() {
   const stats = [
     {
       icon: Globe,
-      number: 5000,
+      number: 7500,
       suffix: '+',
-      label: 'Clients Served'
+      label: 'Clients Served Combined'
     },
     {
       icon: TrendingUp,

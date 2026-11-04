@@ -1694,6 +1694,7 @@ class SimpleProgramSerializer(serializers.ModelSerializer):
 
 class LandingPageProgramSerializer(serializers.ModelSerializer):
     comingSoon = serializers.BooleanField(source="coming_soon", read_only=True)
+    description = serializers.CharField(read_only=True)
     shortDesc = serializers.CharField(source="short_description")
     thumbnailImage = serializers.CharField(source="featured_image")
     order = serializers.IntegerField(read_only=True)
@@ -1707,6 +1708,7 @@ class LandingPageProgramSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "title",
+            "description",
             "shortDesc",
             "comingSoon",
             "thumbnailImage",

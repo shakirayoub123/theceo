@@ -21,7 +21,7 @@ const ClaireBiography = () => {
   ]
 
   const influencerData = {
-    name: 'DR. CLAIRE KEOGH (BSc IT Hons, PhD)',
+    name: 'DR. CLAIRE KEOGH (BSc IT honours, PhD)',
     title: 'International Business Consultant & Keynote Speaker',
     description:
       'Expert in social research, business development, and creating positive work-life balance norms.',
@@ -353,7 +353,11 @@ const ClaireBiography = () => {
 
               {/* INFLUENCER PROFILE CARD */}
               <div className='bg-white border border-gray-200 rounded-[12px] shadow-sm mb-10 overflow-hidden'>
-                <InfluencerProfile {...influencerData} />
+                <InfluencerProfile
+                  {...influencerData}
+                  email="claire@theceoinfluencers.com"
+                  linkedin="https://www.linkedin.com/in/claire-keogh-phd-9b134213/"
+                />
               </div>
 
               {/* ABOUT / REVIEWS CARD */}

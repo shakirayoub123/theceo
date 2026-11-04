@@ -21,34 +21,34 @@ export default function HeroSection({ tickerItems = [] }) {
         <div className='relative flex flex-col items-center justify-center min-h-[480px] md:min-h-[calc(100vh-220px)] py-5 border border-gray-300 rounded-[16px] md:rounded-[20px] mx-auto shadow-2xl'>
 
           {/* ── Static Hero Background Image ── */}
-          <div className='absolute inset-0 rounded-[16px] md:rounded-[20px] overflow-hidden bg-[#000023] z-0'>
+          <div className='absolute inset-0 rounded-[16px] md:rounded-[20px] overflow-hidden bg-white z-0'>
             <img
               src={heroImage}
               alt='The CEO Influencers'
               className='absolute inset-0 w-full h-full object-cover object-center'
             />
-            {/* Dark gradient overlay for legibility */}
-            <div className='absolute inset-0 bg-black/80 z-10' />
+            {/* Subtle dark gradient focused in centre — keeps city bright, text readable */}
+            <div className='absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/20 z-10' />
           </div>
 
           {/* Hero Content */}
           <div className='relative z-20 flex flex-col items-center text-center px-8 md:px-16 w-full max-w-[1000px]'>
 
             {/* Pill Tag */}
-            <div className='border border-white/40 rounded-full px-5 py-1 mb-8 inline-block backdrop-blur-sm bg-white/5'>
+            <div className='border border-white/50 rounded-full px-5 py-1 mb-8 inline-block backdrop-blur-sm bg-black/20'>
               <span className='font-jakarta text-[14px] font-medium leading-[15.9px] tracking-normal text-white uppercase'>
-                Strategic Transformation • Enterprise Vitality
+                Building Better Leaders
               </span>
             </div>
 
             {/* Typography Title */}
-            <h1 className='font-caslon text-[36px] md:text-[48px] lg:text-[56px] leading-[1.1] lg:leading-[64px] tracking-[-1px] text-white mb-4 lg:mb-6 font-normal'>
-              Positively <span className='text-[#F6B72D] italic underline decoration-double decoration-2 underline-offset-[6px] decoration-[#F6B72D]'>Redefining</span><br />
+            <h1 className='font-goodtimes text-[32px] md:text-[44px] lg:text-[52px] leading-[1.15] lg:leading-[1.2] tracking-tight text-white mb-4 lg:mb-6 font-normal [text-shadow:0_2px_12px_rgba(0,0,0,0.6)]'>
+              Positively <span className='text-[#F6B72D]'>Redefining</span><br />
               21st Century Leadership.
             </h1>
 
             {/* Subtitle */}
-            <p className='font-jakarta text-[14px] lg:text-[15px] leading-[22px] lg:leading-[24px] tracking-normal text-gray-200 max-w-[850px] mb-6 lg:mb-8 font-normal'>
+            <p className='font-jakarta text-[14px] lg:text-[15px] leading-[22px] lg:leading-[24px] tracking-normal text-gray-100 max-w-[850px] mb-6 lg:mb-8 font-medium [text-shadow:0_1px_6px_rgba(0,0,0,0.5)]'>
               The CEO Influencers is a next-generation executive leadership and organizational performance optimization coaching consultancy that empowers leaders from start-ups to multinational corporations to maximize success in the 21st-century global business marketplace.
             </p>
 

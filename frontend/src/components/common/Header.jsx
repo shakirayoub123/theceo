@@ -82,7 +82,7 @@ export default function Header() {
       <div className='sticky top-2 md:top-4 w-full z-50 transition-all duration-300 pb-2 flex justify-center'>
         <div className='max-w-[1400px] w-full mx-auto px-4 md:px-6 lg:px-8'>
           <header className='bg-[#000023] w-full h-[72px] flex items-center shadow-2xl font-jakarta rounded-[16px] md:rounded-[20px]'>
-            <div className='w-full px-4 md:px-8 flex items-center justify-between'>
+            <div className='w-full px-4 md:px-8 flex items-center justify-between relative'>
 
               {/* Left: Logo */}
               <div className='flex items-center'>
@@ -95,8 +95,8 @@ export default function Header() {
                 </Link>
               </div>
 
-              {/* Center: Navigation Links */}
-              <div className='hidden lg:flex items-center space-x-3 lg:space-x-4 xl:space-x-6'>
+              {/* Center: Navigation Links — truly centred via absolute positioning */}
+              <div className='hidden lg:flex items-center gap-4 xl:gap-6 absolute left-1/2 -translate-x-1/2'>
                 <Link to='/' className='text-[#F6B72D] text-[13px] xl:text-[14px] font-normal leading-normal tracking-normal hover:text-[#F6B72D]/80 transition-colors whitespace-nowrap'>
                   Home
                 </Link>

@@ -214,12 +214,11 @@ const resources = {
       features: {
         sectionHeader: 'SALIENT FEATURES',
         sectionDescription:
-          'We believe true leadership is about people, not power. We empower next-gen leaders with the skills and mindset for long-term success. Our programs cultivate visionary leadership rooted in empathy, integrity, and purpose. We help leaders develop their moral compass to drive business success and social impact globally.',
+          'At The CEO Influencers, we believe true leadership is about people, not power. We are an international leadership and organizational performance optimization consultancy empowering 21st Century leaders with the skills, values, and mindset to succeed in today’s global marketplace. Claire and James have successfully served 7,500+ executive clients combined over 20+ years. Our custom-designed programs cultivate leadership rooted in empathy, integrity, respect, accountability, and purpose.',
         items: {
           holisticLeadership: {
-            title: 'HOLISTIC 360° LEADERSHIP DEVELOPMENT',
-            description:
-              'Experience our "Two-To-One Advantage™" with two expert mentors offering diverse global perspectives. Our proprietary models align personal and professional growth using data-driven diagnosis for hyper-personalized, verifiable results. This flexible, full-cycle development transforms every interaction into a moment of influence.',
+            title: 'COMPREHENSIVE HOLISTIC 360 DEGREE LEADERSHIP DEVELOPMENT',
+            description: 'Our Two-To-One Advantage™ combines two expert mentors for a tailored 360-degree development experience, supported by APO-aligned optimization, the LLM-Linear Leadership Model™, and data-driven diagnosis.',
           },
           profitability: {
             title: 'LONG-TERM PROFITABILITY',
@@ -229,7 +228,7 @@ const resources = {
           globalExpertise: {
             title: 'GLOBAL EXPERTISE, LOCAL IMPACT',
             description:
-              'We translate international insights into actionable, market-specific strategies. Mentoring 5,000+ executives across 186 industries, we align global best practices with local realities. We help you anticipate trends and use local precision to position your organization as a sustainable industry leader.',
+              'Claire and James have successfully served 7,500+ executive clients combined over 20+ years, with experience spanning more than 186 industries. They translate global insights into locally relevant strategies to help leaders anticipate trends and deliver measurable outcomes.',
           },
           empathy: {
             title: 'EMPATHY AT THE CORE',
@@ -237,14 +236,14 @@ const resources = {
               'Empathy is a strategic imperative that fosters inclusive cultures and inspires trust. We help executives unlock engagement and drive innovation by placing empathy at the core of leadership. Genuine empathy builds alignment, reduces resistance, and positions your organization as an employer of choice.',
           },
           partnerships: {
-            title: 'BUILDING STRATEGIC PARTNERSHIPS & ALLIANCES',
+            title: 'BUILDING 21ST CENTURY STRATEGIC PARTNERSHIPS AND ALLIANCES',
             description:
               'Strategic alliances are essential for resilience and growth. We coach leaders to develop partnerships that expand capabilities and enter new markets. Our program fosters next-generation collaborations based on shared values, helping you forge relationships that deliver sustainable, long-term value and win/win outcomes.',
           },
           aiTechnology: {
-            title: 'MAXIMIZING AI TECHNOLOGY STRATEGY',
+            title: 'MAXIMIZING COMPREHENSIVE TECHNOLOGY STRATEGY',
             description:
-              'AI is a strategic enabler. We advise leaders on harnessing AI to optimize decision-making and uncover growth opportunities. By embedding AI into core strategy, you gain a dynamic edge. We help you navigate risks, ensure compliance, and turn complexity into clarity for global value creation.',
+              'Technology is a strategic enabler that can transform data into decisive, future-ready action. We help leaders optimize decisions, uncover opportunities, and build a comprehensive technology strategy with safeguards for privacy, bias, governance, and change.',
           },
         },
       },
@@ -515,7 +514,7 @@ const resources = {
       features: {
         sectionHeader: 'CARACTERÍSTICAS SALIENTES',
         sectionDescription:
-          'Creemos que el verdadero liderazgo se trata de personas, no de poder. Empoderamos a líderes de nueva generación con las habilidades y mentalidad para el éxito a largo plazo. Nuestros programas cultivan liderazgo visionario arraigado en empatía, integridad y propósito. Ayudamos a los líderes a desarrollar su brújula moral para impulsar el éxito empresarial e impacto social global.',
+          'En The CEO Influencers creemos que el verdadero liderazgo se trata de las personas, no del poder. Somos una consultoría internacional de liderazgo y optimización del rendimiento organizacional que ayuda a líderes del siglo XXI a prosperar en el mercado global. Claire y James han atendido con éxito a más de 7.500 clientes ejecutivos en conjunto durante más de 20 años. Nuestros programas personalizados fomentan un liderazgo basado en empatía, integridad, respeto, responsabilidad y propósito.',
         items: {
           holisticLeadership: {
             title: 'DESARROLLO DE LIDERAZGO HOLÍSTICO 360°',
@@ -530,7 +529,7 @@ const resources = {
           globalExpertise: {
             title: 'EXPERTISE GLOBAL, IMPACTO LOCAL',
             description:
-              'Traducimos insights internacionales en estrategias accionables, específicas del mercado. Mentorizando a más de 5,000 ejecutivos en 186 industrias, alineamos mejores prácticas globales con realidades locales. Te ayudamos a anticipar tendencias y usar precisión local para posicionar tu organización como líder sostenible en la industria.',
+              'Claire y James han atendido con éxito a más de 7.500 clientes ejecutivos en conjunto durante más de 20 años, con experiencia en más de 186 industrias. Transforman perspectivas globales en estrategias locales para ayudar a los líderes a anticipar tendencias y lograr resultados medibles.',
           },
           empathy: {
             title: 'EMPATÍA EN EL NÚCLEO',
