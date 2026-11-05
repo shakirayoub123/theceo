@@ -77,22 +77,20 @@ export default function BlogSection({ blogs = [], loading = false }) {
       <div className='max-w-[1350px] w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
 
         {/* Header */}
-        <div className='flex flex-col md:flex-row md:items-end justify-between mb-4 lg:mb-5 gap-3'>
-          <div className='max-w-2xl'>
-            <div className='inline-block border border-gray-400 rounded-full px-4 py-[2px] mb-2'>
-              <span className='text-[#4B5563] font-bold tracking-widest text-[9px] lg:text-[10px] uppercase'>WHAT WE PROVIDE</span>
-            </div>
-            <h2 className='text-[26px] lg:text-[32px] font-bold leading-none mb-2'>
-              <span className='text-black'>OUR </span>
-              <span className='text-[#F6B72D] font-sans text-[28px] lg:text-[36px]'>BLOGS</span>
+        <div className='flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6 md:mb-8'>
+          <div className='max-w-3xl'>
+            <h2 className='text-[28px] sm:text-[32px] lg:text-[40px] font-bold leading-[1.05] tracking-[-0.04em] text-[#111827]'>
+              <span className='text-[#111827]'>OUR </span>
+              <span className='text-[#F6B72D]'>BLOGS</span>
             </h2>
-            <p className='text-[#4B5563] text-[12.5px] lg:text-[13.5px] leading-relaxed max-w-xl font-medium'>
+            <p className='mt-3 text-[#4B5563] text-[13px] sm:text-[14px] lg:text-[15px] leading-relaxed max-w-[720px]'>
               Explore our curated blogs packed with case studies, expert insights, and actionable frameworks to elevate executive performance and organizational effectiveness.
             </p>
           </div>
-          <Link to='/articles' className='group flex items-center gap-2 hover:opacity-80 transition-opacity whitespace-nowrap mb-1 shrink-0'>
-            <span className='text-black font-bold text-[13px] lg:text-[14px]'>Explore all publications</span>
-            <div className='w-7 h-7 rounded-full bg-[#F6B72D] flex items-center justify-center group-hover:translate-x-1 transition-transform'>
+
+          <Link to='/articles' className='group inline-flex items-center gap-2 self-start md:self-end whitespace-nowrap hover:opacity-80 transition-opacity'>
+            <span className='text-[#111827] font-bold text-[12px] sm:text-[13px] lg:text-[14px]'>Explore all publications</span>
+            <div className='w-8 h-8 rounded-full bg-[#F6B72D] flex items-center justify-center group-hover:translate-x-1 transition-transform'>
               <ArrowRight className='w-3.5 h-3.5 text-white' />
             </div>
           </Link>
@@ -103,22 +101,22 @@ export default function BlogSection({ blogs = [], loading = false }) {
 
           {/* LEFT: Featured — banner image with article details below */}
           {featuredPost && (
-            <div className='lg:col-span-6 xl:col-span-7 h-full'>
+            <div className='lg:col-span-7 h-full'>
               <Link
                 to={`/blog/${featuredPost.slug}`}
-                className='group flex flex-col bg-white rounded-[16px] border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 h-full overflow-hidden'
+                className='site-hover-highlight group flex flex-col bg-white rounded-[18px] border border-[#E5E7EB] shadow-[0_10px_24px_rgba(15,23,42,0.06)] hover:shadow-lg transition-all duration-300 h-full overflow-hidden'
               >
-                <div className='w-full aspect-[1.7/1] sm:aspect-[2.2/1] overflow-hidden bg-[#F3F4F6] flex items-center justify-center'>
+                <div className='w-full aspect-[1.9/1] overflow-hidden bg-[#F3F4F6] flex items-center justify-center'>
                   <img
                     src={getAssetUrl(featuredPost.image)}
                     alt={featuredPost.title}
-                    className='w-full h-full object-contain'
+                    className='w-full h-full object-cover'
                     onError={(e) => { e.target.src = '/images/blog1.svg' }}
                   />
                 </div>
 
-                <div className='flex flex-col flex-1 min-w-0 px-5 py-4 lg:px-7 lg:py-5'>
-                  <p className='flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] lg:text-[11px] uppercase tracking-wide text-[#6B7280] mb-2'>
+                <div className='flex flex-col flex-1 min-w-0 px-5 py-4 lg:px-6 lg:py-5'>
+                  <p className='flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] sm:text-[11px] uppercase tracking-[0.12em] text-[#6B7280] mb-3'>
                     <span className='font-semibold text-[#111827]'>
                       {featuredPost.author || 'The CEO Influencers'}
                     </span>
@@ -128,15 +126,15 @@ export default function BlogSection({ blogs = [], loading = false }) {
                     <span>{featuredPost.publishedAt}</span>
                   </p>
 
-                  <h3 className='text-[17px] lg:text-[21px] font-bold text-[#000023] leading-snug mb-1.5 group-hover:text-[#CFA329] transition-colors line-clamp-2'>
+                  <h3 className='text-[22px] sm:text-[26px] lg:text-[30px] font-bold text-[#111827] leading-[1.1] mb-2 group-hover:text-[#CFA329] transition-colors line-clamp-2'>
                     {featuredPost.title}
                   </h3>
 
-                  <p className='text-[#4B5563] text-[12px] lg:text-[13px] leading-relaxed line-clamp-2 mb-2'>
+                  <p className='text-[#4B5563] text-[13px] sm:text-[14px] leading-relaxed line-clamp-2 mb-3'>
                     {featuredPost.subtitle}
                   </p>
 
-                  <div className='flex items-center text-[#000023] font-bold text-[11px] lg:text-[12px] gap-1.5 mt-auto'>
+                  <div className='flex items-center text-[#111827] font-bold text-[12px] sm:text-[13px] gap-1.5 mt-auto'>
                     <span>Read Article</span>
                     <ArrowRight className='w-3.5 h-3.5 group-hover:translate-x-1 transition-transform' />
                   </div>
@@ -146,14 +144,15 @@ export default function BlogSection({ blogs = [], loading = false }) {
           )}
 
           {/* RIGHT: 3 stacked cards */}
-          <div className='lg:col-span-6 xl:col-span-5 flex flex-col gap-3 lg:gap-3.5'>
+          <div className='lg:col-span-5 flex flex-col gap-4 h-full'>
             {listPosts.map((post, index) => (
               <Link
                 key={post.id || index}
                 to={`/blog/${post.slug}`}
-                className='group bg-white rounded-[12px] border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 px-4 py-5 lg:px-5 lg:py-5 flex items-center gap-4 min-h-[145px]'              >
+                className='site-hover-highlight group bg-white rounded-[14px] border border-[#E5E7EB] shadow-[0_10px_24px_rgba(15,23,42,0.04)] hover:shadow-md transition-all duration-300 p-3 lg:p-4 flex items-center gap-3 h-full flex-1 self-stretch'
+              >
                 {/* Thumbnail */}
-                <div className='w-[100px] h-[100px] lg:w-[125px] lg:h-[125px] rounded-[10px] overflow-hidden shrink-0 bg-gray-100'>
+                <div className='w-[96px] h-[96px] sm:w-[110px] sm:h-[110px] rounded-[12px] overflow-hidden shrink-0 bg-gray-100'>
                   <img
                     src={getAssetUrl(post.image)}
                     alt={post.title}
@@ -163,14 +162,14 @@ export default function BlogSection({ blogs = [], loading = false }) {
                 </div>
 
                 {/* Content */}
-                <div className='flex flex-col flex-1 min-w-0'>
-                  <span className={`inline-block self-start px-2 py-[3px] text-white text-[7.5px] lg:text-[8px] font-bold uppercase tracking-wide rounded-sm mb-1.5 ${post.categoryColor}`}>
+                <div className='flex flex-col flex-1 min-w-0 justify-center'>
+                  <span className={`inline-block self-start px-2 py-[3px] text-white text-[7.5px] sm:text-[8px] font-bold uppercase tracking-[0.12em] rounded-sm mb-2 ${post.categoryColor}`}>
                     {post.category}
                   </span>
-                  <h4 className='text-[13px] lg:text-[14px] font-bold text-black leading-snug mb-1.5 line-clamp-2 group-hover:text-[#CFA329] transition-colors'>
+                  <h4 className='text-[14px] sm:text-[15px] lg:text-[17px] font-bold text-[#111827] leading-snug mb-1.5 line-clamp-2 group-hover:text-[#CFA329] transition-colors'>
                     {post.title}
                   </h4>
-                  <p className='text-[#9CA3AF] text-[10.5px] lg:text-[11px] font-medium'>
+                  <p className='text-[#6B7280] text-[11px] sm:text-[12px] font-medium'>
                     {post.publishedAt} • {post.timeToRead} min read
                   </p>
                 </div>

@@ -95,7 +95,7 @@ export default function SalientFeaturesSection() {
                 to={`/salient-features/${feature.slug}`}
                 key={feature.slug}
                 aria-label={`Read more about ${feature.title}`}
-                className='min-h-[210px] lg:min-h-[225px] w-full group rounded-[20px] p-6 relative flex flex-col cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6B72D] transition-all duration-300 border bg-[#010125]/90 border-[#CBD5E1]/40 hover:bg-white hover:shadow-xl hover:border-[#F6B72D]'
+                className='site-hover-highlight min-h-[210px] lg:min-h-[225px] w-full group rounded-[20px] p-6 relative flex flex-col cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6B72D] transition-all duration-300 border bg-[#010125]/90 border-[#CBD5E1]/40 hover:bg-white hover:shadow-xl hover:border-[#F6B72D]'
               >
                 {/* The card and arrow share this link to the feature detail page. */}
                 <div aria-hidden='true' className='absolute top-5 right-5'>

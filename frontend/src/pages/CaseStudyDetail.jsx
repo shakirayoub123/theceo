@@ -71,7 +71,7 @@ export default function CaseStudyDetail() {
       for (let i = 1; i < parts.length; i += 2) {
         if (parts[i] && parts[i + 1]) {
           phases.push({
-            title: `WINDOW 0${(i + 1) / 2}`,
+            title: `PHASE ${(i + 1) / 2}`,
             content: (parts[i] + parts[i + 1]).trim().replace(/^Phase [I]+ \((.*?)\),\s*/i, '$1: ')
           })
         }
@@ -197,6 +197,10 @@ export default function CaseStudyDetail() {
         </div>
 
       </div>
+
+      <p className='max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8 mt-4 text-center text-xs leading-relaxed text-[#6B7280]'>
+        This case study is based on TCI’s work with an actual former client and uses no other companies’ data or externally sourced outcomes.
+      </p>
 
       {/* Global Key Result Banner - Edge to Edge Layout */}
       <div className='w-full bg-gradient-to-r from-[#F59E0B] via-[#454545] to-[#1F2937] py-4 px-4 flex items-center justify-center gap-4 text-center mt-3 shadow-md relative z-10'>
@@ -479,9 +483,9 @@ export default function CaseStudyDetail() {
               <h3 className='text-[20px] font-bold text-[#000000] uppercase tracking-wide mb-3'>The 30-Day Strategic Intervention Plan</h3>
               <p className='text-[#4B5563] mb-7'>{cs.approach}</p>
               <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
-                {cs.interventionPhases.map((phase) => (
+                {cs.interventionPhases.map((phase, index) => (
                   <article key={phase.window} className='rounded-xl bg-[#FDFBF7] border border-[#F6B72D]/30 border-t-4 border-t-[#F6B72D] p-6'>
-                    <p className='text-[#B45309] text-xs font-bold tracking-widest mb-2'>DAYS {phase.window}</p>
+                    <p className='text-[#B45309] text-xs font-bold tracking-widest mb-2'>PHASE {index + 1} · DAYS {phase.window}</p>
                     <h4 className='font-bold text-[#0B132B] mb-3'>{phase.title}</h4>
                     <p className='text-[#4B5563] text-sm leading-relaxed'>{phase.body}</p>
                   </article>

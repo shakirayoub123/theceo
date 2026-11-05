@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 export default function EbookSeriesCard(ebook) {
   return (
-    <div className='bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 border-[#F6B72D] cursor-pointer block'>
+    <div className='site-hover-highlight bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 border-[#F6B72D] cursor-pointer block'>
       {/* Focus Label */}
       <div className='text-center py-2 bg-[#36454F]'>
         <span className='font-bold text-sm tracking-wide text-white'>
@@ -27,16 +27,28 @@ export default function EbookSeriesCard(ebook) {
         )}
       </div>
       <hr className='h-px bg-[#D4D4D4] border-0' />
-      <div className='p-4 text-center'>
-        {/* Subtitle */}
-        <p className='text-xs text-gray-600 leading-relaxed'>
-          {ebook.subtitle}
-        </p>
-        {ebook.author && (
-          <p className='text-xs text-gray-500 mt-2'>By {ebook.author}</p>
-        )}
-        {ebook.pages && (
-          <p className='text-xs text-gray-500'>{ebook.pages} pages</p>
+      <div className='p-4 space-y-3'>
+        <div className='rounded-lg border border-gray-100 border-l-2 border-l-[#F6B72D] bg-gray-50 p-3'>
+          <p className='text-[9px] font-bold uppercase tracking-wider text-gray-400 mb-1'>Overview</p>
+          <p className='text-xs text-gray-600 leading-relaxed'>
+            {ebook.subtitle || 'Explore the key ideas and practical insights in this eBook.'}
+          </p>
+        </div>
+        {(ebook.author || ebook.pages) && (
+          <div className='grid grid-cols-2 gap-2 text-center'>
+            {ebook.author && (
+              <div className='rounded-lg border border-gray-100 p-2'>
+                <p className='text-[9px] font-bold uppercase tracking-wider text-gray-400'>Author</p>
+                <p className='text-xs text-gray-600 mt-1'>{ebook.author}</p>
+              </div>
+            )}
+            {ebook.pages && (
+              <div className='rounded-lg border border-gray-100 p-2'>
+                <p className='text-[9px] font-bold uppercase tracking-wider text-gray-400'>Length</p>
+                <p className='text-xs text-gray-600 mt-1'>{ebook.pages} pages</p>
+              </div>
+            )}
+          </div>
         )}
       </div>
       <hr className='h-px bg-[#D4D4D4] border-0' />

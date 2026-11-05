@@ -115,7 +115,7 @@ The coaching engagement was architected around a proprietary Integrated Leadersh
 The coaching program deployed a customized architecture blend of evidence-based modalities, selected specifically to match and optimize the client's analytical, action-oriented, and highly self-aware learning style:
 
 - **Executive 360-Degree Feedback Synthesis:** Multi-stakeholder input from direct reports, peers, board members, and family system.
-- **Leadership Assessment Suite:** Personality, derailer risk, and values profiling for nuanced self-awareness.
+- **The Leadership Assessment Suite:** Personality, derailer risk, and values profiling for nuanced self-awareness.
 - **Adaptive Leadership Framework:** Applied to technology sector disruption and organizational complexity.
 - **Systems Thinking & Complexity Leadership Theory:** Developing the capacity to lead in non-linear, emergent environments.
 - **Narrative Leadership Coaching:** Reconstructing the client's personal and professional story to align with CEO-level identity.

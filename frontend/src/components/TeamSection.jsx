@@ -87,7 +87,7 @@ export default function TeamSection() {
         {/* Team Members Grid */}
         <div className='grid md:grid-cols-2 gap-4 lg:gap-6 mb-5 md:mb-6'>
           {teamMembers.map((member, index) => (
-            <div key={index} className='bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-2.5 sm:p-3 flex flex-col sm:flex-row relative group hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)] transition-all duration-300'>
+            <div key={index} className='site-hover-highlight bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-2.5 sm:p-3 flex flex-col sm:flex-row relative group hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)] transition-all duration-300'>
               {/* Link Overlay — z-10, sits below the video button */}
               <Link to={member.link} className="absolute inset-0 z-10" />
 

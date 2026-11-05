@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button } from './ui/button'
 import { useTranslation } from 'react-i18next'
-import { Quote } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import mapBg2 from '@/assets/map bg 2.png'
 
 export default function TestimonialsSection() {
@@ -198,19 +198,51 @@ export default function TestimonialsSection() {
               </div>
             )}
 
-            {/* Minimal Sub-Controls for traversing testimonials inside a group */}
+            {/* Clear controls for moving between testimonials in the selected group */}
             {currentGroup.items.length > 1 && (
-              <div className='flex items-center gap-3 mt-5 opacity-60 hover:opacity-100 transition-opacity'>
-                {currentGroup.items.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveTestimonial(idx)}
-                    className={`h-2 rounded-full transition-all duration-300 ${activeTestimonial === idx
-                      ? 'w-8 bg-[#F6B72D]'
-                      : 'w-2 bg-white/30 hover:bg-white/50'
-                      }`}
-                  />
-                ))}
+              <div className='mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-white/15 pt-4'>
+                <button
+                  type='button'
+                  onClick={() => setActiveTestimonial((index) => Math.max(0, index - 1))}
+                  disabled={activeTestimonial === 0}
+                  className='inline-flex items-center gap-1.5 rounded-full border border-white/30 px-4 py-2 text-sm font-semibold text-white transition-colors hover:border-[#F6B72D] hover:text-[#F6B72D] disabled:cursor-not-allowed disabled:opacity-40'
+                  aria-label='Previous testimonial'
+                >
+                  <ChevronLeft className='h-4 w-4' aria-hidden='true' />
+                  Previous
+                </button>
+
+                <div className='flex flex-col items-center gap-2' aria-label='Testimonial position'>
+                  <span className='text-xs font-semibold tracking-wide text-white/80' aria-live='polite'>
+                    Testimonial {activeTestimonial + 1} of {currentGroup.items.length}
+                  </span>
+                  <div className='flex items-center gap-2'>
+                    {currentGroup.items.map((item, idx) => (
+                      <button
+                        key={`${item.client}-${idx}`}
+                        type='button'
+                        onClick={() => setActiveTestimonial(idx)}
+                        aria-label={`Show testimonial ${idx + 1} of ${currentGroup.items.length}`}
+                        aria-current={activeTestimonial === idx ? 'true' : undefined}
+                        className={`h-2.5 rounded-full transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6B72D] ${activeTestimonial === idx
+                          ? 'w-8 bg-[#F6B72D]'
+                          : 'w-2.5 bg-white/45 hover:bg-white/75'
+                          }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  type='button'
+                  onClick={() => setActiveTestimonial((index) => Math.min(currentGroup.items.length - 1, index + 1))}
+                  disabled={activeTestimonial === currentGroup.items.length - 1}
+                  className='inline-flex items-center gap-1.5 rounded-full border border-white/30 px-4 py-2 text-sm font-semibold text-white transition-colors hover:border-[#F6B72D] hover:text-[#F6B72D] disabled:cursor-not-allowed disabled:opacity-40'
+                  aria-label='Next testimonial'
+                >
+                  Next
+                  <ChevronRight className='h-4 w-4' aria-hidden='true' />
+                </button>
               </div>
             )}
 

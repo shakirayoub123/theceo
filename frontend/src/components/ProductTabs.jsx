@@ -27,17 +27,33 @@ export default function ProductTabs({ tabs }) {
       </nav>
 
       {/* Tab Content */}
-      <div className='p-8 md:p-12'>
+      <div className='p-4 sm:p-6 md:p-8'>
         {activeTabData && (
-          <div className='max-w-5xl mx-auto'>
-            {activeTabData.content.map((paragraph, index) => (
-              <p
-                key={index}
-                className='text-[14px] md:text-[15px] text-[#475569] leading-relaxed mb-6 font-medium text-center'
-              >
-                {paragraph}
-              </p>
-            ))}
+          <div className='max-w-5xl mx-auto rounded-xl border border-[#E5E7EB] bg-white p-5 md:p-7'>
+            <h2 className='text-sm md:text-base font-bold text-[#111827] mb-4 pb-3 border-b border-gray-100'>
+              {activeTabData.label}
+            </h2>
+            {activeTabData.content.every((item) => item && typeof item === 'object' && 'label' in item) ? (
+              <div className='grid sm:grid-cols-2 gap-3'>
+                {activeTabData.content.map((item) => (
+                  <div key={item.label} className='rounded-lg border border-gray-100 bg-[#FAFAF9] p-4'>
+                    <p className='text-[10px] font-bold uppercase tracking-wider text-[#9CA3AF] mb-1'>{item.label}</p>
+                    <p className='text-sm text-[#475569] leading-relaxed break-words text-justify'>{item.value ?? 'N/A'}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className='space-y-4'>
+                {activeTabData.content.map((paragraph, index) => (
+                  <p
+                    key={index}
+                    className='text-[14px] md:text-[15px] text-[#475569] leading-7 font-medium text-justify'
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

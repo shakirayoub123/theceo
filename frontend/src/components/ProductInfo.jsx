@@ -40,12 +40,15 @@ export default function ProductInfo({
       </div>
 
       {/* Description */}
-      <div className='space-y-4 mb-6 font-medium'>
-        {description.map((paragraph, index) => (
-          <p key={index} className='text-[13px] lg:text-[14px] text-[#475569] leading-relaxed'>
-            {paragraph}
-          </p>
-        ))}
+      <div className='mb-6 rounded-xl border border-[#E5E7EB] border-l-4 border-l-[#F6B72D] bg-[#FAFAF9] p-4 lg:p-5 font-medium'>
+        <h2 className='text-[10px] font-bold uppercase tracking-[0.16em] text-[#9A7B35] mb-2'>About this eBook</h2>
+        <div className='space-y-3'>
+          {description.map((paragraph, index) => (
+            <p key={index} className='text-[13px] lg:text-[14px] text-[#475569] leading-7'>
+              {paragraph}
+            </p>
+          ))}
+        </div>
       </div>
 
       {/* Price */}
@@ -93,25 +96,25 @@ export default function ProductInfo({
       </div>
 
       {/* Product Details Table / Meta */}
-      <div className='mt-auto pt-6 border border-[#E5E5E5] bg-[#FCFCFC] rounded-[8px] p-6 lg:p-8 flex flex-col md:flex-row gap-6 justify-between text-[13px]'>
+      <div className='mt-auto pt-5 border border-[#E5E5E5] bg-[#F8F8F8] rounded-xl p-4 lg:p-5 flex flex-col md:flex-row gap-4 justify-between text-[13px]'>
         <div className='space-y-4 flex-1'>
-          <div className='flex items-center'>
-            <span className='font-bold text-black min-w-[80px]'>SKU:</span>
+          <div className='flex items-center gap-3 bg-white border border-gray-100 rounded-lg p-3'>
+            <span className='font-bold text-black min-w-[80px]'>SKU</span>
             <span className='text-[#797979] uppercase truncate max-w-[150px]'>{sku || 'N/A'}</span>
           </div>
-          <div className='flex items-center'>
-            <span className='font-bold text-black min-w-[80px]'>Category:</span>
+          <div className='flex items-center gap-3 bg-white border border-gray-100 rounded-lg p-3'>
+            <span className='font-bold text-black min-w-[80px]'>Category</span>
             <span className='text-[#797979] capitalize'>{category || 'N/A'}</span>
           </div>
         </div>
 
-        <div className='space-y-4 flex-1 md:pl-6'>
-          <div className='flex items-center'>
-            <span className='font-bold text-black min-w-[60px]'>Tags:</span>
+        <div className='space-y-4 flex-1'>
+          <div className='flex items-center gap-3 bg-white border border-gray-100 rounded-lg p-3'>
+            <span className='font-bold text-black min-w-[60px]'>Tags</span>
             <span className='text-[#797979] line-clamp-1'>{tags.length ? tags.join(', ') : 'N/A'}</span>
           </div>
-          <div className='flex items-center'>
-            <span className='font-bold text-black min-w-[60px]'>Share:</span>
+          <div className='flex items-center gap-3 bg-white border border-gray-100 rounded-lg p-3'>
+            <span className='font-bold text-black min-w-[60px]'>Share</span>
             <div className='flex items-center gap-2'>
               <a href='#' className='w-7 h-7 rounded-full bg-[#3b5998] flex items-center justify-center hover:opacity-80 transition'><Facebook className='w-3 h-3 text-white fill-current' /></a>
               <a href='#' className='w-7 h-7 rounded-full bg-[#1da1f2] flex items-center justify-center hover:opacity-80 transition'><Twitter className='w-3 h-3 text-white fill-current' /></a>

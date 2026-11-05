@@ -93,10 +93,10 @@ export default function Footer() {
               <p>9107 West Russell Road, Suite 100</p>
               <p>Las Vegas, Nevada 89148</p>
             </div>
-            {/* Email Block */}
+            {/* Contact Us */}
             <div>
               <p className='text-[#D1D5DB] font-bold text-[12px] uppercase tracking-wider mb-2'>
-                EMAIL BLOCK:
+                CONTACT US:
               </p>
               <p className='text-[#9CA3AF] text-[13px] md:text-[14px]'>
                 Email: <a href="mailto:info@theceoinfluencers.com" className='text-[#F6B72D] hover:underline font-semibold'>info@theceoinfluencers.com</a>
@@ -130,7 +130,7 @@ export default function Footer() {
             </h4>
             <ul className='space-y-4'>
               <li>
-                <a href='/#gallery-section' className={linkStyle}>
+                <a href='/#our-team' className={linkStyle}>
                   <span className='mr-2 font-bold'>&rsaquo;</span> About Us
                 </a>
               </li>
@@ -188,6 +188,7 @@ export default function Footer() {
                 href='https://www.linkedin.com/company/the-ceo-influencers/?viewAsMember=true'
                 target={socialTarget}
                 rel='noopener noreferrer'
+                aria-label='The CEO Influencers on LinkedIn'
                 className='w-[38px] h-[38px] bg-[#1A2332] rounded-full flex items-center justify-center text-gray-300 hover:bg-[#F6B72D] hover:text-black transition-colors'
               >
                 <Linkedin className='h-4 w-4' />
@@ -196,6 +197,7 @@ export default function Footer() {
                 href='https://x.com/CeoInfluencers'
                 target={socialTarget}
                 rel='noopener noreferrer'
+                aria-label='The CEO Influencers on X'
                 className='w-[38px] h-[38px] bg-[#1A2332] rounded-full flex items-center justify-center text-gray-300 hover:bg-[#F6B72D] hover:text-black transition-colors'
               >
                 <svg className='h-4 w-4' fill='currentColor' viewBox='0 0 24 24'>
@@ -206,6 +208,7 @@ export default function Footer() {
                 href='https://www.instagram.com/theceoinfluencers'
                 target={socialTarget}
                 rel='noopener noreferrer'
+                aria-label='The CEO Influencers on Instagram'
                 className='w-[38px] h-[38px] bg-[#1A2332] rounded-full flex items-center justify-center text-gray-300 hover:bg-gradient-to-tr hover:from-yellow-500 hover:to-fuchsia-600 hover:text-white transition-all'
               >
                 <Instagram className='h-4 w-4' />
@@ -214,6 +217,7 @@ export default function Footer() {
                 href='https://www.youtube.com/@TheCEOInfluencers'
                 target={socialTarget}
                 rel='noopener noreferrer'
+                aria-label='The CEO Influencers on YouTube'
                 className='w-[38px] h-[38px] bg-[#1A2332] rounded-full flex items-center justify-center text-gray-300 hover:bg-[#FF0000] hover:text-white transition-colors'
               >
                 <Youtube className='h-4 w-4' />
@@ -222,6 +226,7 @@ export default function Footer() {
                 href='https://www.facebook.com/TheCEOInfluencers/'
                 target={socialTarget}
                 rel='noopener noreferrer'
+                aria-label='The CEO Influencers on Facebook'
                 className='w-[38px] h-[38px] bg-[#1A2332] rounded-full flex items-center justify-center text-gray-300 hover:bg-[#1877F2] hover:text-white transition-colors'
               >
                 <Facebook className='h-4 w-4' />

@@ -39,11 +39,9 @@ export default function CaseStudies() {
             </h1>
 
             <p className='text-[#CBD5E1] text-[15px] md:text-[17px] max-w-3xl leading-relaxed mb-16'>
-              Eleven documented engagements. Real leaders, real organizations, real
-              results. Each case study presents independently verified outcomes
-              from transformational coaching, strategic consulting, and
-              organizational performance programs delivered by The CEO
-              Influencers LLC.
+              Eleven documented engagements with actual former clients of The CEO
+              Influencers. These case studies use TCI client data and outcomes only;
+              no other companies’ data or externally sourced outcomes are used.
             </p>
 
             {/* Stats */}

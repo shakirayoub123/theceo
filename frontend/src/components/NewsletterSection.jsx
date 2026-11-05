@@ -211,7 +211,7 @@ export default function NewsletterSection() {
           </div>
           <h2 className='text-[28px] md:text-[38px] font-bold leading-none mb-3 tracking-tight'>
             <span className='text-white'>OUR </span>
-            <span className='text-[#F6B72D] font-sans text-[32px] md:text-[42px]'>NEWSLETTERS</span>
+            <span className='text-[#F6B72D] font-sans text-[32px] md:text-[42px]'>QUARTERLY NEWSLETTERS</span>
           </h2>
           <p className='text-[#CBD5E1] text-[12px] md:text-[14px] leading-[19px] md:leading-[22px] font-medium mx-auto max-w-4xl'>
             Unlock a decisive competitive edge with our quarterly strategic briefing, where we deconstruct business-critical shifts across global continents and local markets, distilling high-stakes industry trends and corporate maneuvers into actionable leadership blueprints tailored for today's complex economic landscape.
@@ -225,7 +225,7 @@ export default function NewsletterSection() {
           <div className='flex flex-col md:flex-row flex-1 min-h-0 overflow-hidden p-3 sm:p-4 gap-3 sm:gap-4 pb-0 md:pb-4'>
 
             {/* Left Sidebar: Thumbnails */}
-            <div className='w-full md:w-[230px] lg:w-[260px] md:h-full bg-transparent overflow-x-auto md:overflow-x-hidden md:overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 pb-2 md:pb-0 md:pr-2 shrink-0 flex flex-row md:flex-col items-stretch gap-3'>
+            <div className='newsletter-sidebar-scroll w-full md:w-[230px] lg:w-[260px] md:h-full bg-transparent overflow-x-auto md:overflow-x-hidden md:overflow-y-auto pb-2 md:pb-0 md:pr-2 shrink-0 flex flex-row md:flex-col items-stretch gap-3'>
               {displayEditions.map((edition, index) => {
                 const isActive = selectedNewsletter?.id
                   ? selectedNewsletter.id === edition.id

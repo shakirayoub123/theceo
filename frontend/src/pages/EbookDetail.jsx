@@ -109,11 +109,15 @@ export default function EbookDetail() {
     ebookData.introduction ||
     ebookData.description ||
     'No introduction available.'
+  const introductionParagraphs = String(introductionText)
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
 
   const productData = {
     name: ebookData.title,
     price: `$${ebookData.price}`,
-    description: [introductionText],
+    description: introductionParagraphs,
     sku: ebookData.id,
     category: ebookData.topic || 'ebooks',
     tags: ['ebook', ebookData.topic].filter(Boolean),
@@ -128,27 +132,26 @@ export default function EbookDetail() {
     {
       id: 'introduction',
       label: 'Introduction',
-      content: [introductionText],
+      content: introductionParagraphs,
     },
     {
       id: 'additional-info',
       label: 'Additional Information',
       content: [
-        `Author: ${ebookData.author}`,
-        `Pages: ${ebookData.pages}`,
-        `Topic: ${ebookData.topic}`,
-        `ISBN: ${ebookData.isbn || 'N/A'}`,
-        `Total Sold: ${ebookData.totalSold}`,
+        { label: 'Author', value: ebookData.author },
+        { label: 'Pages', value: ebookData.pages },
+        { label: 'Topic', value: ebookData.topic },
+        { label: 'ISBN', value: ebookData.isbn },
+        { label: 'Total sold', value: ebookData.totalSold },
       ],
     },
     {
       id: 'series-info',
       label: 'Series Information',
       content: ebookData.series
-        ? [
-          `Series: ${ebookData.series.title}`,
-          `Description: ${ebookData.series.description}`,
-          `Cover: ${ebookData.series.coverImage}`,
+          ? [
+            { label: 'Series', value: ebookData.series.title },
+            { label: 'Description', value: ebookData.series.description },
         ]
         : ['This ebook is not part of a series.'],
     },
