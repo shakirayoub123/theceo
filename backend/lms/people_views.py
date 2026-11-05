@@ -356,9 +356,7 @@ class PeopleProgramsView(APIView):
 
     def get(self, request):
         # Get all active programs
-        programs = Service.objects.filter(status="active").order_by(
-            "order"
-        )
+        programs = Service.objects.filter(status="active").order_by("order", "id")
         serializer = ClientProgramSerializer(
             programs, many=True, context={"request": request}
         )

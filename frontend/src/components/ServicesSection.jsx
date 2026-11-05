@@ -128,7 +128,20 @@ export default function ServicesSection() {
     },
   ]
 
-  const displayPrograms = programs.length > 0 ? programs : fallbackPrograms
+  const displayPrograms = (programs.length > 0 ? programs : fallbackPrograms)
+    .map((program, index) => ({ program, index }))
+    .sort((a, b) => {
+      const orderDifference =
+        (Number(a.program.order) || 0) - (Number(b.program.order) || 0)
+      if (orderDifference !== 0) return orderDifference
+
+      return String(a.program.id ?? a.index).localeCompare(
+        String(b.program.id ?? b.index),
+        undefined,
+        { numeric: true },
+      )
+    })
+    .map(({ program }) => program)
   const programsPerPage = 3
   const pageCount = Math.ceil(displayPrograms.length / programsPerPage)
   const visiblePrograms = displayPrograms.slice(

@@ -1,11 +1,8 @@
 import { useState } from 'react'
-import { Button } from './ui/button'
-import { useTranslation } from 'react-i18next'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import mapBg2 from '@/assets/map bg 2.png'
 
 export default function TestimonialsSection() {
-  const { t } = useTranslation()
   const [activeMentor, setActiveMentor] = useState(0)
   const [activeTestimonial, setActiveTestimonial] = useState(0)
 
@@ -17,30 +14,19 @@ export default function TestimonialsSection() {
           client: 'Robert McDonough',
           title: 'Retired Senior Executive',
           company: 'Multiple Industries',
-          text: `“James is a very dynamic individual who has extensive knowledge of the executive business environment. He is a master mentor to all of his associates and has contributed to their great success and advancement. James has become a leader in his realm by his keen insights, strong dedication, and masterful knowledge of human nature. I trust James' judgement completely.”`,
+          text: `James is a very dynamic individual who has extensive knowledge of the executive business environment. He is a master mentor to all of his associates and has contributed to their great success and advancement. James has become a leader in his realm by his keen insights, strong dedication, and masterful knowledge of human nature. I trust James' judgement completely.`,
         },
         {
           client: 'Sandy Priester',
           title: 'CEO/Founder',
           company: 'Lifespark Cancer Resources',
-          text: `“James has advised LifeSpark on several occasions. As a non-profit organization, we have tapped James expertise in the area of corporate fundraising, and he has assisted us with training committee members, and counsel on overall fundraising strategy. James has extensive connections throughout the business community, and his skills related to organizational development, marketing and branding, and leadership development are excellent.”`,
+          text: `James has advised LifeSpark on several occasions. As a non-profit organisation, we have tapped James expertise in the area of corporate fundraising, and he has assisted us with training committee members, and counsel on overall fundraising strategy. James has extensive connections throughout the business community, and his skills related to organisational development, marketing and branding, and leadership development are excellent.\n\nJames is smart, generous, talented, and very easy to work with. I would highly recommend James in any of these areas.`,
         },
         {
           client: 'Jay Garcia',
           title: 'Executive AICP, LEEP AP',
           company: 'Multiple Industries',
-          text: `“James Armstrong is an extremely well-rounded professional with a strong and diverse background in numerous industries on an international scale. More importantly, James is a good man and a nice person. He communicates well with all types of people at all different levels and while he is extremely good at providing valuable insight and guidance he is also open to taking advice and suggestions for possible solutions.”`,
-        },
-      ],
-    },
-    {
-      mentor: 'THE CEO INFLUENCERS',
-      items: [
-        {
-          client: 'The CEO Influencers',
-          title: 'Client Testimonial',
-          company: '',
-          video: '/videos/testimonial-video-1.mp4',
+          text: `James Armstrong is an extremely well-rounded professional with a strong and diverse background in numerous industries on an international scale. More importantly, James is a good man and a nice person. He communicates well with all types of people at all different levels and while he is extremely good at providing valuable insight and guidance he is also open to taking advice and suggestions for possible solutions. He treats every relationship (personal and professional) with positive and meaningful success and I have seen him motivate others in dynamic and creative ways. This is the mark of a true leader. He is honest, has strong core values and his personal integrity is of the highest quality.\n\nJames has helped me to understand the nuisances of leadership and professional development. He has shown me how to articulate and explain my professional experience to people from other industries and he has exposed me to incredible networking opportunities and tactics for personal branding.\n\nI would strongly recommend James to anyone who is interested in developing or refining their professional brand/network/identity because his knowledge for all industries and his strategic approach to professional growth are top notch.`,
         },
       ],
     },
@@ -48,22 +34,22 @@ export default function TestimonialsSection() {
       mentor: 'DR. CLAIRE KEOGH',
       items: [
         {
-          client: 'Helen Richardson',
+          client: 'Professor Helen Richardson',
           title: 'Professor',
-          company: 'Sheffield Business School',
-          text: `“Claire demonstrated exceptional research capabilities during her tenure at the University of Salford, where she led multiple research initiatives examining gender disparity within the Information Communication Technology sector. Her work garnered significant recognition, resulting in numerous peer-reviewed publications and high-profile presentations.”`,
+          company: 'Sheffield University Business School',
+          text: `Claire demonstrated exceptional research capabilities during her tenure at the University of Salford, where she led multiple research initiatives examining gender disparity within the Information Communication Technology sector. Her work garnered significant recognition, resulting in numerous peer-reviewed publications and high-profile presentations to key stakeholders, including British parliamentary briefings at the House of Commons and strategic industry forums.\n\nClaire's research methodology and stakeholder engagement skills proved exemplary across all organisational levels, from C-suite executives to technical specialists. Her ability to extract meaningful insights and build immediate rapport with diverse audiences consistently yielded valuable, actionable research outcomes.`,
         },
         {
-          client: 'Dr. Sarina B.',
-          title: 'Director- Nursing',
-          company: 'NHS England',
-          text: `“I have had the privilege of collaborating with Claire over several years across strategic research initiatives, leadership development programs, and innovative organizational transformation projects. Throughout this professional partnership, Claire has consistently demonstrated an exceptional capacity to bridge the gap between rigorous academic research and practical business application.”`,
+          client: 'Dr. Sarina S.',
+          title: 'Director of Nursing',
+          company: 'NHS – National Health Service',
+          text: `I have had the privilege of collaborating with Claire over several years across strategic research initiatives, leadership development programs, and innovative organisational transformation projects. Throughout this professional partnership, Claire has consistently demonstrated an exceptional capacity to bridge the gap between rigorous academic research and practical business application.\n\nClaire's distinguishing strength lies in her systematic yet innovative approach to problem-solving. She possesses a rare ability to synthesise complex empirical evidence and translates theoretical frameworks into actionable strategies that deliver measurable impact. Her analytical rigor is matched by her visionary creative thinking, enabling her to develop solutions that are both evidence-informed and contextually relevant.\n\nWhat sets Claire apart is her empathetic holistic perspective on organisational development. She recognises that sustainable organisational improvement must address both individual capability and systemic organisational factors. This dual focus has enabled her to design customised business interventions that not only achieve immediate operational objectives but also build long-term organisational capacity and resilience.\n\nClaire's superior consulting performance consistently demonstrates global commercial awareness and a results-oriented mindset. She engages stakeholders effectively at all levels, ensuring that research insights are not merely documented, but actively embedded into strategic planning and operational practice across the organisation. Her contributions have generated tangible value for both leaders and all key internal and external stakeholders across the broader organisation.\n\nI highly recommend Claire without reservation for senior-level business advisory, research, and leadership development mentoring.`,
         },
         {
           client: 'CEO Confidential',
           title: 'Kent County Council',
           company: 'British Government',
-          text: `“Dr. Claire Keogh is a strategic analyst of exceptional caliber whose work has consistently delivered high-impact intelligence solutions to our C-Suite and board-level stakeholders. Claire possesses a rare ability to translate complex data into actionable insights that drive meaningful organizational performance across critical public services.”`,
+          text: `Dr. Claire Keogh is a strategic analyst of exceptional caliber whose work has consistently delivered high-impact intelligence solutions to our C-Suite and board-level stakeholders. Claire possesses a rare ability to translate complex data into actionable insights that drive meaningful organisational performance across critical public services.\n\nThroughout her tenure, Claire provided executive-level strategic direction on mission-critical initiatives spanning Children's Services, Safeguarding, and Public Health portfolios. Her comprehensive analytical reporting informed senior executive leadership decision-making and shaped organisational priorities at the highest levels, demonstrating her sophisticated understanding of complex public sector challenges.\n\nClaire established and operationalised enterprise-wide standards for empirical research methodologies and survey designs, ensuring robust accurate evidence generation for service leadership teams. The frameworks she developed enhanced the quality and reliability of insights used to guide service delivery improvements and resource allocation decisions across the organisation. She orchestrated multi-stakeholder engagement initiatives with exceptional diplomatic skill, bridging internal service teams and external partners to develop evidence-based policy frameworks. Claire applied sophisticated models to optimise customer engagement strategies, redesign service delivery protocols, and elevate staff performance outcomes.\n\nClaire has consistently demonstrated the strategic acumen, analytical rigor, and stakeholder management capabilities essential for senior executive roles requiring advanced business intelligence leadership. I highly recommend her without reservation.`,
         },
       ],
     },
@@ -162,7 +148,12 @@ export default function TestimonialsSection() {
               </div>
             ) : (
               <div className='relative'>
-                <p className='text-[#E2E8F0] font-jakarta text-[14px] md:text-[16px] xl:text-[17px] leading-[26px] md:leading-[32px] font-normal mb-8 max-h-[160px] md:max-h-[200px] overflow-y-auto pr-2'>
+                <p
+                  className='scrollbar-thin whitespace-pre-line text-[#E2E8F0] font-jakarta text-[14px] md:text-[16px] xl:text-[17px] leading-[26px] md:leading-[32px] font-normal mb-8 max-h-[220px] md:max-h-[280px] overflow-y-auto overscroll-contain pr-3'
+                  role='region'
+                  aria-label={`Scrollable testimonial from ${currentTestimonial.client}`}
+                  tabIndex={0}
+                >
                   {currentTestimonial.text}
                 </p>
 
@@ -171,18 +162,17 @@ export default function TestimonialsSection() {
 
                 {/* Author Block */}
                 <div className='flex items-center gap-4'>
-                  {/* Avatar */}
-                  <div className='w-[48px] h-[48px] sm:w-[54px] sm:h-[54px] rounded-full p-[2px] bg-gradient-to-tr from-[#F6B72D] to-[#F6B72D] shrink-0'>
-                    <img
-                      src={
-                        currentGroup.mentor === 'DR. CLAIRE KEOGH'
-                          ? '/images/claire.jpeg'
-                          : '/images/james.jpg'
-                      }
-                      alt={currentTestimonial.client}
-                      className='w-full h-full rounded-full object-cover border-2 border-[#010125]'
-                      onError={(e) => { e.target.src = '/images/team2.svg' }} // Fallback
-                    />
+                  {/* Initials badge (client photos are not available) */}
+                  <div
+                    aria-hidden='true'
+                    className='w-[48px] h-[48px] sm:w-[54px] sm:h-[54px] rounded-full border-2 border-[#F6B72D] bg-[#FDF5DF] text-[#0B132B] flex items-center justify-center shrink-0 font-bold text-sm'
+                  >
+                    {currentTestimonial.client
+                      .split(/\s+/)
+                      .filter((part) => /^[A-Za-z]/.test(part))
+                      .slice(0, 2)
+                      .map((part) => part[0])
+                      .join('')}
                   </div>
 
                   {/* Author Meta */}
@@ -205,11 +195,10 @@ export default function TestimonialsSection() {
                   type='button'
                   onClick={() => setActiveTestimonial((index) => Math.max(0, index - 1))}
                   disabled={activeTestimonial === 0}
-                  className='inline-flex items-center gap-1.5 rounded-full border border-white/30 px-4 py-2 text-sm font-semibold text-white transition-colors hover:border-[#F6B72D] hover:text-[#F6B72D] disabled:cursor-not-allowed disabled:opacity-40'
+                  className='inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:border-[#F6B72D] hover:text-[#F6B72D] disabled:cursor-not-allowed disabled:opacity-40'
                   aria-label='Previous testimonial'
                 >
                   <ChevronLeft className='h-4 w-4' aria-hidden='true' />
-                  Previous
                 </button>
 
                 <div className='flex flex-col items-center gap-2' aria-label='Testimonial position'>
@@ -237,10 +226,9 @@ export default function TestimonialsSection() {
                   type='button'
                   onClick={() => setActiveTestimonial((index) => Math.min(currentGroup.items.length - 1, index + 1))}
                   disabled={activeTestimonial === currentGroup.items.length - 1}
-                  className='inline-flex items-center gap-1.5 rounded-full border border-white/30 px-4 py-2 text-sm font-semibold text-white transition-colors hover:border-[#F6B72D] hover:text-[#F6B72D] disabled:cursor-not-allowed disabled:opacity-40'
+                  className='inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:border-[#F6B72D] hover:text-[#F6B72D] disabled:cursor-not-allowed disabled:opacity-40'
                   aria-label='Next testimonial'
                 >
-                  Next
                   <ChevronRight className='h-4 w-4' aria-hidden='true' />
                 </button>
               </div>

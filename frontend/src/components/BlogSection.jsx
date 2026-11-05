@@ -1,3 +1,4 @@
+
 import { getAssetUrl, formatDate } from '@/lib/utils'
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -71,27 +72,32 @@ export default function BlogSection({ blogs = [], loading = false }) {
     <section className='py-4 lg:py-5 min-h-[calc(100vh-140px)] flex flex-col justify-center relative overflow-hidden bg-[#FBF9F5] font-jakarta'>
       <div
         className='absolute inset-0 z-0 pointer-events-none'
-        style={{ backgroundImage: `url("${mapBg3}")`, backgroundSize: 'contain', backgroundPosition: 'top center', backgroundRepeat: 'no-repeat' }}
+        style={{
+          backgroundImage: `url("${mapBg3}")`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'top center',
+          backgroundRepeat: 'no-repeat'
+        }}
       />
 
       <div className='max-w-[1350px] w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
 
         {/* Header */}
-        <div className='flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6 md:mb-8'>
+        <div className='flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-5 md:mb-6'>
           <div className='max-w-3xl'>
-            <h2 className='text-[28px] sm:text-[32px] lg:text-[40px] font-bold leading-[1.05] tracking-[-0.04em] text-[#111827]'>
+            <h2 className='text-[36px] lg:text-[40px] font-bold leading-[1.05] tracking-[-0.04em] text-[#111827]'>
               <span className='text-[#111827]'>OUR </span>
               <span className='text-[#F6B72D]'>BLOGS</span>
             </h2>
-            <p className='mt-3 text-[#4B5563] text-[13px] sm:text-[14px] lg:text-[15px] leading-relaxed max-w-[720px]'>
+            <p className='mt-2 text-[#4B5563] text-[12px] sm:text-[13px] lg:text-[14px] leading-relaxed max-w-[720px]'>
               Explore our curated blogs packed with case studies, expert insights, and actionable frameworks to elevate executive performance and organizational effectiveness.
             </p>
           </div>
 
           <Link to='/articles' className='group inline-flex items-center gap-2 self-start md:self-end whitespace-nowrap hover:opacity-80 transition-opacity'>
-            <span className='text-[#111827] font-bold text-[12px] sm:text-[13px] lg:text-[14px]'>Explore all publications</span>
-            <div className='w-8 h-8 rounded-full bg-[#F6B72D] flex items-center justify-center group-hover:translate-x-1 transition-transform'>
-              <ArrowRight className='w-3.5 h-3.5 text-white' />
+            <span className='text-[#111827] font-bold text-[11px] sm:text-[12px] lg:text-[13px]'>Explore all publications</span>
+            <div className='w-7 h-7 rounded-full bg-[#F6B72D] flex items-center justify-center group-hover:translate-x-1 transition-transform'>
+              <ArrowRight className='w-3 h-3 text-white' />
             </div>
           </Link>
         </div>
@@ -99,14 +105,14 @@ export default function BlogSection({ blogs = [], loading = false }) {
         {/* Grid */}
         <div className='grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 items-stretch'>
 
-          {/* LEFT: Featured — banner image with article details below */}
+          {/* LEFT: Featured */}
           {featuredPost && (
             <div className='lg:col-span-7 h-full'>
               <Link
                 to={`/blog/${featuredPost.slug}`}
                 className='site-hover-highlight group flex flex-col bg-white rounded-[18px] border border-[#E5E7EB] shadow-[0_10px_24px_rgba(15,23,42,0.06)] hover:shadow-lg transition-all duration-300 h-full overflow-hidden'
               >
-                <div className='w-full aspect-[1.9/1] overflow-hidden bg-[#F3F4F6] flex items-center justify-center'>
+                <div className='w-full aspect-[1.9/1] lg:aspect-[2.4/1] overflow-hidden bg-[#F3F4F6] flex items-center justify-center'>
                   <img
                     src={getAssetUrl(featuredPost.image)}
                     alt={featuredPost.title}
@@ -116,7 +122,7 @@ export default function BlogSection({ blogs = [], loading = false }) {
                 </div>
 
                 <div className='flex flex-col flex-1 min-w-0 px-5 py-4 lg:px-6 lg:py-5'>
-                  <p className='flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] sm:text-[11px] uppercase tracking-[0.12em] text-[#6B7280] mb-3'>
+                  <p className='flex flex-wrap items-center gap-x-3 gap-y-1 text-[9px] sm:text-[10px] uppercase tracking-[0.1em] text-[#6B7280] mb-2'>
                     <span className='font-semibold text-[#111827]'>
                       {featuredPost.author || 'The CEO Influencers'}
                     </span>
@@ -126,17 +132,17 @@ export default function BlogSection({ blogs = [], loading = false }) {
                     <span>{featuredPost.publishedAt}</span>
                   </p>
 
-                  <h3 className='text-[22px] sm:text-[26px] lg:text-[30px] font-bold text-[#111827] leading-[1.1] mb-2 group-hover:text-[#CFA329] transition-colors line-clamp-2'>
+                  <h3 className='text-[15px] sm:text-[16px] lg:text-[18px] font-bold text-[#111827] leading-[1.2] mb-2 group-hover:text-[#CFA329] transition-colors line-clamp-2'>
                     {featuredPost.title}
                   </h3>
 
-                  <p className='text-[#4B5563] text-[13px] sm:text-[14px] leading-relaxed line-clamp-2 mb-3'>
+                  <p className='text-[#4B5563] text-[12px] sm:text-[13px] leading-relaxed line-clamp-2 mb-2'>
                     {featuredPost.subtitle}
                   </p>
 
-                  <div className='flex items-center text-[#111827] font-bold text-[12px] sm:text-[13px] gap-1.5 mt-auto'>
+                  <div className='flex items-center text-[#111827] font-bold text-[11px] sm:text-[12px] gap-1.5 mt-auto'>
                     <span>Read Article</span>
-                    <ArrowRight className='w-3.5 h-3.5 group-hover:translate-x-1 transition-transform' />
+                    <ArrowRight className='w-3 h-3 group-hover:translate-x-1 transition-transform' />
                   </div>
                 </div>
               </Link>
@@ -144,15 +150,15 @@ export default function BlogSection({ blogs = [], loading = false }) {
           )}
 
           {/* RIGHT: 3 stacked cards */}
-          <div className='lg:col-span-5 flex flex-col gap-4 h-full'>
+          <div className='lg:col-span-5 flex flex-col gap-3 h-full'>
             {listPosts.map((post, index) => (
               <Link
                 key={post.id || index}
                 to={`/blog/${post.slug}`}
-                className='site-hover-highlight group bg-white rounded-[14px] border border-[#E5E7EB] shadow-[0_10px_24px_rgba(15,23,42,0.04)] hover:shadow-md transition-all duration-300 p-3 lg:p-4 flex items-center gap-3 h-full flex-1 self-stretch'
+                className='site-hover-highlight group bg-white rounded-[14px] border border-[#E5E7EB] shadow-[0_10px_24px_rgba(15,23,42,0.04)] hover:shadow-md transition-all duration-300 p-3 lg:p-3 flex items-center gap-3 h-full flex-1 self-stretch'
               >
                 {/* Thumbnail */}
-                <div className='w-[96px] h-[96px] sm:w-[110px] sm:h-[110px] rounded-[12px] overflow-hidden shrink-0 bg-gray-100'>
+                <div className='w-[90px] h-[90px] sm:w-[100px] sm:h-[100px] rounded-[12px] overflow-hidden shrink-0 bg-gray-100'>
                   <img
                     src={getAssetUrl(post.image)}
                     alt={post.title}
@@ -163,13 +169,15 @@ export default function BlogSection({ blogs = [], loading = false }) {
 
                 {/* Content */}
                 <div className='flex flex-col flex-1 min-w-0 justify-center'>
-                  <span className={`inline-block self-start px-2 py-[3px] text-white text-[7.5px] sm:text-[8px] font-bold uppercase tracking-[0.12em] rounded-sm mb-2 ${post.categoryColor}`}>
+                  <span className={`inline-block self-start px-2 py-[3px] text-white text-[7px] sm:text-[7.5px] font-bold uppercase tracking-[0.1em] rounded-sm mb-1.5 ${post.categoryColor}`}>
                     {post.category}
                   </span>
-                  <h4 className='text-[14px] sm:text-[15px] lg:text-[17px] font-bold text-[#111827] leading-snug mb-1.5 line-clamp-2 group-hover:text-[#CFA329] transition-colors'>
+
+                  <h4 className='text-[12px] sm:text-[13px] lg:text-[14px] font-bold text-[#111827] leading-snug mb-1 line-clamp-2 group-hover:text-[#CFA329] transition-colors'>
                     {post.title}
                   </h4>
-                  <p className='text-[#6B7280] text-[11px] sm:text-[12px] font-medium'>
+
+                  <p className='text-[#6B7280] text-[10px] sm:text-[11px] font-medium'>
                     {post.publishedAt} • {post.timeToRead} min read
                   </p>
                 </div>

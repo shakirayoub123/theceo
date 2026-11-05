@@ -36,7 +36,6 @@ function CountUp({ end, duration = 3000, suffix = '', decimals = 0 }) {
 export default function TeamSection() {
   const { t } = useTranslation()
   const [activeVideo, setActiveVideo] = useState(null)
-  const [openVideoMenu, setOpenVideoMenu] = useState(null)
 
   const teamMembers = [
     {
@@ -45,10 +44,8 @@ export default function TeamSection() {
       image: '/images/james.jpg',
       stats: { clients: '5,000+', years: '20+' },
       link: '/biography/james-armstrong',
-      videos: [
-        { label: 'Biography', url: '/videos/JamesBio.mp4' },
-        { label: 'Business Ethos', url: '/videos/ourJames2.mp4' },
-      ],
+      biographyVideo: '/videos/JamesBio.mp4',
+      philosophyVideo: '/videos/ourJames2.mp4',
       iconTheme: 'orange'
     },
     {
@@ -57,10 +54,8 @@ export default function TeamSection() {
       image: '/images/claire.jpeg',
       stats: { clients: '2,500+', years: '20+' },
       link: '/biography/claire-keogh',
-      videos: [
-        { label: 'Biography', url: '/videos/CliareBio.mp4' },
-        { label: 'Business Ethos', url: '/videos/ourcliare2.mp4' },
-      ],
+      biographyVideo: '/videos/CliareBio.mp4',
+      philosophyVideo: '/videos/ourcliare2.mp4',
       iconTheme: 'white'
     },
   ]
@@ -136,51 +131,44 @@ export default function TeamSection() {
                   </div>
                 </div>
 
-                {/* View Introduction Video — z-20 so it's above the Link overlay */}
-                <div className="w-full md:w-[95%] relative z-20">
+                {/* Biography and Philosophy actions sit above the card link overlay. */}
+                <div className='relative z-20 flex flex-wrap items-center gap-2'>
                   <button
                     type='button'
-                    aria-haspopup='menu'
-                    aria-expanded={openVideoMenu === member.name}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      setOpenVideoMenu((current) =>
-                        current === member.name ? null : member.name,
-                      )
+                    onClick={(event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      setActiveVideo({
+                        url: member.biographyVideo,
+                        label: 'Biography',
+                        memberName: member.name,
+                      })
                     }}
-                    className="flex items-center gap-3 bg-[#FCFBF7] border border-gray-200 rounded-full py-1.5 px-2 hover:bg-gray-50 w-max transition-all duration-300"
+                    className='inline-flex items-center gap-2 rounded-full border border-gray-200 bg-[#FCFBF7] py-1.5 pl-2 pr-4 text-[12px] font-bold text-[#111827] transition-colors hover:border-[#F6B72D] hover:bg-[#FFF8E8]'
                   >
-                    <div className="w-8 h-8 rounded-full bg-[#F6B72D] flex items-center justify-center flex-shrink-0">
-                      <ArrowRight className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="text-[13px] font-bold text-[#111827] pr-4">View Videos</span>
+                    <span className='flex h-8 w-8 items-center justify-center rounded-full bg-[#F6B72D]'>
+                      <ArrowRight className='h-4 w-4 text-white' />
+                    </span>
+                    Biography
                   </button>
-
-                  {openVideoMenu === member.name && (
-                    <div
-                      role='menu'
-                      aria-label={`${member.name} videos`}
-                      className='absolute bottom-full left-0 mb-2 min-w-[220px] overflow-hidden rounded-xl border border-gray-200 bg-white p-1.5 shadow-xl'
-                    >
-                      {member.videos.map((video) => (
-                        <button
-                          key={video.url}
-                          type='button'
-                          role='menuitem'
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            setActiveVideo({ ...video, memberName: member.name })
-                            setOpenVideoMenu(null)
-                          }}
-                          className='block w-full rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-[#111827] hover:bg-[#FFF8E8] hover:text-[#946200]'
-                        >
-                          {video.label}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  <button
+                    type='button'
+                    onClick={(event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      setActiveVideo({
+                        url: member.philosophyVideo,
+                        label: 'Philosophy',
+                        memberName: member.name,
+                      })
+                    }}
+                    className='inline-flex items-center gap-2 rounded-full border border-gray-200 bg-[#FCFBF7] py-1.5 pl-2 pr-4 text-[12px] font-bold text-[#111827] transition-colors hover:border-[#F6B72D] hover:bg-[#FFF8E8]'
+                  >
+                    <span className='flex h-8 w-8 items-center justify-center rounded-full bg-[#F6B72D]'>
+                      <ArrowRight className='h-4 w-4 text-white' />
+                    </span>
+                    Philosophy
+                  </button>
                 </div>
               </div>
             </div>

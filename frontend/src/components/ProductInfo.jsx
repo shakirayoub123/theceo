@@ -40,14 +40,23 @@ export default function ProductInfo({
       </div>
 
       {/* Description */}
-      <div className='mb-6 rounded-xl border border-[#E5E7EB] border-l-4 border-l-[#F6B72D] bg-[#FAFAF9] p-4 lg:p-5 font-medium'>
-        <h2 className='text-[10px] font-bold uppercase tracking-[0.16em] text-[#9A7B35] mb-2'>About this eBook</h2>
-        <div className='space-y-3'>
+      <div className='mb-6 flex max-h-[260px] flex-col rounded-xl border border-[#E5E7EB] border-l-4 border-l-[#F6B72D] bg-[#FAFAF9] p-4 lg:p-5 font-medium'>
+        <h2 className='mb-2 shrink-0 text-[10px] font-bold uppercase tracking-[0.16em] text-[#9A7B35]'>
+          About this eBook
+        </h2>
+        <div
+          className='scrollbar-thin min-h-0 overflow-y-auto overscroll-contain pr-2'
+          role='region'
+          aria-label={`Scrollable description for ${name}`}
+          tabIndex={0}
+        >
+          <div className='space-y-3'>
           {description.map((paragraph, index) => (
             <p key={index} className='text-[13px] lg:text-[14px] text-[#475569] leading-7'>
               {paragraph}
             </p>
           ))}
+          </div>
         </div>
       </div>
 
