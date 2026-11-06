@@ -4,6 +4,7 @@ import TabNavigation from '@/components/common/TabNavigation'
 import ContactSidebar from '@/components/ContactSidebar'
 import InfluencerProfile from '@/components/InfluencerProfile'
 import ReviewsContent from '@/components/ReviewsContent'
+import bgHeader from '@/assets/bgHeader.png'
 import { useState, useEffect } from 'react'
 
 const JamesBiography = () => {
@@ -135,9 +136,9 @@ const JamesBiography = () => {
           <div className='relative w-full max-w-[1383px] mx-auto h-[220px] md:h-[280px] bg-[#FFFBF0] flex flex-col items-center justify-center overflow-hidden rounded-[20px] shadow-sm mb-8'>
             {/* Topographic Background */}
             <div
-              className='absolute inset-0 z-0 opacity-40 pointer-events-none'
+              className='absolute inset-0 z-0 pointer-events-none'
               style={{
-                backgroundImage: `url('/images/body-bg.png')`,
+                backgroundImage: `url("${bgHeader}")`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}

@@ -11,6 +11,7 @@ import caseStudyEightMarkdown from '../../case-study-8.md?raw'
 import caseStudyNineMarkdown from '../../case-study-9.md?raw'
 import caseStudyTenMarkdown from '../../case-study-10.md?raw'
 import caseStudyElevenMarkdown from '../../case-study-11.md?raw'
+import bgHeader from '@/assets/bgHeader.png'
 
 const markdownTableToLists = (markdown) => {
   const lines = markdown.split('\n')
@@ -120,11 +121,12 @@ export default function CaseStudyDetail() {
         <div className='bg-[#000023] rounded-[24px] lg:rounded-[32px] pt-16 pb-20 px-8 relative overflow-hidden shadow-md'>
           {/* Topo map */}
           <div
-            className='absolute inset-0 z-0 opacity-10 pointer-events-none'
+            className='absolute inset-0 z-0 opacity-20 pointer-events-none'
             style={{
-              backgroundImage: `url('/images/body-bg.png')`,
-              backgroundRepeat: 'repeat',
-              backgroundSize: 'auto',
+              backgroundImage: `url("${bgHeader}")`,
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
             }}
           ></div>
 

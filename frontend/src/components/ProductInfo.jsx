@@ -17,12 +17,23 @@ export default function ProductInfo({
   addingToCart,
 }) {
   const [quantity, setQuantity] = useState(1)
+  const isAlgorithmicCeoTitle = name?.startsWith('The Algorithmic CEO:')
+  const algorithmicCeoSubtitle = isAlgorithmicCeoTitle
+    ? name.slice('The Algorithmic CEO:'.length).trim()
+    : ''
 
   return (
     <div className='w-full rounded-[14px] bg-[#FFFFFF] border border-[#CACACA] p-6 lg:p-10 font-jakarta flex flex-col'>
       {/* Product Name */}
-      <h1 className='text-[28px] lg:text-[34px] font-bold text-[#000000] leading-tight mb-3'>
-        {name}
+      <h1 className='text-[27px] lg:text-[32px] font-bold text-[#000000] leading-tight mb-3'>
+        {isAlgorithmicCeoTitle ? (
+          <>
+            <span className='block'>The Algorithmic CEO:</span>
+            <span className='block whitespace-nowrap text-[clamp(16px,2vw,22px)] leading-snug'>
+              {algorithmicCeoSubtitle}
+            </span>
+          </>
+        ) : name}
       </h1>
 
       {/* Reviews */}

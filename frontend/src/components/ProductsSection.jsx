@@ -76,10 +76,6 @@ export default function ProductsSection({ loading: externalLoading = false }) {
 
   const featuredEbook = mappedEbooks[0]
   const listEbooks = mappedEbooks.slice(1, 3)
-  const featuredTitleParts = featuredEbook?.title?.startsWith('The Algorithmic CEO:')
-    ? featuredEbook.title.split(/:\s*/, 2)
-    : null
-  const featuredSubtitleParts = featuredTitleParts?.[1]?.split(/,\s*/, 2)
 
   if (isLoading) {
     return (
@@ -151,9 +147,9 @@ export default function ProductsSection({ loading: externalLoading = false }) {
                     <div className='bg-[#0B132B] text-white text-[8px] lg:text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm'>
                       {featuredEbook.category}
                     </div>
-                    <div className='border border-[#F6B72D] text-[#F6B72D] text-[8px] lg:text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-sm'>
-                      {featuredEbook.series?.title || 'FEATURED'}
-                    </div>
+                    <div className='border border-[#F6B72D] text-[#F6B72D] text-[10px] lg:text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-sm whitespace-nowrap'>
+  {featuredEbook.series?.title || 'FEATURED'}
+</div>
                   </div>
                   <span className='max-w-[120px] shrink-0 text-right text-[#9CA3AF] text-[7px] sm:text-[8px] lg:text-[9px] font-medium tracking-wide leading-tight'>
                     {featuredEbook.tagDesc}
@@ -176,20 +172,8 @@ export default function ProductsSection({ loading: externalLoading = false }) {
 
                   {/* Right: Text & Actions */}
                   <div className='flex flex-col flex-1'>
-                    <h3 className='text-[17px] lg:text-[20px] font-bold text-[#0B132B] leading-tight mb-2'>
-                      {featuredTitleParts ? (
-                        <>
-                          <span className='block whitespace-nowrap'>{featuredTitleParts[0]}:</span>
-                          {featuredSubtitleParts?.[1] ? (
-                            <>
-                              <span className='block'>{featuredSubtitleParts[0]},</span>
-                              <span className='block'>{featuredSubtitleParts[1]}</span>
-                            </>
-                          ) : (
-                            <span className='block'>{featuredTitleParts[1]}</span>
-                          )}
-                        </>
-                      ) : featuredEbook.title}
+                    <h3 className={`mb-2 font-bold leading-tight text-[#0B132B] ${featuredEbook.title?.startsWith('The Algorithmic CEO:') ? 'whitespace-nowrap text-[clamp(10px,1.05vw,16px)]' : 'text-[17px] lg:text-[20px]'}`}>
+                      {featuredEbook.title}
                     </h3>
                     <div className='w-8 h-0.5 bg-[#F6B72D] rounded-full mb-2' />
                     <div className='bg-white/80 border border-[#E8E3D8] border-l-[3px] border-l-[#F6B72D] rounded-lg p-3 mb-3 flex h-[220px] sm:h-[240px] lg:h-[280px] min-h-0 flex-col'>

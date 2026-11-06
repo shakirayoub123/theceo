@@ -7,6 +7,7 @@ import {
   Linkedin,
   Twitter,
 } from 'lucide-react'
+import bgHeader from '@/assets/bgHeader.png'
 
 export default function BlogHeader({
   title,
@@ -30,9 +31,9 @@ export default function BlogHeader({
         <div className='relative w-full max-w-[1383px] mx-auto py-16 md:py-[70px] bg-[#FFFBF0] flex flex-col items-center justify-center overflow-hidden rounded-[28px] shadow-sm mb-12'>
           {/* Topographic Background */}
           <div
-            className='absolute inset-0 z-0 opacity-40 pointer-events-none'
+            className='absolute inset-0 z-0 pointer-events-none'
             style={{
-              backgroundImage: `url('/images/body-bg.png')`,
+              backgroundImage: `url("${bgHeader}")`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}

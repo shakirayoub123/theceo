@@ -3,6 +3,7 @@ import ProductGallery from '@/components/ProductGallery'
 import ProductInfo from '@/components/ProductInfo'
 import ProductTabs from '@/components/ProductTabs'
 import authService from '@/services/authService'
+import bgHeader from '@/assets/bgHeader.png'
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -234,9 +235,9 @@ export default function EbookDetail() {
           <div className='relative w-full max-w-[1383px] mx-auto py-16 md:py-[70px] bg-[#FFFBF0] flex flex-col items-center justify-center overflow-hidden rounded-[28px] shadow-sm mb-12'>
             {/* Topographic Background */}
             <div
-              className='absolute inset-0 z-0 opacity-40 pointer-events-none'
+              className='absolute inset-0 z-0 pointer-events-none'
               style={{
-                backgroundImage: `url('/images/body-bg.png')`,
+                backgroundImage: `url("${bgHeader}")`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
