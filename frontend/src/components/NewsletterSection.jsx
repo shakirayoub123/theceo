@@ -60,7 +60,7 @@ export default function NewsletterSection() {
   }
 
   const getEditionTitle = (edition) =>
-    edition?.title || edition?.month || 'Newsletter Edition'
+    edition?.title || edition?.name || edition?.month || 'Newsletter Edition'
 
   const getNewsletterFileUrl = (item) => {
     const raw =
@@ -264,9 +264,14 @@ export default function NewsletterSection() {
 
             {/* Right Viewer: PDF Instance */}
             <div className='flex-1 min-w-0 min-h-[280px] md:min-h-0 border border-gray-200 rounded-[16px] sm:rounded-[20px] overflow-hidden bg-[#FCFCFC] shadow-sm relative h-full flex flex-col mt-0'>
+              <div className='shrink-0 border-b border-gray-200 bg-white px-4 py-2 text-center'>
+                <h3 className='mx-auto max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-xs font-semibold text-[#000023]'>
+                  {getEditionTitle(selectedNewsletter)}
+                </h3>
+              </div>
               <div
                 ref={viewerRootRef}
-                className='w-full h-full relative'
+                className='relative w-full min-h-0 flex-1'
               >
                 {fileLoading ? (
                   <div className='h-full flex items-center justify-center bg-[#FCFCFC]'>

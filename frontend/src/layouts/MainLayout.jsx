@@ -1,6 +1,6 @@
 import Header from '../components/common/Header'
 import Footer from '../components/common/Footer'
-import PublicAIChatbot from '../components/PublicAIChatbot'
+import WebsiteQuestionChatbot from '../components/WebsiteQuestionChatbot'
 import PublicContactFormPopup from '../components/PublicContactFormPopup'
 import { Outlet } from 'react-router-dom'
 
@@ -13,7 +13,7 @@ const MainLayout = () => {
         <Outlet />
       </main>
       <Footer />
-      <PublicAIChatbot />
+      <WebsiteQuestionChatbot />
       <PublicContactFormPopup />
     </div>
   )

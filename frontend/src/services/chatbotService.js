@@ -7,6 +7,15 @@ class ChatbotService {
     this.baseURL = API_BASE_URL
   }
 
+  async askWebsiteQuestion(question) {
+    const response = await fetch(`${this.baseURL}/chat/website-question/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question }),
+    })
+    return this.handleResponse(response)
+  }
+
   // Helper method to handle API responses
   async handleResponse(response) {
     if (!response.ok) {

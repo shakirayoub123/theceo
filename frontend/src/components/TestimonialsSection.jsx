@@ -31,6 +31,17 @@ export default function TestimonialsSection() {
       ],
     },
     {
+      mentor: 'CLIENT TESTIMONIAL',
+      items: [
+        {
+          client: 'Client Testimonial',
+          title: 'The CEO Influencers Client',
+          company: '',
+          video: '/videos/testimonial-video-1.mp4',
+        },
+      ],
+    },
+    {
       mentor: 'DR. CLAIRE KEOGH',
       items: [
         {
@@ -142,8 +153,9 @@ export default function TestimonialsSection() {
                 <video
                   src={currentTestimonial.video}
                   controls
-                  className='w-full h-auto aspect-video rounded-xl shadow-lg border border-white/10'
-                  poster='/images/testimonial-placeholder.jpg'
+                  preload='metadata'
+                  aria-label='Client testimonial video'
+                  className='w-full h-auto max-h-[360px] aspect-video rounded-xl bg-black shadow-lg border border-white/10'
                 />
               </div>
             ) : (

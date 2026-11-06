@@ -24,11 +24,12 @@ const ClaireBiography = () => {
     name: 'DR. CLAIRE KEOGH (BSc IT honours, PhD)',
     title: 'International Business Consultant & Keynote Speaker',
     description:
-      'Expert in social research, business development, and creating positive work-life balance norms.',
+      'Expert in social research, business development, and creating positive work-life balance norms who positively transforms leadership and organizational performance into new heights of success',
     image: '/images/claire.jpeg',
     languages: ['English', 'Spanish'],
     experience: '20+ years of experience',
     achievements: 'Consulted 2,500+ top executive leaders',
+    clientsAdvised: '2,500+',
   }
 
   const aboutContent = [
@@ -336,7 +337,7 @@ const ClaireBiography = () => {
               }}
             ></div>
             <div className='relative z-10 text-center flex flex-col items-center px-4'>
-              <h1 className='text-3xl md:text-[42px] font-bold font-jakarta text-[#000023] mb-4 tracking-tight'>Author Profile</h1>
+              <h1 className='text-3xl md:text-[42px] font-bold font-jakarta text-[#000023] mb-4 tracking-tight'>Influencer Profile</h1>
               <div className='flex items-center text-[14px] md:text-[15px] font-semibold font-jakarta'>
                 <a href='/' className='text-[#161616] hover:text-[#F6B72D] transition-colors'>Home</a>
                 <span className='mx-3 text-[#161616] tracking-widest'>&gt;</span>

@@ -22,11 +22,12 @@ const JamesBiography = () => {
     name: 'Mr. James H. Armstrong',
     title: 'Visionary Thought Leader & Executive Coach',
     description:
-      'Highly respected visionary thought leader with extensive experience in coaching top C-level executives.',
+      "Visionary thought leader coaching top C-Suite, Vice President and Director level executives and founders to achieve breakthrough business results despite today's challenging 21st Century business landscape",
     image: '/images/james.jpg',
     languages: ['English', 'Spanish'],
     experience: '20+ years of experience',
     achievements: 'Coached 5,000+ top executive leaders',
+    clientsAdvised: '5,000+',
   }
 
   const aboutContent = [
@@ -142,7 +143,7 @@ const JamesBiography = () => {
               }}
             ></div>
             <div className='relative z-10 text-center flex flex-col items-center px-4'>
-              <h1 className='text-3xl md:text-[42px] font-bold font-jakarta text-[#000023] mb-4 tracking-tight'>Author Profile</h1>
+              <h1 className='text-3xl md:text-[42px] font-bold font-jakarta text-[#000023] mb-4 tracking-tight'>Influencer Profile</h1>
               <div className='flex items-center text-[14px] md:text-[15px] font-semibold font-jakarta'>
                 <a href='/' className='text-[#161616] hover:text-[#F6B72D] transition-colors'>Home</a>
                 <span className='mx-3 text-[#161616] tracking-widest'>&gt;</span>

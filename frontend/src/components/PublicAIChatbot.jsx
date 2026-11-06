@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
-import { MessageCircle, Send, X, Minimize2 } from 'lucide-react'
+import { Bot, Send, X, Minimize2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -288,20 +288,22 @@ const PublicAIChatbot = () => {
 
   if (!isOpen) {
     return (
-      <div className='fixed bottom-6 right-6 z-50'>
+      <div className='fixed bottom-24 right-6 z-50'>
         <Button
           onClick={toggleChat}
           className='w-14 h-14 rounded-full bg-[#F6B72D] hover:bg-[#F6B72D]/90 shadow-lg'
           size='icon'
+          aria-label='Ask the AI about our website'
+          title='Ask the AI about our website'
         >
-          <MessageCircle className='w-6 h-6 text-white' />
+          <Bot className='w-6 h-6 text-white' />
         </Button>
       </div>
     )
   }
 
   return (
-    <div className='fixed bottom-6 right-6 z-50'>
+    <div className='fixed bottom-24 right-6 z-50'>
       <Card
         className={`w-80 h-[500px] bg-white shadow-xl border-2 border-[#F6B72D] flex flex-col transition-all duration-300 font-exo ${isMinimized ? 'h-14' : ''}`}
       >

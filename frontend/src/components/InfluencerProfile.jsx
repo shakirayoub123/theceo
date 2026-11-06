@@ -8,9 +8,12 @@ export default function InfluencerProfile({
   languages,
   experience,
   achievements,
+  clientsAdvised,
   email,
   linkedin,
 }) {
+  const isClaire = name?.toUpperCase().includes('CLAIRE')
+
   return (
     <div className='flex flex-col lg:flex-row gap-8 lg:gap-14 w-full p-8 md:p-12'>
       {/* Left - Photo */}
@@ -28,7 +31,18 @@ export default function InfluencerProfile({
           <div className='w-6 h-[2px] bg-[#F6B72D]'></div>
           <p className='text-[#F6B72D] text-[11px] font-extrabold uppercase tracking-widest'>OUR INFLUENCER</p>
         </div>
-        <h2 className='text-[36px] md:text-[42px] leading-[1.1] font-bold text-[#000023] mb-5 tracking-tight'>{name}</h2>
+        <h2
+          className={`${isClaire ? 'text-[clamp(1rem,2vw,1.75rem)] whitespace-nowrap' : 'text-[36px] md:text-[42px]'} leading-[1.1] font-bold text-[#000023] mb-5 tracking-tight`}
+        >
+          {name}
+        </h2>
+        {title && (
+          <p
+            className='-mt-3 mb-4 max-w-full truncate whitespace-nowrap text-xs font-semibold text-[#4B5563] sm:text-sm'
+          >
+            {title}
+          </p>
+        )}
         <p className='text-[#4B5563] mb-8 text-[16px] leading-[1.6] max-w-[550px]'>{description}</p>
 
         {/* Stats Grid */}
@@ -47,8 +61,8 @@ export default function InfluencerProfile({
               <Award className='h-4 w-4' />
               <span className='text-[10px] font-bold tracking-widest uppercase'>Leadership</span>
             </div>
-            <div className='text-[32px] font-black text-[#000023] mb-1 leading-none'>7,500+</div>
-            <p className='text-[#9CA3AF] text-[10px] tracking-widest uppercase font-semibold'>Top Executive Leaders</p>
+            <div className='text-[32px] font-black text-[#000023] mb-1 leading-none'>{clientsAdvised}</div>
+            <p className='text-[#9CA3AF] text-[10px] tracking-widest uppercase font-semibold'>Clients Advised</p>
           </div>
 
           <div className='border border-gray-200 rounded-[10px] p-5 flex flex-col justify-center bg-white shadow-sm hover:shadow-md transition-shadow'>

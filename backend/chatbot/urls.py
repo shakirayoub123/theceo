@@ -6,6 +6,7 @@ from .views import (
     StartChatView,
     StartAIChatView,
     GetAIChatMessagesView,
+    WebsiteQuestionView,
 )
 
 urlpatterns = [
@@ -18,6 +19,7 @@ urlpatterns = [
     path("sendMessage/", SendMessageView.as_view(), name="send_message"),
     path("startChat/", StartChatView.as_view(), name="start_chat"),
     path("startAIChat/", StartAIChatView.as_view(), name="start_ai_chat"),
+    path("website-question/", WebsiteQuestionView.as_view(), name="website_question"),
     path(
         "getAIChatMessages/<str:chat_uuid>/",
         GetAIChatMessagesView.as_view(),
