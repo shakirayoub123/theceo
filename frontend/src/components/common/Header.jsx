@@ -103,6 +103,9 @@ export default function Header() {
                 <a href='/#services-section' className='text-white text-[13px] xl:text-[14px] font-normal leading-normal tracking-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap'>
                   Services
                 </a>
+                <a href='/#salient-features' className='text-white text-[13px] xl:text-[14px] font-normal leading-normal tracking-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap'>
+                  Salient Features
+                </a>
                 <a href='/#our-team' className='text-white text-[13px] xl:text-[14px] font-normal leading-normal tracking-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap'>
                   Influencers
                 </a>

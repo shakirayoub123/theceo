@@ -13,6 +13,9 @@ export default function NewsletterSection() {
   const [blobFileUrl, setBlobFileUrl] = useState(null)
   const [fileLoadError, setFileLoadError] = useState('')
   const [fileLoading, setFileLoading] = useState(false)
+  const [thumbnailSources, setThumbnailSources] = useState({})
+  const [failedThumbnailIds, setFailedThumbnailIds] = useState(() => new Set())
+  const thumbnailRetryIds = useRef(new Set())
   const viewerRootRef = useRef(null)
 
   useEffect(() => {
@@ -61,6 +64,50 @@ export default function NewsletterSection() {
 
   const getEditionTitle = (edition) =>
     edition?.title || edition?.name || edition?.month || 'Newsletter Edition'
+
+  const getEditionThumbnailUrl = (edition) =>
+    getAssetUrl(
+      edition?.thumbnailImage?.url ||
+        edition?.thumbnailImage ||
+        edition?.thumbnailImageUrl ||
+        edition?.image ||
+        edition?.cover_image,
+    ) || '/images/ebook.svg'
+
+  const handleThumbnailError = async (edition) => {
+    const editionId = String(edition?.id || '')
+    if (!editionId || thumbnailRetryIds.current.has(editionId)) {
+      setFailedThumbnailIds((previous) => new Set(previous).add(editionId))
+      return
+    }
+
+    thumbnailRetryIds.current.add(editionId)
+
+    try {
+      // Public newsletter thumbnail URLs are signed and can expire while the
+      // page is open. Refresh the list once to obtain a current URL instead of
+      // leaving the ebook placeholder visible until a full page reload.
+      const refreshedData = await authService.getAllNewsletters()
+      const refreshedEdition = refreshedData?.newsletters?.find(
+        (item) => String(item.id) === editionId,
+      )
+      const refreshedThumbnail = getEditionThumbnailUrl(refreshedEdition)
+
+      if (!refreshedEdition || refreshedThumbnail === '/images/ebook.svg') {
+        throw new Error('Newsletter thumbnail is unavailable')
+      }
+
+      const retryUrl = new URL(refreshedThumbnail, window.location.href)
+      retryUrl.searchParams.set('_retry', String(Date.now()))
+      setThumbnailSources((previous) => ({
+        ...previous,
+        [editionId]: retryUrl.href,
+      }))
+    } catch (error) {
+      console.error('Failed to refresh newsletter thumbnail:', error)
+      setFailedThumbnailIds((previous) => new Set(previous).add(editionId))
+    }
+  }
 
   const getNewsletterFileUrl = (item) => {
     const raw =
@@ -227,6 +274,10 @@ export default function NewsletterSection() {
             {/* Left Sidebar: Thumbnails */}
             <div className='newsletter-sidebar-scroll w-full md:w-[230px] lg:w-[260px] md:h-full bg-transparent overflow-x-auto md:overflow-x-hidden md:overflow-y-auto pb-2 md:pb-0 md:pr-2 shrink-0 flex flex-row md:flex-col items-stretch gap-3'>
               {displayEditions.map((edition, index) => {
+                const editionId = String(edition.id || index)
+                const thumbnailSrc = failedThumbnailIds.has(editionId)
+                  ? '/images/ebook.svg'
+                  : thumbnailSources[editionId] || getEditionThumbnailUrl(edition)
                 const isActive = selectedNewsletter?.id
                   ? selectedNewsletter.id === edition.id
                   : index === 0
@@ -244,17 +295,13 @@ export default function NewsletterSection() {
                   >
                     <div className='w-full h-[140px] sm:h-[165px] md:h-[185px] bg-[#E8EDF3] rounded-[10px] overflow-hidden'>
                       <img
-                        src={
-                          getAssetUrl(edition.thumbnailImage?.url || edition.thumbnailImage) ||
-                          getAssetUrl(edition.thumbnailImageUrl) ||
-                          getAssetUrl(edition.image) ||
-                          getAssetUrl(edition.cover_image) ||
-                          '/images/ebook.svg'
-                        }
+                        key={`${editionId}-${thumbnailSrc}`}
+                        src={thumbnailSrc}
                         alt={`${getEditionTitle(edition)}`}
                         className='object-cover h-full w-full transition-transform duration-300 group-hover:scale-[1.04]'
-                        loading='lazy'
-                        onError={(event) => { event.currentTarget.src = '/images/ebook.svg' }}
+                        loading={index === 0 ? 'eager' : 'lazy'}
+                        fetchPriority={index === 0 ? 'high' : 'auto'}
+                        onError={() => handleThumbnailError(edition)}
                       />
                     </div>
                   </button>

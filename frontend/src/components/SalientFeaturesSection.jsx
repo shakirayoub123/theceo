@@ -84,7 +84,7 @@ export default function SalientFeaturesSection() {
               Salient <span className='text-[#F6B72D]'>Features</span>
             </h2>
             <p className='text-[12px] md:text-[13px] leading-[19px] md:leading-[21px] text-gray-300 max-w-[820px] mx-auto'>
-              Together, Claire and James have successfully served 7,500+ executive clients over 20+ years. We believe true leadership is about people, not power, and empower next-generation leaders with the skills, values, and mindset to create lasting business and social impact.
+              Claire and James bring more than 20 years of combined experience, having successfully served over 7,500 executive clients worldwide. Their shared philosophy is that exceptional leadership is defined not by power or position, but by the ability to develop people, inspire progress, and equip the next generation of leaders with the skills, values, and mindset to drive meaningful, sustainable business and societal impact.
             </p>
           </div>
 

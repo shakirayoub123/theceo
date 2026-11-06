@@ -11,6 +11,7 @@ import {
   MessageSquareQuote,
   Lightbulb,
   Mail,
+  Sparkles,
 } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
@@ -48,6 +49,12 @@ export default function Sidebar({ isOpen, onClose }) {
       icon: Briefcase,
       label: 'Services',
       href: '/#services-section',
+      isAnchor: true,
+    },
+    {
+      icon: Sparkles,
+      label: 'Salient Features',
+      href: '/#salient-features',
       isAnchor: true,
     },
     {

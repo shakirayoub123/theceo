@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -11,7 +11,7 @@ import mapBg from '@/assets/map bg 2.png'
 export default function ServicesSection() {
   const { t } = useTranslation()
   const [programs, setPrograms] = useState([])
-  const [currentPage, setCurrentPage] = useState(0)
+  const programsTrackRef = useRef(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -142,12 +142,22 @@ export default function ServicesSection() {
       )
     })
     .map(({ program }) => program)
-  const programsPerPage = 3
-  const pageCount = Math.ceil(displayPrograms.length / programsPerPage)
-  const visiblePrograms = displayPrograms.slice(
-    currentPage * programsPerPage,
-    (currentPage + 1) * programsPerPage,
-  )
+  const scrollPrograms = (direction) => {
+    const track = programsTrackRef.current
+    if (!track) return
+
+    track.scrollBy({
+      left: direction * track.clientWidth,
+      behavior: 'smooth',
+    })
+  }
+
+  const toTitleCase = (title) =>
+    title
+      .toLocaleLowerCase()
+      .replace(/(^|[\s:–—-])([a-z])/g, (_, separator, letter) =>
+        `${separator}${letter.toLocaleUpperCase()}`,
+      )
 
   if (loading) {
     return (
@@ -164,7 +174,7 @@ export default function ServicesSection() {
   return (
     <section
       id='services-section'
-      className='py-8 lg:py-10 relative overflow-hidden bg-[#FCFBF7] font-jakarta min-h-[calc(100svh-72px)] flex flex-col justify-center'
+      className='py-6 lg:py-8 relative overflow-hidden bg-[#FCFBF7] font-jakarta min-h-[calc(100svh-72px)] flex flex-col justify-center'
     >
       <div
         aria-hidden='true'
@@ -174,8 +184,8 @@ export default function ServicesSection() {
       <div className='w-full max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
 
         {/* Header Section */}
-        <div className='flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-10 gap-4'>
-          <div className='flex-1'>
+        <div className='flex flex-col items-center text-center mb-6 md:mb-8 gap-4'>
+          <div className='w-full'>
             <div className='inline-block border border-[#334155]/60 rounded-full px-4 py-1 mb-3'>
               <span className='text-[#334155] font-semibold tracking-[0.08em] text-[10px] uppercase'>
                 What We Provide
@@ -184,26 +194,24 @@ export default function ServicesSection() {
             <h2 className='text-[30px] lg:text-[40px] leading-[1.1] tracking-[-1.01px] font-bold text-[#000023] mb-2 uppercase font-jakarta'>
               Our <span className='text-[#F6B72D]'>Services</span>
             </h2>
-            <p className='text-[13px] lg:text-[15px] leading-[24px] font-normal text-[#4B5563] max-w-full whitespace-nowrap overflow-hidden text-ellipsis'>We deliver tailored leadership and performance programs empowering leaders with clarity and confidence.</p>
+            <p className='text-[13px] lg:text-[15px] leading-[24px] font-normal text-[#4B5563] max-w-3xl mx-auto'>We deliver tailored leadership and performance programs empowering leaders with clarity and confidence.</p>
           </div>
 
           {/* Top Right Arrows */}
-          <div className='flex gap-4 items-center'>
+          <div className='flex gap-3 items-center justify-center'>
             <button
               aria-label='Previous services'
-              onClick={() => setCurrentPage((page) => Math.max(0, page - 1))}
-              disabled={currentPage === 0}
-              className='w-12 h-12 rounded-full border border-[#CBD5E1] bg-white flex items-center justify-center hover:bg-[#F8FAFC] transition-colors disabled:opacity-40 disabled:cursor-not-allowed'
+              onClick={() => scrollPrograms(-1)}
+              className='w-10 h-10 rounded-full border border-[#CBD5E1] bg-white flex items-center justify-center hover:bg-[#F8FAFC] transition-colors'
             >
               <ChevronLeft className='w-5 h-5 text-[#111827]' />
             </button>
             <button
               aria-label='Next services'
-              onClick={() => setCurrentPage((page) => Math.min(pageCount - 1, page + 1))}
-              disabled={currentPage >= pageCount - 1}
-              className='w-12 h-12 rounded-full bg-[#000023] flex items-center justify-center hover:bg-[#11113A] transition-colors disabled:opacity-40 disabled:cursor-not-allowed'
+              onClick={() => scrollPrograms(1)}
+              className='w-10 h-10 rounded-full bg-[#F6B72D] flex items-center justify-center hover:bg-[#E9A91E] transition-colors'
             >
-              <ChevronRight className='w-5 h-5 text-white' />
+              <ChevronRight className='w-5 h-5 text-[#000023]' />
             </button>
           </div>
         </div>
@@ -215,13 +223,17 @@ export default function ServicesSection() {
           </div>
         )}
 
-        <div className='grid grid-cols-1 md:grid-cols-3 items-stretch gap-5 lg:gap-6'>
-          {visiblePrograms.map((program, index) => {
-            const programIndex = currentPage * programsPerPage + index
-            const programTitle = (program.title || program.name || 'Program').replace(
+        <div
+          ref={programsTrackRef}
+          className='flex items-stretch gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2'
+          style={{ scrollbarWidth: 'thin' }}
+        >
+          {displayPrograms.map((program, programIndex) => {
+            const rawProgramTitle = (program.title || program.name || 'Program').replace(
               /^P\.?\s*\d+\s*/i,
               '',
             )
+            const programTitle = toTitleCase(rawProgramTitle)
             const programDescription = stripHtml(
               program.description ||
                 program.fullDescription ||
@@ -238,12 +250,12 @@ export default function ServicesSection() {
             return (
               <div
                 key={program.id}
-                className='h-full rounded-[20px] flex flex-col p-5 lg:p-6 relative group transition-all duration-300 ease-out bg-white/95 border border-[#E5E7EB] shadow-[0_12px_30px_rgba(0,0,35,0.06)] hover:scale-[1.02] hover:-translate-y-1 hover:z-20 hover:bg-[#000023] hover:border-[#312E81]/40 hover:shadow-[0_24px_48px_rgba(0,0,35,0.2)] focus-within:scale-[1.01] focus-within:-translate-y-1 focus-within:z-20 focus-within:bg-[#000023] focus-within:border-[#312E81]/40 focus-within:shadow-[0_24px_48px_rgba(0,0,35,0.2)]'
+                className='w-[88%] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 snap-start h-full rounded-[20px] flex flex-col p-5 lg:p-6 relative group transition-all duration-300 ease-out bg-white/95 border border-[#E5E7EB] shadow-[0_12px_30px_rgba(0,0,35,0.06)] hover:scale-[1.02] hover:-translate-y-1 hover:z-20 hover:bg-[#000023] hover:border-[#312E81]/40 hover:shadow-[0_24px_48px_rgba(0,0,35,0.2)] focus-within:scale-[1.01] focus-within:-translate-y-1 focus-within:z-20 focus-within:bg-[#000023] focus-within:border-[#312E81]/40 focus-within:shadow-[0_24px_48px_rgba(0,0,35,0.2)]'
               >
                 {/* Arrow icon absolute positioned at top-right */}
                 <Link to={program.id ? `/service/${program.id}` : '#'} aria-label={`View Program ${programIndex + 1}: ${programTitle}`} className='absolute top-5 right-5 z-20 group-hover:scale-110 transition-transform duration-300'>
-                  <div className='w-[38px] h-[38px] rounded-full border border-[#E5E7EB] bg-white flex items-center justify-center shadow-sm group-hover:border-white'>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-[#0B132B]" />
+                  <div className='w-[38px] h-[38px] rounded-full border border-[#F6B72D] bg-[#F6B72D] flex items-center justify-center shadow-sm'>
+                    <ArrowUpRight className='w-3.5 h-3.5 text-[#000023]' />
                   </div>
                 </Link>
 
@@ -276,22 +288,6 @@ export default function ServicesSection() {
           })}
         </div>
 
-        {/* Pagination Dots */}
-        {pageCount > 1 && (
-          <div className='flex items-center justify-center gap-2.5 mt-6'>
-            {Array.from({ length: pageCount }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i)}
-                aria-label={`Go to page ${i + 1}`}
-                className={`rounded-full transition-all duration-300 ${i === currentPage
-                    ? 'w-6 h-2.5 bg-[#000023]'
-                    : 'w-2.5 h-2.5 bg-[#CBD5E1] hover:bg-[#94A3B8]'
-                  }`}
-              />
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Appointment Modal */}

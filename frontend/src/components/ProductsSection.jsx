@@ -76,6 +76,10 @@ export default function ProductsSection({ loading: externalLoading = false }) {
 
   const featuredEbook = mappedEbooks[0]
   const listEbooks = mappedEbooks.slice(1, 3)
+  const featuredTitleParts = featuredEbook?.title?.startsWith('The Algorithmic CEO:')
+    ? featuredEbook.title.split(/:\s*/, 2)
+    : null
+  const featuredSubtitleParts = featuredTitleParts?.[1]?.split(/,\s*/, 2)
 
   if (isLoading) {
     return (
@@ -101,8 +105,8 @@ export default function ProductsSection({ loading: externalLoading = false }) {
       <div className='max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
 
         {/* Header Block */}
-        <div className='flex flex-col md:flex-row md:items-end md:justify-between mb-4 lg:mb-5 gap-3'>
-          <div className='max-w-3xl mx-auto text-center md:mx-0 md:text-left'>
+        <div className='flex flex-col items-center mb-4 lg:mb-5 gap-3'>
+          <div className='max-w-3xl mx-auto text-center'>
             <div className='inline-block border border-gray-400 rounded-full px-4 py-[2px] mb-2'>
               <span className='text-[#4B5563] font-bold tracking-widest text-[9px] lg:text-[10px] uppercase'>
                 WHAT WE PROVIDE
@@ -118,7 +122,7 @@ export default function ProductsSection({ loading: externalLoading = false }) {
           </div>
 
           {/* Stats Meta */}
-          <div className='flex items-center gap-6 md:gap-8 pb-1 shrink-0'>
+          <div className='flex items-center justify-center gap-6 md:gap-8 pb-1 shrink-0'>
             <div className='flex flex-col'>
               <span className='text-[#9CA3AF] text-[9px] lg:text-[10px] font-bold uppercase tracking-wider mb-0.5'>CURATION</span>
               <span className='text-[#111827] text-[12px] lg:text-[13px] font-bold'>SERIES I-III / EBOOKS 1-12</span>
@@ -173,7 +177,19 @@ export default function ProductsSection({ loading: externalLoading = false }) {
                   {/* Right: Text & Actions */}
                   <div className='flex flex-col flex-1'>
                     <h3 className='text-[17px] lg:text-[20px] font-bold text-[#0B132B] leading-tight mb-2'>
-                      {featuredEbook.title}
+                      {featuredTitleParts ? (
+                        <>
+                          <span className='block whitespace-nowrap'>{featuredTitleParts[0]}:</span>
+                          {featuredSubtitleParts?.[1] ? (
+                            <>
+                              <span className='block'>{featuredSubtitleParts[0]},</span>
+                              <span className='block'>{featuredSubtitleParts[1]}</span>
+                            </>
+                          ) : (
+                            <span className='block'>{featuredTitleParts[1]}</span>
+                          )}
+                        </>
+                      ) : featuredEbook.title}
                     </h3>
                     <div className='w-8 h-0.5 bg-[#F6B72D] rounded-full mb-2' />
                     <div className='bg-white/80 border border-[#E8E3D8] border-l-[3px] border-l-[#F6B72D] rounded-lg p-3 mb-3 flex h-[220px] sm:h-[240px] lg:h-[280px] min-h-0 flex-col'>
