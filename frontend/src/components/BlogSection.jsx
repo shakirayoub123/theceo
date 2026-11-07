@@ -112,13 +112,16 @@ export default function BlogSection({ blogs = [], loading = false }) {
                 to={`/blog/${featuredPost.slug}`}
                 className='site-hover-highlight group flex flex-col bg-white rounded-[18px] border border-[#E5E7EB] shadow-[0_10px_24px_rgba(15,23,42,0.06)] hover:shadow-lg transition-all duration-300 h-full overflow-hidden'
               >
-                <div className='w-full aspect-[1.9/1] lg:aspect-[2.4/1] overflow-hidden bg-[#F3F4F6] flex items-center justify-center'>
+                <div className='relative w-full aspect-[1.9/1] lg:aspect-[2.4/1] overflow-hidden bg-[#F3F4F6] flex items-center justify-center'>
                   <img
                     src={getAssetUrl(featuredPost.image)}
                     alt={featuredPost.title}
                     className='w-full h-full object-cover'
                     onError={(e) => { e.target.src = '/images/blog1.svg' }}
                   />
+                  <span className={`absolute left-4 top-4 inline-block rounded-sm px-3 py-1.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.1em] text-white shadow ${featuredPost.categoryColor}`}>
+                    {featuredPost.category}
+                  </span>
                 </div>
 
                 <div className='flex flex-col flex-1 min-w-0 px-5 py-4 lg:px-6 lg:py-5'>

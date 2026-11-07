@@ -58,12 +58,6 @@ export default function Blog() {
     )
   }
 
-  const breadcrumbItems = [
-    { label: 'Home', href: '/' },
-    { label: 'Blog', href: '/#blog' },
-    { label: blogData.title.substring(0, 30) + '...' },
-  ]
-
   const normalizedAuthor =
     blogData.author && blogData.author.toLowerCase() !== 'super admin'
       ? blogData.author
@@ -77,6 +71,30 @@ export default function Blog() {
     viewsCount: blogData.viewsCount,
   }
   const shareUrl = `https://theceoinfluencers.com/blog/${slug}`
+
+  const handleDownloadBlog = () => {
+    const articleText = new DOMParser().parseFromString(
+      blogData.content || '',
+      'text/html',
+    ).body.innerText
+    const downloadContent = [
+      blogData.title,
+      `Topic: ${blogData.topic || 'Business Insight'}`,
+      `Author: ${normalizedAuthor || 'The CEO Influencers'}`,
+      `Published: ${blogHeaderData.publishedDate}`,
+      '',
+      articleText,
+    ].join('\n')
+    const file = new Blob([downloadContent], { type: 'text/plain;charset=utf-8' })
+    const downloadUrl = URL.createObjectURL(file)
+    const link = document.createElement('a')
+    link.href = downloadUrl
+    link.download = `${slug || 'blog'}.txt`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(downloadUrl)
+  }
 
   return (
     <div className='min-h-screen bg-white font-jakarta'>
@@ -153,6 +171,8 @@ export default function Blog() {
         featuredImage={blogHeaderData.featuredImage}
         author={blogHeaderData.author}
         viewsCount={blogHeaderData.viewsCount}
+        topic={blogData.topic}
+        onDownload={handleDownloadBlog}
         shareUrl={shareUrl}
         shareTitle={blogData.title}
       />

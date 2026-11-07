@@ -6,6 +6,7 @@ import {
   Facebook,
   Linkedin,
   Twitter,
+  Download,
 } from 'lucide-react'
 import bgHeader from '@/assets/bgHeader.png'
 
@@ -16,6 +17,8 @@ export default function BlogHeader({
   featuredImage,
   author,
   viewsCount,
+  topic,
+  onDownload,
   shareUrl,
   shareTitle,
 }) {
@@ -66,6 +69,11 @@ export default function BlogHeader({
         </h1>
 
         <div className='flex flex-wrap items-center gap-6 text-gray-500 font-exo mb-6 text-[15px]'>
+          {topic && (
+            <span className='rounded-full bg-[#F6B72D]/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#9A6700]'>
+              {topic.replace(/-/g, ' ')}
+            </span>
+          )}
           <div className='flex items-center gap-2'>
             <Calendar className='h-4 w-4 text-[#F6B72D]' />
             <span>{publishedDate}</span>
@@ -117,6 +125,14 @@ export default function BlogHeader({
           >
             <Twitter className='h-4 w-4' />
           </a>
+          <button
+            type='button'
+            onClick={onDownload}
+            className='inline-flex h-10 items-center gap-2 rounded-full bg-[#000023] px-4 text-sm font-bold text-white transition-colors hover:bg-[#1B1B45]'
+          >
+            <Download className='h-4 w-4' aria-hidden='true' />
+            Download Blog
+          </button>
         </div>
       </div>
     </div>

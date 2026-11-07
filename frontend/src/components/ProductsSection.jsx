@@ -148,8 +148,8 @@ export default function ProductsSection({ loading: externalLoading = false }) {
                       {featuredEbook.category}
                     </div>
                     <div className='border border-[#F6B72D] text-[#F6B72D] text-[10px] lg:text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-sm whitespace-nowrap'>
-  {featuredEbook.series?.title || 'FEATURED'}
-</div>
+                      {featuredEbook.series?.title || 'FEATURED'}
+                    </div>
                   </div>
                   <span className='max-w-[120px] shrink-0 text-right text-[#9CA3AF] text-[7px] sm:text-[8px] lg:text-[9px] font-medium tracking-wide leading-tight'>
                     {featuredEbook.tagDesc}
