@@ -31,6 +31,7 @@ import MasterDashboard from '@/pages/dashboard/master/MasterDashboard'
 import Newsletter from '@/pages/dashboard/master/Newsletter'
 import Referrals from '@/pages/dashboard/master/Referrals'
 import Series from '@/pages/dashboard/master/Series'
+import SiteSettings from '@/pages/dashboard/master/SiteSettings'
 import ServiceDetails from '@/pages/dashboard/master/ServiceDetails'
 import Services from '@/pages/dashboard/master/Services'
 import UserDetail from '@/pages/dashboard/master/UserDetail'
@@ -241,6 +242,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={['master', 'admin']}>
               <Referrals />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={URLS.master.siteSettings}
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <SiteSettings />
             </ProtectedRoute>
           }
         />

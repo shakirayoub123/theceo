@@ -2,7 +2,8 @@ import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import PaymentForm from './PaymentForm'
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY)
+const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY
+const stripePromise = stripePublicKey ? loadStripe(stripePublicKey) : null
 
 export default function StripeCheckoutWrapper({
   total,
@@ -25,6 +26,14 @@ export default function StripeCheckoutWrapper({
         <p className='font-jakarta font-medium text-[15px] text-[#797979]'>
           Please complete and save your billing details first to proceed with payment.
         </p>
+      </div>
+    )
+  }
+
+  if (!stripePromise) {
+    return (
+      <div role='status' className='rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900'>
+        Online checkout is temporarily unavailable. Please contact us for help completing your purchase.
       </div>
     )
   }

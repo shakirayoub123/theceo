@@ -30,11 +30,17 @@ export const AuthProvider = ({ children }) => {
     const initializeAuth = async () => {
       try {
         const userData = await authService.getCurrentUser()
+        if (!userData) {
+          clearAuthState()
+          return
+        }
         setUser(userData)
         setIsAuthenticated(true)
         setToken('cookie-authenticated')
       } catch (error) {
-        console.error('Auth initialization error:', error)
+        if (error.httpStatus !== 401) {
+          console.error('Auth initialization error:', error)
+        }
         clearAuthState()
       } finally {
         setLoading(false)

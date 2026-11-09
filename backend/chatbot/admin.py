@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ChatSession, ChatMessage
+from .models import ChatSession, ChatMessage, SiteFeatureSettings
 
 
 class ChatMessageInline(admin.TabularInline):
@@ -50,3 +50,13 @@ class ChatMessageAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         """Optimize queryset with select_related"""
         return super().get_queryset(request).select_related("session", "sender")
+
+
+@admin.register(SiteFeatureSettings)
+class SiteFeatureSettingsAdmin(admin.ModelAdmin):
+    list_display = ("chatbot_enabled", "updated_at")
+    fields = ("chatbot_enabled", "updated_at")
+    readonly_fields = ("updated_at",)
+
+    def has_add_permission(self, request):
+        return not SiteFeatureSettings.objects.exists()

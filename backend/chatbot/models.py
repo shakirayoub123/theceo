@@ -1,7 +1,32 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 User = get_user_model()
+
+
+class SiteFeatureSettings(models.Model):
+    """Singleton configuration for public website features."""
+
+    chatbot_enabled = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name = "site feature settings"
+        verbose_name_plural = "site feature settings"
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        self.updated_at = timezone.now()
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def load(cls):
+        settings, _ = cls.objects.get_or_create(pk=1)
+        return settings
+
+    def __str__(self):
+        return "Website feature settings"
 
 
 class ChatSession(models.Model):

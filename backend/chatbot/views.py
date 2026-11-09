@@ -2,10 +2,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.db.utils import DatabaseError
 from .models import ChatSession, ChatMessage, AIChatSession, AIChatMessage
+from .models import SiteFeatureSettings
 from .serializers import (
     ChatSessionSerializer,
     ChatMessageSerializer,
@@ -18,6 +20,7 @@ from html import unescape
 from pathlib import Path
 from django.utils.html import strip_tags
 from lms.models import Service, Ebook, Blog, Newsletter
+from authentication.permissions import IsAdmin
 
 User = get_user_model()
 
@@ -42,6 +45,34 @@ _TOPIC_SYNONYMS = {
 }
 
 
+def _question_intent(question):
+    normalized = (question or "").lower()
+    terms = _question_terms(normalized)
+
+    if terms & {"case", "study", "studies", "spirit"}:
+        return "case_study"
+    if terms & {"influencer", "influencers", "team", "mentor", "mentors", "james", "claire", "people"}:
+        return "team"
+    if terms & {"newsletter", "newsletters", "quarterly", "bulletin"}:
+        return "newsletter"
+    if terms & {"ebook", "ebooks", "book", "books", "guide", "guides"}:
+        return "ebook"
+    if terms & {
+        "blog", "blogs", "article", "articles", "insight", "insights", "post", "posts",
+        "algorithm", "algorithms", "pressure", "resilience", "collaboration",
+    }:
+        return "blog"
+    if "salient" in terms or "feature" in terms or "features" in terms:
+        return "feature"
+    if "program" in terms or "programs" in terms:
+        return "program"
+    if terms & {"service", "services", "offer", "offers", "coaching", "consulting", "seminar", "seminars", "keynote", "mastermind"}:
+        return "service"
+    if terms & {"contact", "email", "phone", "call", "reach"}:
+        return "contact"
+    return "website"
+
+
 def _expanded_terms(value):
     terms = _question_terms(value)
     expanded = set(terms)
@@ -59,7 +90,7 @@ def _plain_text(value):
 def _question_terms(value):
     return {
         term for term in re.findall(r"[a-z0-9]+", (value or "").lower())
-        if len(term) > 2 and term not in _STOP_WORDS
+        if (len(term) > 2 or term.isdigit()) and term not in _STOP_WORDS
     }
 
 
@@ -68,7 +99,7 @@ def _content_candidates():
         {
             "title": "The CEO Influencers",
             "kind": "About us",
-            "topics": {"website", "team", "contact", "service"},
+            "topics": {"website", "contact"},
             "text": (
                 "The CEO Influencers website describes an international executive "
                 "leadership coaching and organizational performance consultancy. "
@@ -78,6 +109,26 @@ def _content_candidates():
                 "train-the-trainer programs, keynote speaking, business-to-business "
                 "consulting, and executive career coaching. "
                 "Contact us at info@theceoinfluencers.com or +1 702 760 3158."
+            ),
+        },
+        {
+            "title": "Our Influencers",
+            "kind": "Team overview",
+            "topics": {"team"},
+            "text": (
+                "James H. Armstrong is a visionary thought leader and executive coach, and Dr. Claire Keogh is an international "
+                "business consultant and keynote speaker. "
+                "Together they bring more than 20 years of combined experience and have advised over 7,500 executive clients worldwide."
+            ),
+        },
+        {
+            "title": "Our Services",
+            "kind": "Service overview",
+            "topics": {"service"},
+            "text": (
+                "The CEO Influencers' services include live and virtual executive leadership coaching, client-site leadership seminars, "
+                "international mastermind networking events and classes, train-the-trainer programs, keynote guest speakers, "
+                "business-to-business consulting, and live executive career coaching."
             ),
         },
         {
@@ -127,7 +178,7 @@ def _content_candidates():
         {
             "title": "Program 1: Live 2:1 Executive Leadership Coaching",
             "kind": "Program overview",
-            "topics": {"program", "programs", "service", "coaching"},
+            "topics": {"program"},
             "text": (
                 "Program 1 is the Live 2:1 Executive Leadership Coaching program. It is a live twelve-week Zoom coaching program with nine months of continuous support. "
                 "It uses the Two-to-One Advantage model, where leaders receive guidance from two expert mentors focused on their real-world leadership advantage. "
@@ -140,19 +191,44 @@ def _content_candidates():
     if qna_path.exists():
         try:
             with qna_path.open("r", encoding="utf-8") as handle:
-                qna_items = json.load(handle)
+                qna_data = json.load(handle)
+                qna_items = qna_data.get("faqs", []) if isinstance(qna_data, dict) else qna_data
             for item in qna_items:
                 answer = (item.get("answer") or "").strip()
-                question = (item.get("question") or "").strip()
                 section = (item.get("section") or "Website FAQ").strip()
                 if not answer:
                     continue
-                content = f"{section}. {question}. {answer}"
+                questions = item.get("questions") or [item.get("question", "")]
+                questions = [value.strip() for value in questions if isinstance(value, str) and value.strip()]
+                keywords = item.get("keywords", [])
+                if isinstance(keywords, str):
+                    keywords = [keywords]
+                query_text = " ".join(questions + [str(value) for value in keywords])
+                normalized_section = " ".join([
+                    section.lower(),
+                    str(item.get("category", "")).lower(),
+                ])
+                if "case stud" in normalized_section:
+                    topic = "case_study"
+                elif "program" in normalized_section:
+                    topic = "program"
+                elif "service" in normalized_section:
+                    topic = "service"
+                elif "feature" in normalized_section or "salient" in normalized_section:
+                    topic = "feature"
+                else:
+                    topic = _question_intent(query_text)
+                    if topic == "website" and any(word in normalized_section for word in ("company", "support", "content")):
+                        topic = "website"
+                question_title = questions[0] if questions else section
                 candidates.append({
-                    "title": section,
+                    "title": question_title,
                     "kind": "Website FAQ",
-                    "topics": {"program", "service", "website", "feature", "faq"},
-                    "text": content,
+                    "topics": {topic},
+                    "text": f"{section}. {question_title}. {answer}",
+                    "question_variants": questions,
+                    "keywords": keywords,
+                    "category": item.get("category", ""),
                 })
         except (json.JSONDecodeError, OSError):
             logger.exception("Website Q&A could not load qna index")
@@ -178,6 +254,29 @@ def _content_candidates():
         except (json.JSONDecodeError, OSError):
             logger.exception("Website Q&A could not load frontend salient features")
 
+    frontend_root = Path(__file__).resolve().parent.parent.parent / "frontend"
+    for markdown_path in sorted(frontend_root.glob("case-study-*.md")):
+        match = re.search(r"case-study-(\d+)", markdown_path.stem)
+        if not match:
+            continue
+        case_number = match.group(1)
+        try:
+            markdown = markdown_path.read_text(encoding="utf-8").strip()
+        except OSError:
+            logger.exception("Website Q&A could not load %s", markdown_path.name)
+            continue
+        title_match = re.search(r"^#\s+(.+)$", markdown, re.MULTILINE)
+        case_title = title_match.group(1).strip() if title_match else f"Case Study {case_number}"
+        candidates.append({
+            "title": f"Case Study {case_number}: {case_title}",
+            "kind": "Case study",
+            "topics": {"case_study"},
+            "text": markdown,
+            "question_variants": [f"case study {case_number}", case_title],
+            "url": f"/case-studies/{case_number}",
+            "download_url": f"/pdfs/case-study-{case_number}.pdf",
+        })
+
     content_sources = (
         (
             "services",
@@ -185,6 +284,8 @@ def _content_candidates():
             "Service",
             lambda item: " ".join(filter(None, [item.short_description, item.description])),
             {"service"},
+            lambda item: item.featured_image,
+            lambda item: "/#services-section",
         ),
         (
             "eBooks",
@@ -192,6 +293,8 @@ def _content_candidates():
             "eBook",
             lambda item: item.description,
             {"ebook"},
+            lambda item: item.cover_image,
+            lambda item: f"/ebook-detail/{item.id}",
         ),
         (
             "blogs",
@@ -199,6 +302,8 @@ def _content_candidates():
             "Blog",
             lambda item: " ".join(filter(None, [item.short_description, item.content])),
             {"blog"},
+            lambda item: item.thumbnail_image,
+            lambda item: f"/blog/{item.slug}",
         ),
         (
             "newsletters",
@@ -206,18 +311,28 @@ def _content_candidates():
             "Newsletter",
             lambda item: item.short_description,
             {"newsletter"},
+            lambda item: item.thumbnail_image,
+            lambda item: f"/newsletters/{item.id}",
         ),
     )
 
-    for source_name, queryset_factory, kind, text_getter, topics in content_sources:
+    for source_name, queryset_factory, kind, text_getter, topics, image_getter, url_getter in content_sources:
         try:
             for item in queryset_factory():
-                candidates.append({
+                candidate = {
                     "title": item.title,
                     "kind": kind,
                     "text": _plain_text(text_getter(item)),
                     "topics": topics,
-                })
+                    "url": url_getter(item),
+                }
+                try:
+                    image = image_getter(item)
+                    if image:
+                        candidate["image_url"] = image.url
+                except (ValueError, OSError):
+                    pass
+                candidates.append(candidate)
         except DatabaseError:
             logger.exception("Website Q&A could not load %s content", source_name)
 
@@ -262,33 +377,47 @@ def _best_excerpt(text, terms, limit=420):
 
 def _build_ai_answer(question, results):
     question_text = (question or "").strip()
-    intro = "I found a few relevant details from the website."
-
-    if not question_text:
-        return intro
-
     normalized = question_text.lower()
-    if any(word in normalized for word in ["service", "services", "offer", "coaching", "program"]):
-        intro = "Here are the services and programs offered by The CEO Influencers, based on the website content:"
+    intent = _question_intent(question_text)
+    if not results:
+        return "I couldn’t find that detail in the published website content. You can ask me about our services, programs, influencers, blogs, eBooks, or newsletters."
+
+    candidate = results[0][1]
+    terms = _question_terms(question_text)
+    if candidate.get("kind") == "Case study" and terms & {"text", "full", "complete", "entire", "all"}:
+        answer = candidate["text"]
+        if candidate.get("download_url"):
+            answer += f"\n\n[Download the original PDF]({candidate['download_url']})"
+        return answer
+
+    snippet = _best_excerpt(candidate["text"], _question_terms(question_text), limit=500)
+
+    if intent == "service":
+        opening = "Sure!"
+    elif intent == "team":
+        opening = "The team includes"
+    elif any(word in normalized for word in ["program"]):
+        opening = "Sure! The CEO Influencers offers"
     elif any(word in normalized for word in ["blog", "article", "insight"]):
-        intro = "Here are the most relevant blog insights from the site:"
+        opening = "Sure! Here’s a useful overview"
     elif any(word in normalized for word in ["ebook", "book", "guide"]):
-        intro = "I found the most relevant reading resources on the site:"
+        opening = "Of course! Here’s what’s available"
     elif any(word in normalized for word in ["newsletter", "quarterly"]):
-        intro = "Here are the newsletter highlights I found:"
+        opening = "Sure! Our quarterly newsletters"
     elif any(word in normalized for word in ["who", "team", "influencer", "mentor"]):
-        intro = "Here’s what the site says about the team and influencers:"
-    elif any(word in normalized for word in ["what", "about", "website", "company"]):
-        intro = "Here’s a quick summary of the website and its focus:"
+        opening = "The team includes"
+    else:
+        opening = "Sure —"
 
-    body = []
-    for _, candidate in results:
-        snippet = _best_excerpt(candidate["text"], _question_terms(question_text))
-        body.append(f"• {candidate['title']} — {snippet}")
-
-    answer = f"{intro}\n\n" + "\n\n".join(body)
-    if len(answer) < 220:
-        answer += "\n\nIf you want, I can also help you narrow it down to services, blogs, newsletters, or the leadership team."
+    answer = f"{opening} {snippet}"
+    if len(results) > 1 and intent not in {"team", "service", "newsletter", "ebook", "blog", "feature", "contact"}:
+        related = results[1][1]
+        related_snippet = _best_excerpt(
+            related["text"], _question_terms(question_text), limit=240
+        )
+        if related["title"].lower() != candidate["title"].lower():
+            answer += f"\n\nYou may also find **{related['title']}** helpful: {related_snippet}"
+    answer += "\n\nWould you like to know more about this, or explore another part of the site?"
     return answer
 
 
@@ -305,44 +434,48 @@ class WebsiteQuestionView(APIView):
         if len(question) > 500:
             return Response({"error": "Please keep your question under 500 characters."}, status=status.HTTP_400_BAD_REQUEST)
 
-        terms = _question_terms(question)
-        expanded_terms = _expanded_terms(question)
+        conversation = request.data.get("conversation", [])
+        previous_user_messages = []
+        if isinstance(conversation, list):
+            for message in conversation[-8:]:
+                if not isinstance(message, dict) or message.get("role") != "user":
+                    continue
+                content = message.get("content", "")
+                if isinstance(content, str) and content.strip():
+                    previous_user_messages.append(content.strip()[:500])
+
+        retrieval_question = question
+        is_follow_up = bool(re.search(
+            r"\b(it|that|this|they|them|those|these|which one|what about|tell me more|more about|why|how so|and then)\b",
+            question.lower(),
+        ))
+        if previous_user_messages and is_follow_up:
+            retrieval_question = " ".join(previous_user_messages[-2:] + [question])
+
+        terms = _question_terms(retrieval_question)
+        expanded_terms = _expanded_terms(retrieval_question)
+        intent = _question_intent(retrieval_question)
         ranked = []
-        qna_items = []
-        qna_path = Path(__file__).resolve().parent.parent / "qna.json"
-        if qna_path.exists():
-            try:
-                with qna_path.open("r", encoding="utf-8") as handle:
-                    qna_items = json.load(handle)
-            except (json.JSONDecodeError, OSError):
-                qna_items = []
-
-        kb_boost = 0
-        for item in qna_items:
-            kb_title = (item.get("section") or "").lower()
-            kb_question = (item.get("question") or "").lower()
-            kb_text = f"{kb_title} {kb_question} {(item.get('answer') or '')}".lower()
-            kb_terms = _expanded_terms(kb_text)
-            score = len(expanded_terms & kb_terms)
-            if "program" in (question.lower()) and "program" in kb_title:
-                score += 4
-            if "salient" in question.lower() and "salient" in kb_title:
-                score += 4
-            if "feature" in question.lower() and ("feature" in kb_text or "salient" in kb_text):
-                score += 4
-            if score > kb_boost:
-                kb_boost = score
-
         for candidate in _content_candidates():
+            if intent != "website" and intent not in candidate.get("topics", set()):
+                continue
             title_terms = _expanded_terms(candidate["title"])
             content_terms = _expanded_terms(candidate["text"])
             topic_bonus = 4 * len(expanded_terms & candidate.get("topics", set()))
+            question_match = max(
+                (
+                    len(terms & _expanded_terms(variant))
+                    for variant in candidate.get("question_variants", [])
+                ),
+                default=0,
+            )
+            keyword_match = len(terms & _expanded_terms(" ".join(candidate.get("keywords", []))))
             score = (
                 len(expanded_terms & content_terms)
                 + 2 * len(expanded_terms & title_terms)
                 + topic_bonus
-                + (10 if kb_boost and ("program" in question.lower() and "program" in candidate["title"].lower()) else 0)
-                + (10 if kb_boost and ("salient" in question.lower() and "salient" in candidate["title"].lower()) else 0)
+                + 6 * question_match
+                + 3 * keyword_match
             )
             if score:
                 ranked.append((score, candidate))
@@ -356,61 +489,60 @@ class WebsiteQuestionView(APIView):
             return Response({"answer": answer, "sources": []})
 
         results = ranked[:3]
-        answer = _build_ai_answer(question, results)
+        answer = _build_ai_answer(retrieval_question, results)
+        public_base = getattr(settings, "PUBLIC_SITE_URL", "https://theceoinfluencers.com").rstrip("/")
+        image_requested = bool(terms & {"image", "picture", "photo", "thumbnail", "cover"})
+        source_data = []
+        for _, candidate in results:
+            source = {"title": candidate["title"], "type": candidate["kind"]}
+            for key in ("url", "download_url", "image_url"):
+                value = candidate.get(key)
+                if value:
+                    if value.startswith("/"):
+                        if key == "url":
+                            value = f"{public_base}/theceo{value}" if value.startswith("/case-studies/") or value.startswith("/blog/") or value.startswith("/ebook-detail/") else f"{public_base}{value}"
+                        else:
+                            value = f"{public_base}{value}"
+                    source[key] = value
+            source_data.append(source)
         return Response({
             "answer": answer,
-            "sources": [{"title": candidate["title"], "type": candidate["kind"]} for _, candidate in results],
+            "sources": source_data,
+            "image_requested": image_requested,
         })
 
 
-class GetChatsView(APIView):
-    permission_classes = [IsAuthenticated]
+class PublicSiteFeatureSettingsView(APIView):
+    """Expose only public feature visibility flags."""
 
-    def get(self, request, user_uuid):
-        # Verify the requesting user
-        if str(request.user.id) != user_uuid:
-            return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
+    permission_classes = [AllowAny]
 
-        # Get all chat sessions for this user
-        chat_sessions = ChatSession.objects.filter(
-            participants=request.user, is_active=True
-        ).prefetch_related("participants", "messages")
-
-        serializer = ChatSessionSerializer(
-            chat_sessions, many=True, context={"request": request}
-        )
-        return Response(serializer.data)
+    def get(self, request):
+        feature_settings = SiteFeatureSettings.load()
+        return Response({"chatbot_enabled": feature_settings.chatbot_enabled})
 
 
-class GetChatMessagesView(APIView):
-    permission_classes = [IsAuthenticated]
+class AdminSiteFeatureSettingsView(APIView):
+    """Allow administrators to update public feature visibility."""
 
-    def get(self, request, chat_uuid, user_uuid):
-        # Verify the requesting user
-        if str(request.user.id) != user_uuid:
-            return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
+    permission_classes = [IsAuthenticated, IsAdmin]
 
-        # Get the chat session
-        chat_session = get_object_or_404(
-            ChatSession, id=chat_uuid, participants=request.user, is_active=True
-        )
+    def get(self, request):
+        feature_settings = SiteFeatureSettings.load()
+        return Response({"chatbot_enabled": feature_settings.chatbot_enabled})
 
-        # Get the other participant
-        other_participant = chat_session.participants.exclude(
-            id=request.user.id
-        ).first()
-        if not other_participant:
+    def patch(self, request):
+        enabled = request.data.get("chatbot_enabled")
+        if not isinstance(enabled, bool):
             return Response(
-                {"error": "Chat session not found"}, status=status.HTTP_404_NOT_FOUND
+                {"chatbot_enabled": ["Must be a boolean value."]},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get messages
-        messages = ChatMessage.objects.filter(session=chat_session).order_by("sent_at")
-        message_serializer = ChatMessageSerializer(messages, many=True)
-
-        return Response(
-            {"user": other_participant.username, "messages": message_serializer.data}
-        )
+        feature_settings = SiteFeatureSettings.load()
+        feature_settings.chatbot_enabled = enabled
+        feature_settings.save(update_fields=["chatbot_enabled", "updated_at"])
+        return Response({"chatbot_enabled": feature_settings.chatbot_enabled})
 
 
 class SendMessageView(APIView):

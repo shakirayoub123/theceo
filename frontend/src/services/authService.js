@@ -192,6 +192,13 @@ class AuthService {
         headers: this.getAuthHeaders(),
       },
     )
+
+    // A 401 is the normal response for a visitor without a login cookie.
+    if (response.status === 401) {
+      this.clearStoredAuth()
+      return null
+    }
+
     const userData = await this.handleResponse(response)
 
     if (userData) {

@@ -7,6 +7,8 @@ from .views import (
     StartAIChatView,
     GetAIChatMessagesView,
     WebsiteQuestionView,
+    PublicSiteFeatureSettingsView,
+    AdminSiteFeatureSettingsView,
 )
 
 urlpatterns = [
@@ -20,6 +22,8 @@ urlpatterns = [
     path("startChat/", StartChatView.as_view(), name="start_chat"),
     path("startAIChat/", StartAIChatView.as_view(), name="start_ai_chat"),
     path("website-question/", WebsiteQuestionView.as_view(), name="website_question"),
+    path("settings/public/", PublicSiteFeatureSettingsView.as_view(), name="public_site_feature_settings"),
+    path("settings/admin/", AdminSiteFeatureSettingsView.as_view(), name="admin_site_feature_settings"),
     path(
         "getAIChatMessages/<str:chat_uuid>/",
         GetAIChatMessagesView.as_view(),

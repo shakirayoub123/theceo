@@ -1,6 +1,7 @@
 import { loadStripe } from '@stripe/stripe-js'
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY)
+const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY
+const stripePromise = stripePublicKey ? loadStripe(stripePublicKey) : null
 
 class StripeService {
   // Initialize a payment intent on the backend
@@ -47,6 +48,9 @@ class StripeService {
 
   // Confirm card payment
   async confirmCardPayment(clientSecret, cardElement) {
+    if (!stripePromise) {
+      throw new Error('Stripe is not configured. Set VITE_STRIPE_PUBLIC_KEY to enable payments.')
+    }
     const stripe = await stripePromise
     return stripe.confirmCardPayment(clientSecret, {
       payment_method: {
@@ -62,6 +66,9 @@ class StripeService {
 
   // Handle 3D Secure or additional authentication
   async handleCardAction(clientSecret) {
+    if (!stripePromise) {
+      throw new Error('Stripe is not configured. Set VITE_STRIPE_PUBLIC_KEY to enable payments.')
+    }
     const stripe = await stripePromise
     return stripe.handleCardAction(clientSecret)
   }

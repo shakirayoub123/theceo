@@ -7,11 +7,34 @@ class ChatbotService {
     this.baseURL = API_BASE_URL
   }
 
-  async askWebsiteQuestion(question) {
+  async getPublicSiteSettings() {
+    const response = await fetch(`${this.baseURL}/chat/settings/public/`)
+    return this.handleResponse(response)
+  }
+
+  async getAdminSiteSettings() {
+    const response = await fetch(`${this.baseURL}/chat/settings/admin/`, {
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+    })
+    return this.handleResponse(response)
+  }
+
+  async updateAdminSiteSettings(settings) {
+    const response = await fetch(`${this.baseURL}/chat/settings/admin/`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(settings),
+    })
+    return this.handleResponse(response)
+  }
+
+  async askWebsiteQuestion(question, conversation = []) {
     const response = await fetch(`${this.baseURL}/chat/website-question/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({ question, conversation }),
     })
     return this.handleResponse(response)
   }

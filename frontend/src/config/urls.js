@@ -33,6 +33,7 @@ export const URLS = {
     addNewsletter: '/admin-dashboard/newsletters/add-newsletter',
     editNewsletter: '/admin-dashboard/newsletters/edit-newsletter/:id',
     referrals: '/admin-dashboard/referrals',
+    siteSettings: '/admin-dashboard/settings',
   },
 
   sales: {

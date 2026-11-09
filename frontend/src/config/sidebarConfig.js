@@ -13,6 +13,7 @@ import {
   ShoppingCart,
   MessageCircle,
   FileText,
+  Settings,
 } from 'lucide-react'
 import { URLS } from './urls'
 export const sidebarConfigs = {
@@ -25,6 +26,7 @@ export const sidebarConfigs = {
     { label: 'Blogs', icon: FilePenLine, href: URLS.master.blogs },
     { label: 'Newsletters', icon: Newspaper, href: URLS.master.newsletters },
     { label: 'Referrals', icon: Newspaper, href: URLS.master.referrals },
+    { label: 'Site Settings', icon: Settings, href: URLS.master.siteSettings },
     { label: 'Chat', icon: MessageCircle, href: URLS.chat },
 
     { label: 'Logout', icon: LogOut, href: URLS.logout },

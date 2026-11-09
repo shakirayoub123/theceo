@@ -98,8 +98,8 @@ export default function TeamSection() {
                       <ArrowUpRight className="w-3.5 h-3.5 text-white" />
                     </div>
                   ) : (
-                    <div className='w-7 h-7 rounded-full border border-gray-200 bg-white flex items-center justify-center shadow-sm'>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-[#111827]" />
+                    <div className='w-7 h-7 rounded-full border border-gray-200 bg-[#F6B72D] flex items-center justify-center shadow-sm'>
+                      <ArrowUpRight className="w-3.5 h-3.5 text-white" />
                     </div>
                   )}
                 </Link>
