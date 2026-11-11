@@ -5,6 +5,7 @@ import StripeCheckoutWrapper from '@/components/StripeCheckoutWrapper'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
+import authService from '@/services/authService'
 
 export default function CheckoutPage() {
   const navigate = useNavigate()
@@ -19,16 +20,43 @@ export default function CheckoutPage() {
     if (cartData) {
       try {
         const parsedCart = JSON.parse(cartData)
-        setCartItems(parsedCart || [])
+        const recalculate = (items) => {
+          setCartItems(items || [])
+          const itemsTotal =
+            items?.reduce(
+              (sum, item) => sum + parseFloat(item.price) * (item.quantity || 1),
+              0,
+            ) || 0
+          setSubtotal(itemsTotal)
+          setTotal(itemsTotal)
+        }
 
-        // Calculate totals
-        const itemsTotal =
-          parsedCart?.reduce(
-            (sum, item) => sum + item.price * item.quantity,
-            0,
-          ) || 0
-        setSubtotal(itemsTotal)
-        setTotal(itemsTotal) // For now, no additional fees
+        recalculate(parsedCart)
+
+        // Sync live prices from backend
+        if (parsedCart && parsedCart.length > 0) {
+          Promise.all(
+            parsedCart.map(async (item) => {
+              try {
+                const fresh = await authService.getPeopleEbookDetails(item.id)
+                if (fresh) {
+                  return {
+                    ...item,
+                    title: fresh.title || item.title,
+                    price: fresh.price !== undefined ? parseFloat(fresh.price) : item.price,
+                    coverImage: fresh.coverImage || item.coverImage,
+                  }
+                }
+              } catch (e) {
+                console.error('Error refreshing checkout item:', e)
+              }
+              return item
+            }),
+          ).then((refreshed) => {
+            localStorage.setItem('cartItems', JSON.stringify(refreshed))
+            recalculate(refreshed)
+          })
+        }
       } catch (error) {
         console.error('Error parsing cart data:', error)
         setCartItems([])

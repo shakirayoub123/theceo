@@ -5,19 +5,26 @@ import { Link } from 'react-router-dom'
 import mapBg3 from '@/assets/map bg 3.png'
 
 export default function BlogSection({ blogs = [], loading = false }) {
+  // Helper to get category badge color according to topic:
+  // 1. business need to know -> green
+  // 2. business hot topic -> yellow
+  // 3. business critical -> red
+  const getTopicColor = (topic) => {
+    const t = topic?.toLowerCase() || ''
+    if (t.includes('critical')) return 'bg-[#DC2626]' // Red
+    if (t.includes('hot')) return 'bg-[#F59E0B]' // Yellow
+    if (t.includes('know')) return 'bg-[#16A34A]' // Green
+    return 'bg-[#16A34A]'
+  }
+
   // Preserve API ordering for the side list; an explicitly featured blog leads.
   const blogPosts = [...blogs]
     .sort((a, b) => Number(a.id) - Number(b.id))
     .map((blog) => {
-      const topicLower = blog.topic?.toLowerCase() || ''
-      let categoryColor = 'bg-[#16A34A]'
-      if (topicLower.includes('critical')) categoryColor = 'bg-[#F59E0B]'
-      else if (topicLower.includes('know') || topicLower.includes('pressure')) categoryColor = 'bg-[#DC2626]'
-
       return {
         id: blog.id,
         category: blog.topic?.toUpperCase().replace(/-/g, '-') || 'BUSINESS-HOT',
-        categoryColor,
+        categoryColor: getTopicColor(blog.topic),
         title: blog.title,
         subtitle: blog.shortDescription || blog.title,
         image: blog.thumbnail || blog.thumbnailImage || '/images/blog1.svg',
@@ -31,23 +38,23 @@ export default function BlogSection({ blogs = [], loading = false }) {
 
   const fallbackPosts = [
     {
-      id: '1', category: 'BUSINESS-INSIGHT', categoryColor: 'bg-[#16A34A]',
+      id: '1', category: 'BUSINESS-NEED-TO-KNOW', categoryColor: 'bg-[#16A34A]',
       title: 'The algorithm of trust: building human-centered leadership in an AI-driven world',
       subtitle: 'Exploring how trust, empathy, and human judgment can shape stronger leadership.',
       image: '/images/blog1.svg', publishedAt: '16th Oct, 2024', timeToRead: 8, author: 'The CEO Influencers', slug: 'algorithm-of-trust',
     },
     {
-      id: '2', category: 'BUSINESS-HOT', categoryColor: 'bg-[#16A34A]',
+      id: '2', category: 'BUSINESS-HOT', categoryColor: 'bg-[#F59E0B]',
       title: 'Collaboration or competition? How aligned values define the future of strategic alliances',
       subtitle: '', image: '/images/blog2.svg', publishedAt: '28th Sept, 2024', timeToRead: 5, slug: 'collaboration-or-competition',
     },
     {
-      id: '3', category: 'BUSINESS-CRITICAL', categoryColor: 'bg-[#F59E0B]',
+      id: '3', category: 'BUSINESS-CRITICAL', categoryColor: 'bg-[#DC2626]',
       title: 'The human algorithm: navigating the organizational shockwaves of AI',
       subtitle: '', image: '/images/blog1.svg', publishedAt: '14th Sept, 2024', timeToRead: 6, slug: 'human-algorithm',
     },
     {
-      id: '4', category: 'BUSINESS-NEED-TO-KNOW', categoryColor: 'bg-[#DC2626]',
+      id: '4', category: 'BUSINESS-NEED-TO-KNOW', categoryColor: 'bg-[#16A34A]',
       title: 'Pressure points: the structural shift in global business resilience',
       subtitle: '', image: '/images/blog2.svg', publishedAt: '30th Aug, 2024', timeToRead: 7, slug: 'pressure-points',
     },

@@ -274,10 +274,15 @@ _db_password = os.getenv("DB_PASSWORD", "").strip()
 if not _db_password:
     raise ImproperlyConfigured("The DB_PASSWORD environment variable must be set")
 
+_db_engine = os.getenv("DB_ENGINE", "django.db.backends.postgresql")
+_db_name = os.getenv("DB_NAME", "ceoinfluencers_db")
+if "sqlite3" in _db_engine and not os.path.isabs(_db_name):
+    _db_name = str(BASE_DIR / _db_name)
+
 DATABASES = {
     "default": {
-        "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),
-        "NAME": os.getenv("DB_NAME", "ceoinfluencers_db"),
+        "ENGINE": _db_engine,
+        "NAME": _db_name,
         "USER": os.getenv("DB_USER", "ceoinfluencers_user"),
         "PASSWORD": _db_password,
         "HOST": os.getenv("DB_HOST", "127.0.0.1"),

@@ -15,9 +15,12 @@ export default function CartItem({
         {/* Product Image */}
         <div className='w-20 h-28 sm:w-20 sm:h-28 border border-[#CACACA] rounded-[8px] overflow-hidden flex-shrink-0 bg-[#F8F8F8] p-2'>
           <img
-            src={image || '/placeholder.svg'}
+            src={image || '/images/ebook-red.svg'}
             alt={name}
             className='w-full h-full object-contain'
+            onError={(e) => {
+              e.currentTarget.src = '/images/ebook-red.svg'
+            }}
           />
         </div>
 

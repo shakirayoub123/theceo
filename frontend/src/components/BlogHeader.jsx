@@ -69,11 +69,17 @@ export default function BlogHeader({
         </h1>
 
         <div className='flex flex-wrap items-center gap-6 text-gray-500 font-exo mb-6 text-[15px]'>
-          {topic && (
-            <span className='rounded-full bg-[#F6B72D]/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#9A6700]'>
-              {topic.replace(/-/g, ' ')}
-            </span>
-          )}
+          {topic && (() => {
+            const t = topic.toLowerCase()
+            let badgeClass = 'bg-[#16A34A]/15 text-[#16A34A]'
+            if (t.includes('critical')) badgeClass = 'bg-[#DC2626]/15 text-[#DC2626]'
+            else if (t.includes('hot')) badgeClass = 'bg-[#F59E0B]/15 text-[#B45309]'
+            return (
+              <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${badgeClass}`}>
+                {topic.replace(/-/g, ' ')}
+              </span>
+            )
+          })()}
           <div className='flex items-center gap-2'>
             <Calendar className='h-4 w-4 text-[#F6B72D]' />
             <span>{publishedDate}</span>

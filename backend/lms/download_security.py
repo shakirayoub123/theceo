@@ -83,6 +83,9 @@ def validate_public_newsletter_view_token(token, resource_id):
     )
 
 
+PUBLIC_COVER_MAX_AGE_SECONDS = 60 * 60 * 24 * 30  # 30 days for public covers/thumbnails
+
+
 def create_public_ebook_cover_view_token(resource_id):
     payload = {
         "resourceType": "ebook_cover_view",
@@ -93,7 +96,7 @@ def create_public_ebook_cover_view_token(resource_id):
 
 def validate_public_ebook_cover_view_token(token, resource_id):
     max_age = int(
-        getattr(settings, "SIGNED_DOWNLOAD_URL_TTL_SECONDS", DOWNLOAD_TOKEN_MAX_AGE_SECONDS)
+        getattr(settings, "PUBLIC_COVER_MAX_AGE_SECONDS", PUBLIC_COVER_MAX_AGE_SECONDS)
     )
     try:
         payload = signing.loads(token, salt=PUBLIC_EBOOK_COVER_VIEW_SALT, max_age=max_age)
@@ -118,7 +121,7 @@ def create_public_newsletter_thumbnail_view_token(resource_id):
 
 def validate_public_newsletter_thumbnail_view_token(token, resource_id):
     max_age = int(
-        getattr(settings, "SIGNED_DOWNLOAD_URL_TTL_SECONDS", DOWNLOAD_TOKEN_MAX_AGE_SECONDS)
+        getattr(settings, "PUBLIC_COVER_MAX_AGE_SECONDS", PUBLIC_COVER_MAX_AGE_SECONDS)
     )
     try:
         payload = signing.loads(

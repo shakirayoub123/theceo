@@ -172,7 +172,10 @@ export default function ProductsSection({ loading: externalLoading = false }) {
 
                   {/* Right: Text & Actions */}
                   <div className='flex flex-col flex-1'>
-                    <h3 className={`mb-2 font-bold leading-tight text-[#0B132B] ${featuredEbook.title?.startsWith('The Algorithmic CEO:') ? 'whitespace-nowrap text-[clamp(10px,1.05vw,16px)]' : 'text-[17px] lg:text-[20px]'}`}>
+                    <h3 className={`mb-2 font-bold leading-tight text-[#0B132B] ${featuredEbook.title?.startsWith('The Algorithmic CEO:')
+                      ? 'whitespace-nowrap text-[clamp(12px,1.2vw,18px)]'
+                      : 'text-[18px] lg:text-[22px]'
+                      }`}>
                       {featuredEbook.title}
                     </h3>
                     <div className='w-8 h-0.5 bg-[#F6B72D] rounded-full mb-2' />

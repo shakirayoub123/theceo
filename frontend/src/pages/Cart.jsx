@@ -4,6 +4,8 @@ import { Helmet } from 'react-helmet-async'
 import CartTable from '@/components/CartTable'
 import CartTotals from '@/components/CartTotals'
 import Breadcrumb from '@/components/Breadcrumb'
+import authService from '@/services/authService'
+import { getAssetUrl } from '@/lib/utils'
 
 export default function Cart() {
   const navigate = useNavigate()
@@ -33,6 +35,32 @@ export default function Cart() {
     const items = getCartItems()
     setCartItems(items)
     setLoading(false)
+
+    // Sync live prices and cover image URLs from backend to fix any stale localStorage data
+    if (items && items.length > 0) {
+      Promise.all(
+        items.map(async (item) => {
+          try {
+            const fresh = await authService.getPeopleEbookDetails(item.id)
+            if (fresh) {
+              return {
+                ...item,
+                title: fresh.title || item.title,
+                price: fresh.price !== undefined ? parseFloat(fresh.price) : item.price,
+                coverImage: fresh.coverImage || item.coverImage,
+                author: fresh.author || item.author,
+                topic: fresh.topic || item.topic,
+              }
+            }
+          } catch (err) {
+            console.error('Failed to sync cart item from backend:', err)
+          }
+          return item
+        }),
+      ).then((refreshed) => {
+        updateCartInStorage(refreshed)
+      })
+    }
   }, [])
 
   const handleRemoveFromCart = (ebookId) => {
@@ -67,7 +95,7 @@ export default function Cart() {
     id: item.id,
     name: item.title,
     price: parseFloat(item.price),
-    image: item.coverImage || '/images/ebook-red.svg',
+    image: getAssetUrl(item.coverImage) || '/images/ebook-red.svg',
     author: item.author,
     topic: item.topic,
     quantity: item.quantity || 1,
