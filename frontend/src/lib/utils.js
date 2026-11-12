@@ -33,7 +33,12 @@ export const formatDate = (date) => {
 }
 
 export const BACKEND_URL =
-  import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
+  import.meta.env.VITE_BACKEND_URL ||
+  (typeof window !== 'undefined' &&
+  window.location.hostname !== 'localhost' &&
+  window.location.hostname !== '127.0.0.1'
+    ? window.location.origin
+    : 'http://localhost:8000')
 
 /**
  * Ensures that asset URLs from the backend have the proper BACKEND_URL prefix.
@@ -46,8 +51,22 @@ export const getAssetUrl = (url) => {
   if (!url) return url
   if (typeof url !== 'string') return ''
 
-  const trimmedUrl = url.trim()
+  let trimmedUrl = url.trim()
   if (!trimmedUrl) return ''
+
+  // In production, sanitize any accidental localhost URLs
+  if (
+    typeof window !== 'undefined' &&
+    window.location.hostname !== 'localhost' &&
+    window.location.hostname !== '127.0.0.1'
+  ) {
+    if (
+      trimmedUrl.startsWith('http://localhost:8000/') ||
+      trimmedUrl.startsWith('https://localhost:8000/')
+    ) {
+      trimmedUrl = trimmedUrl.replace(/^https?:\/\/localhost:8000\//, '/')
+    }
+  }
 
   // Keep site-local/static assets untouched.
   if (
@@ -75,6 +94,14 @@ export const getAssetUrl = (url) => {
 
   // Remove leading slash if present to avoid double slashes
   const cleanUrl = trimmedUrl.startsWith('/') ? trimmedUrl.slice(1) : trimmedUrl
+
+  // When served from the same domain in production, relative path /uploads/... is safest
+  if (
+    typeof window !== 'undefined' &&
+    (BACKEND_URL === window.location.origin || !BACKEND_URL)
+  ) {
+    return `/${cleanUrl}`
+  }
 
   // Prepend BACKEND_URL
   return `${BACKEND_URL}/${cleanUrl}`
