@@ -223,10 +223,30 @@ CORS_EXPOSE_HEADERS = ["Content-Length", "Accept-Ranges", "Content-Range"]
 CORS_ALLOW_ALL_ORIGINS = False  # Never use True in production
 CORS_ALLOW_CREDENTIALS = True
 
+# Reverse proxy SSL header
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 # CSRF Trusted Origins
-CSRF_TRUSTED_ORIGINS = [
-    "https://api.theceoinfluencers.com",
-]
+_csrf_env = os.getenv("CSRF_TRUSTED_ORIGINS", "")
+_csrf_env_list = [o.strip() for o in _csrf_env.split(",") if o.strip()]
+
+CSRF_TRUSTED_ORIGINS = list(
+    set(
+        [
+            "https://theceoinfluencers.com",
+            "https://www.theceoinfluencers.com",
+            "https://api.theceoinfluencers.com",
+            "https://assessment.theceoinfluencers.com",
+            "https://marketing.theceoinfluencers.com",
+            "http://72.62.251.242",
+            "https://72.62.251.242",
+            "http://localhost:8000",
+            "http://127.0.0.1:8000",
+            "http://localhost:5173",
+        ]
+        + _csrf_env_list
+    )
+)
 
 # Email Configuration
 # Default to console in dev, SMTP in prod. You can always override via env var.
