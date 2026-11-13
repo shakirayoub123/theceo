@@ -707,8 +707,40 @@ class SalesClientDetailView(APIView):
             "servicesEnrolled": services_enrolled,
         }
 
+        # Check assessment assignment & high-level completion status (without revealing raw results)
+        from lms.models import ClientFormAnswers
+
+        assignment_cfa = (
+            ClientFormAnswers.objects.filter(
+                user_email__iexact=client.email,
+                questionnaire_title="__tci_assessments_assigned__",
+            )
+            .order_by("-created_at")
+            .first()
+        )
+        completed_count = (
+            ClientFormAnswers.objects.filter(
+                user_email__iexact=client.email,
+            )
+            .exclude(questionnaire_title__startswith="__")
+            .values("questionnaire_title")
+            .distinct()
+            .count()
+        )
+        is_assigned = assignment_cfa is not None or completed_count > 0
+        assigned_at = (
+            assignment_cfa.created_at.isoformat()
+            if assignment_cfa and assignment_cfa.created_at
+            else None
+        )
+
         serializer = SalesClientDetailResponseSerializer(response_data)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serialized_data = dict(serializer.data)
+        serialized_data["assessmentsAssigned"] = is_assigned
+        serialized_data["assessmentsAssignedAt"] = assigned_at
+        serialized_data["completedAssessmentsCount"] = completed_count
+
+        return Response(serialized_data, status=status.HTTP_200_OK)
 
 
 class GeneratePasswordView(APIView):
@@ -1966,12 +1998,12 @@ class GetLeadProgressView(APIView):
         # Create progress data for all 6 assessments
         progress_data = []
         assessment_names = {
-            1: "Fitness Assessment",
-            2: "Nutrition Assessment",
-            3: "Lifestyle Assessment",
-            4: "Goal Setting",
-            5: "Medical History",
-            6: "Preferences & Availability",
+            1: "MBTI – Meyers-Briggs Personality Profile Assessment",
+            2: "Senior Executive Leader Soft & Hard Skills Assessment",
+            3: "Executive Leader: Client Personal & Professional Assessment",
+            4: "Senior Executive Leadership Core Competencies Assessment",
+            5: "Global Industry Experience Assessment",
+            6: "The Senior Leader's Big 5 Personality Profile Assessment",
         }
 
         for assessment_id in range(1, 7):
@@ -3190,9 +3222,37 @@ class SalesNewClientsView(APIView):
             program_status="unpaid", contract_status="sent_signed"
         ).count()
 
-        # Build clients array
+        # Build clients array with assessment assignment & completion status
+        from lms.models import ClientFormAnswers
+
         clients_data = []
         for client in clients:
+            assignment_cfa = (
+                ClientFormAnswers.objects.filter(
+                    user_email__iexact=client.email,
+                    questionnaire_title="__tci_assessments_assigned__",
+                )
+                .order_by("-created_at")
+                .first()
+            )
+
+            completed_count = (
+                ClientFormAnswers.objects.filter(
+                    user_email__iexact=client.email,
+                )
+                .exclude(questionnaire_title__startswith="__")
+                .values("questionnaire_title")
+                .distinct()
+                .count()
+            )
+
+            is_assigned = assignment_cfa is not None or completed_count > 0
+            assigned_at = (
+                assignment_cfa.created_at.isoformat()
+                if assignment_cfa and assignment_cfa.created_at
+                else None
+            )
+
             clients_data.append(
                 {
                     "clientName": client.full_name,
@@ -3200,6 +3260,9 @@ class SalesNewClientsView(APIView):
                     "meetingStatus": client.meeting_status,
                     "serviceStatus": client.program_status,
                     "contractStatus": client.contract_status,
+                    "assessmentsAssigned": is_assigned,
+                    "assessmentsAssignedAt": assigned_at,
+                    "completedAssessmentsCount": completed_count,
                 }
             )
 
@@ -3211,6 +3274,151 @@ class SalesNewClientsView(APIView):
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+class SalesAssignAssessmentsView(APIView):
+    """
+    POST /api/people/sales/clients/<user_uuid>/assign-assessments/
+    Allows sales persons to assign the 6 TCI Executive Assessments to new paid clients.
+    Sales persons only manage assignment and high-level completion status;
+    they do not view the detailed assessment results (which are exclusively reviewed by coaches).
+    """
+
+    permission_classes = [IsAuthenticated, IsSales]
+
+    def post(self, request, user_uuid):
+        from lms.models import ClientFormAnswers
+        from comms.models import Notification
+        from django.core.mail import send_mail
+        from django.conf import settings
+        from django.utils import timezone
+
+        sales_user = request.user
+
+        # Look up client by user ID or client profile ID
+        client = Client.objects.filter(
+            models.Q(user__id=user_uuid) | models.Q(id=user_uuid)
+        ).first()
+
+        if not client:
+            return Response(
+                {"error": "Client not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Ensure client is assigned to this sales person (or user is admin)
+        if (
+            not sales_user.is_staff
+            and client.assigned_sales
+            and client.assigned_sales != sales_user
+        ):
+            return Response(
+                {"error": "You can only assign assessments to your assigned clients."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Enforce that only paid clients receive the 6 TCI Assessments
+        if client.program_status != "paid":
+            return Response(
+                {
+                    "error": (
+                        f"Client '{client.full_name}' is currently in '{client.program_status}' status. "
+                        "The 6 TCI Executive Assessments can only be assigned to paid clients."
+                    ),
+                    "serviceStatus": client.program_status,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        now = timezone.now()
+        now_iso = now.isoformat()
+        salesperson_name = sales_user.get_full_name().strip() or sales_user.username
+
+        # 1. Record the 6 TCI Assessments assignment in ClientFormAnswers
+        ClientFormAnswers.objects.update_or_create(
+            user_email__iexact=client.email,
+            questionnaire_title="__tci_assessments_assigned__",
+            defaults={
+                "user_email": client.email,
+                "questionnaire_title": "__tci_assessments_assigned__",
+                "data": [
+                    {
+                        "assigned": True,
+                        "assigned_by": sales_user.email,
+                        "assigned_by_name": salesperson_name,
+                        "assigned_at": now_iso,
+                        "assessments": [
+                            "MBTI – Meyers-Briggs Personality Profile Assessment",
+                            "Senior Executive Leader Soft & Hard Skills Assessment",
+                            "Executive Leader: Client Personal & Professional Assessment",
+                            "Senior Executive Leadership Core Competencies Assessment",
+                            "Global Industry Experience Assessment",
+                            "The Senior Leader's Big 5 Personality Profile Assessment",
+                        ],
+                    }
+                ],
+                "created_at": now,
+            },
+        )
+
+        # 2. In-app notification to the client
+        try:
+            Notification.objects.create(
+                user=client.user,
+                title="6 TCI Executive Assessments Assigned",
+                message=(
+                    f"Your Sales Executive {salesperson_name} has assigned your 6 TCI Executive Assessments. "
+                    "Please complete these assessments prior to your initial 2-hour Client Discovery Meeting "
+                    "with your Executive Coaching Influencer."
+                ),
+                notification_type="general",
+            )
+        except Exception as notif_err:
+            logger.warning("Could not create in-app notification: %s", notif_err)
+
+        # 3. Email to the client notifying them of assignment
+        try:
+            subject = "Your 6 TCI Executive Assessments Have Been Assigned - The CEO Influencers"
+            message = (
+                f"Dear {client.full_name},\n\n"
+                f"Congratulations on enrolling with The CEO Influencers.\n\n"
+                f"Your Sales Executive, {salesperson_name}, has assigned your 6 TCI Executive Assessments:\n\n"
+                "  1. MBTI – Meyers-Briggs Personality Profile Assessment\n"
+                "  2. Senior Executive Leader Soft & Hard Skills Assessment\n"
+                "  3. Executive Leader: Client Personal & Professional Assessment\n"
+                "  4. Senior Executive Leadership Core Competencies Assessment\n"
+                "  5. Global Industry Experience Assessment\n"
+                "  6. The Senior Leader's Big 5 Personality Profile Assessment (OCEAN)\n\n"
+                "NEXT STEP:\n"
+                "Please log in to your Client Dashboard and complete these 6 assessments prior to your "
+                "initial 2-hour new Client Discovery Meeting with your Executive Coaching Influencer. "
+                "Your coach will thoroughly review your assessment results with you during this session.\n\n"
+                "Sign in to access your assessments:\n"
+                "https://theceoinfluencers.com/client-dashboard\n\n"
+                "Best regards,\n"
+                "The CEO Influencers Advisory Team"
+            )
+            send_mail(
+                subject=subject,
+                message=message,
+                recipient_list=[client.email],
+                fail_silently=True,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+            )
+        except Exception as mail_err:
+            logger.warning("Could not send assignment email to client: %s", mail_err)
+
+        return Response(
+            {
+                "success": True,
+                "message": f"6 TCI Executive Assessments successfully assigned to {client.full_name}.",
+                "assessmentsAssigned": True,
+                "assessmentsAssignedAt": now_iso,
+                "clientName": client.full_name,
+                "clientID": str(client.user.id),
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class SalesCreateClientView(APIView):

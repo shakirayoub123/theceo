@@ -16,7 +16,13 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import salesAPIService from '@/services/salesAPIService'
-import { X } from 'lucide-react'
+import {
+  X,
+  Sparkles,
+  CheckCircle2,
+  ShieldCheck,
+  AlertCircle,
+} from 'lucide-react'
 
 export default function SalesClientDetails() {
   const { id: userId } = useParams()
@@ -49,6 +55,10 @@ export default function SalesClientDetails() {
     loading: false,
     error: '',
   })
+  const [assessmentsAssigned, setAssessmentsAssigned] = useState(false)
+  const [isAssigningAssessments, setIsAssigningAssessments] = useState(false)
+  const [assignSuccessMessage, setAssignSuccessMessage] = useState('')
+  const [assignErrorMessage, setAssignErrorMessage] = useState('')
 
   const getMeetingActions = useCallback((meetingStatus) => {
     const normalizedStatus = String(meetingStatus || '').toLowerCase()
@@ -172,6 +182,21 @@ export default function SalesClientDetails() {
       setFormAnswers(
         Array.isArray(client.formAnswers) ? client.formAnswers : [],
       )
+
+      // Fetch assignment status from sales client details endpoint
+      try {
+        const salesInfo = await salesAPIService
+          .fetchWithCredentials(
+            `${salesAPIService.baseURL}/people/sales/clientDetails/${userId}/`,
+            { method: 'GET', headers: salesAPIService.getAuthHeaders() },
+          )
+          .then((r) => (r.ok ? r.json() : null))
+        if (salesInfo?.assessmentsAssigned != null) {
+          setAssessmentsAssigned(Boolean(salesInfo.assessmentsAssigned))
+        }
+      } catch (assignCheckErr) {
+        console.warn('Could not check assessment assignment status:', assignCheckErr)
+      }
     } catch (err) {
       console.error('fetchUserData error:', err)
       setError(err.message)
@@ -642,6 +667,25 @@ export default function SalesClientDetails() {
     }
   }
 
+  const handleAssignAssessments = async () => {
+    try {
+      setIsAssigningAssessments(true)
+      setAssignErrorMessage('')
+      const response = await salesAPIService.assignClientAssessments(userId)
+      setAssignSuccessMessage(
+        response?.message || '6 TCI Executive Assessments assigned successfully!',
+      )
+      setAssessmentsAssigned(true)
+      setTimeout(() => {
+        fetchUserData()
+      }, 1500)
+    } catch (err) {
+      setAssignErrorMessage(err.message || 'Failed to assign assessments.')
+    } finally {
+      setIsAssigningAssessments(false)
+    }
+  }
+
   const initiateChat = async () => {
     try {
       const data = await salesAPIService.initiateChat(
@@ -750,6 +794,69 @@ export default function SalesClientDetails() {
             />
           )}
         </div>
+        <div className='col-span-12'>
+          <div className='bg-white border-2 border-[#F6B72D] rounded-xl p-5 shadow-sm space-y-4 font-exo'>
+            <div className='flex flex-wrap items-center justify-between gap-3'>
+              <div>
+                <div className='flex items-center gap-2 mb-1'>
+                  <span className='px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F6B72D] text-black uppercase tracking-wider'>
+                    Client Onboarding Diagnostics
+                  </span>
+                  {assessmentsAssigned ? (
+                    <span className='inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300'>
+                      <CheckCircle2 className='w-3.5 h-3.5 text-emerald-600' />
+                      6 TCI Assessments Assigned
+                    </span>
+                  ) : (
+                    <span className='inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300'>
+                      Assessments Not Assigned Yet
+                    </span>
+                  )}
+                </div>
+                <h3 className='text-lg font-bold text-gray-900'>
+                  6 TCI Executive Assessments Suite
+                </h3>
+                <p className='text-xs text-gray-600'>
+                  1. MBTI • 2. Soft & Hard Skills • 3. Personal & Professional • 4. Leadership Competencies • 5. Global Industry • 6. Big 5 (OCEAN)
+                </p>
+              </div>
+
+              {!assessmentsAssigned && (
+                <button
+                  type='button'
+                  disabled={isAssigningAssessments}
+                  onClick={handleAssignAssessments}
+                  className='inline-flex items-center gap-2 px-4 py-2.5 bg-[#F6B72D] hover:bg-[#e6b82a] text-black font-bold text-xs sm:text-sm rounded-lg shadow-sm transition-transform active:scale-95 disabled:opacity-50'
+                >
+                  <Sparkles className='w-4 h-4' />
+                  {isAssigningAssessments ? 'Assigning...' : 'Assign 6 TCI Assessments'}
+                </button>
+              )}
+            </div>
+
+            {assignSuccessMessage && (
+              <div className='p-3 bg-emerald-50 text-emerald-900 border border-emerald-300 rounded-lg text-xs font-semibold flex items-center gap-2'>
+                <CheckCircle2 className='w-4 h-4 text-emerald-600 shrink-0' />
+                <span>{assignSuccessMessage}</span>
+              </div>
+            )}
+
+            {assignErrorMessage && (
+              <div className='p-3 bg-red-50 text-red-900 border border-red-300 rounded-lg text-xs font-semibold flex items-center gap-2'>
+                <AlertCircle className='w-4 h-4 text-red-600 shrink-0' />
+                <span>{assignErrorMessage}</span>
+              </div>
+            )}
+
+            <div className='bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs text-slate-700 flex items-start gap-2.5'>
+              <ShieldCheck className='w-4 h-4 text-slate-500 shrink-0 mt-0.5' />
+              <p>
+                <strong>Confidentiality Policy:</strong> Sales Executives assign the 6 assessments and monitor completion progress. In accordance with executive coaching standards, individual question responses and evaluation scores are confidential and are <strong>exclusively reviewed by Executive Coaches</strong> with the client during their initial 2-hour new Client Discovery meeting.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className='col-span-12'>
           <QuestionnaireProgressCard formAnswers={formAnswers} />
         </div>

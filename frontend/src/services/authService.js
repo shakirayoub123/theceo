@@ -1060,6 +1060,18 @@ class AuthService {
     return this.handleResponse(response)
   }
 
+  // Assign 6 TCI Executive Assessments to new paid client
+  async assignClientAssessments(userId) {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/people/sales/clients/${userId}/assign-assessments/`,
+      {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+      },
+    )
+    return this.handleResponse(response)
+  }
+
   // Get Existing Clients Data
   async getExistingClients() {
     const response = await this.fetchWithCredentials(

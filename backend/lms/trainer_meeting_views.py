@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from django.http import Http404
 from django.db import transaction
 from datetime import timedelta
 import logging
@@ -41,7 +42,11 @@ class TrainerMeetingDetailView(APIView):
                 return Response(
                     {
                         "error": "NOT_PARTICIPANT",
-                        "message": "You are not a participant in this meeting",
+                        "message": "You are not a registered participant in this meeting.",
+                        "meeting_id": str(meeting.id),
+                        "meeting_title": meeting.title,
+                        "status": meeting.status,
+                        "scheduled_at": meeting.scheduled_at.isoformat() if meeting.scheduled_at else None,
                     },
                     status=status.HTTP_403_FORBIDDEN,
                 )
@@ -181,6 +186,14 @@ class TrainerMeetingDetailView(APIView):
 
             return Response(response_data, status=status.HTTP_200_OK)
 
+        except Http404:
+            return Response(
+                {
+                    "error": "NOT_FOUND",
+                    "message": f"Meeting #{meeting_id} does not exist or has been removed.",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
         except Exception as e:
             logger.error(f"Error in TrainerMeetingDetailView: {str(e)}")
             return Response(
@@ -821,7 +834,10 @@ class TrainerGetRoomUrlView(APIView):
                 return Response(
                     {
                         "error": "NOT_PARTICIPANT",
-                        "message": "You are not a participant in this meeting",
+                        "message": "You are not a registered participant in this meeting.",
+                        "meeting_id": str(meeting.id),
+                        "meeting_title": meeting.title,
+                        "status": meeting.status,
                     },
                     status=status.HTTP_403_FORBIDDEN,
                 )

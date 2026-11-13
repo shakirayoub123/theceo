@@ -14,6 +14,7 @@ import { Link, useParams } from 'react-router-dom'
 import { getAssetUrl } from '@/lib/utils'
 import { CreditCard } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { MeetingAccessValidation } from '@/components/MeetingAccessValidation'
 
 const ClientMeeting = () => {
   const { meetingId } = useParams()
@@ -237,60 +238,23 @@ const ClientMeetingContent = ({ meetingId, meetingRole, userRole }) => {
 
   if (meetingError) {
     return (
-      <div className='text-center text-red-500 p-4'>
-        Error loading meeting: {meetingError}
-      </div>
+      <MeetingAccessValidation
+        error={meetingError}
+        meetingId={meetingId}
+        role={meetingRole}
+        onRetry={() => window.location.reload()}
+      />
     )
   }
 
   if (roomUrlError) {
     return (
-      <div className='flex flex-col items-center justify-center py-10 px-4'>
-        <div className='bg-red-50 border-l-4 border-red-500 p-6 rounded-md max-w-2xl w-full'>
-          <div className='flex items-start'>
-            <div className='flex-shrink-0'>
-              <svg
-                className='h-6 w-6 text-red-500'
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={2}
-                stroke='currentColor'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z'
-                />
-              </svg>
-            </div>
-            <div className='ml-3'>
-              <h3 className='text-lg font-medium text-red-800'>
-                Unable to Join Meeting
-              </h3>
-              <div className='mt-2 text-md text-red-700'>{roomUrlError}</div>
-              <div className='mt-4'>
-                <p className='text-sm text-red-600'>
-                  If you believe this is an error, please try:
-                </p>
-                <ul className='list-disc pl-5 mt-1 text-sm text-red-600'>
-                  <li>Refreshing the page</li>
-                  <li>Checking that you're enrolled in this program</li>
-                  <li>Contacting support if the issue persists</li>
-                </ul>
-              </div>
-              <div className='mt-6'>
-                <button
-                  onClick={() => window.location.reload()}
-                  className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                >
-                  Retry
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <MeetingAccessValidation
+        error={roomUrlError}
+        meetingId={meetingId}
+        role={meetingRole}
+        onRetry={() => window.location.reload()}
+      />
     )
   }
 

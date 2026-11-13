@@ -369,7 +369,14 @@ const useMeeting = (meetingId, options = {}) => {
 
       return details
     } catch (err) {
-      setError(err.message)
+      setError({
+        message: err.message || 'Failed to load meeting details',
+        status: err.httpStatus || err.status || 500,
+        code: err.error || err.code || null,
+        detail: err.detail || null,
+        meetingId: normalizedMeetingId,
+        meetingTitle: err.meeting_title || null,
+      })
       console.error('Failed to load meeting details:', err)
       throw err
     } finally {

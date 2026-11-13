@@ -22,7 +22,7 @@ class TrainerAPIService {
 
   async handleResponse(response) {
     if (!response.ok) {
-      let errorData
+      let errorData = null
       try {
         errorData = await response.json()
         console.log(`[TrainerAPIService] Received error response:`, {
@@ -30,49 +30,39 @@ class TrainerAPIService {
           url: response.url,
           data: errorData,
         })
+      } catch (jsonErr) {
+        // Not JSON
+      }
 
-        const error = new Error(
+      if (errorData) {
+        const message =
           errorData.message ||
-            errorData.detail ||
-            errorData.error ||
-            `HTTP ${response.status}`,
-        )
+          errorData.detail ||
+          errorData.error ||
+          `HTTP ${response.status}: ${response.statusText || 'Error'}`
+        const error = new Error(message)
         error.httpStatus = response.status
         error.url = response.url
-        error.endpoint = response.url.split('/api/')[1] || ''
+        error.endpoint = response.url ? (response.url.split('/api/')[1] || '') : ''
         Object.assign(error, errorData)
         throw error
-      } catch (jsonError) {
-        if (jsonError !== errorData) {
-          try {
-            const errorText = await response.text()
-            console.log(`[TrainerAPIService] Failed to parse JSON error:`, {
-              status: response.status,
-              url: response.url,
-              text: errorText,
-            })
-
-            const genericError = new Error(
-              errorText ||
-                `HTTP ${response.status}: ${response.statusText || 'Unknown error'}`,
-            )
-            genericError.httpStatus = response.status
-            genericError.url = response.url
-            genericError.endpoint = response.url.split('/api/')[1] || ''
-            throw genericError
-          } catch {
-            const statusError = new Error(
-              `HTTP ${response.status}: ${response.statusText || 'Unknown error'}`,
-            )
-            statusError.httpStatus = response.status
-            statusError.url = response.url
-            statusError.endpoint = response.url.split('/api/')[1] || ''
-            throw statusError
-          }
-        } else {
-          throw jsonError
-        }
       }
+
+      let errorText = ''
+      try {
+        errorText = await response.text()
+      } catch {
+        // Stream already consumed or cannot read
+      }
+
+      const genericError = new Error(
+        errorText ||
+          `HTTP ${response.status}: ${response.statusText || 'Unknown error'}`,
+      )
+      genericError.httpStatus = response.status
+      genericError.url = response.url
+      genericError.endpoint = response.url ? (response.url.split('/api/')[1] || '') : ''
+      throw genericError
     }
     return response.json()
   }

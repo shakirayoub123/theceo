@@ -181,12 +181,12 @@ class Lead(models.Model):
 
 class LeadAssessmentEntry(models.Model):
     ASSESSMENT_CHOICES = [
-        (1, "Fitness Assessment"),
-        (2, "Nutrition Assessment"),
-        (3, "Lifestyle Assessment"),
-        (4, "Goal Setting"),
-        (5, "Medical History"),
-        (6, "Preferences & Availability"),
+        (1, "MBTI – Meyers-Briggs Personality Profile Assessment"),
+        (2, "Senior Executive Leader Soft & Hard Skills Assessment"),
+        (3, "Executive Leader: Client Personal & Professional Assessment"),
+        (4, "Senior Executive Leadership Core Competencies Assessment"),
+        (5, "Global Industry Experience Assessment"),
+        (6, "The Senior Leader's Big 5 Personality Profile Assessment"),
     ]
 
     lead = models.ForeignKey(

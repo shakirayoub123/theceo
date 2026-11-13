@@ -27,6 +27,11 @@ urlpatterns = [
         name="sales-client-detail",
     ),
     path(
+        "sales/clients/<user_uuid>/assign-assessments/",
+        views.SalesAssignAssessmentsView.as_view(),
+        name="sales-assign-assessments",
+    ),
+    path(
         "sales/generatePassword/<user_uuid>/",
         views.GeneratePasswordView.as_view(),
         name="generate-password",

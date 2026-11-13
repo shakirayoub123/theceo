@@ -21,10 +21,23 @@ import {
   FileDown,
   AlertCircle,
   Sparkles,
+  Target,
 } from 'lucide-react'
 import { FormAnswersCard } from '@/components/FormAnswersCard'
 import { QuestionnaireProgressCard } from '@/components/QuestionnaireProgressCard'
 import { URLS } from '@/config/urls'
+import MbtiAssessmentModal from './MbtiAssessmentModal'
+import SkillsAssessmentModal from './SkillsAssessmentModal'
+import PersonalProfessionalAssessmentModal from './PersonalProfessionalAssessmentModal'
+import LeadershipCompetenciesAssessmentModal from './LeadershipCompetenciesAssessmentModal'
+import GlobalIndustryAssessmentModal from './GlobalIndustryAssessmentModal'
+import BigFiveAssessmentModal from './BigFiveAssessmentModal'
+import { MBTI_ASSESSMENT_DATA } from '@/data/mbtiAssessmentData'
+import { SKILLS_ASSESSMENT_DATA, getAllSkillsList } from '@/data/skillsAssessmentData'
+import { PERSONAL_PROFESSIONAL_ASSESSMENT_DATA } from '@/data/personalProfessionalAssessmentData'
+import { LEADERSHIP_COMPETENCIES_DATA, getAllCompetencySkills } from '@/data/leadershipCompetenciesAssessmentData'
+import { GLOBAL_INDUSTRY_DATA, getAllIndustryCategories } from '@/data/globalIndustryAssessmentData'
+import { BIG_FIVE_ASSESSMENT_DATA } from '@/data/bigFiveAssessmentData'
 
 const PAGE_SIZE = 8
 const HERO_TAGLINE_OUTLINE = {
@@ -76,87 +89,73 @@ const formatDate = (dateString) => {
 const SIX_CORE_ASSESSMENTS = [
   {
     id: 1,
-    title: 'Fitness Assessment',
+    title: 'MBTI – MEYERS-BRIGGS PERSONALITY PROFILE ASSESSMENT 1',
     description:
-      'Physical baseline, metabolic markers, cardiovascular health, and workout background.',
-    defaultQuestions: [
-      'Current Weight (lbs/kg)',
-      'Target Weight (lbs/kg)',
-      'Height',
-      'Current Fitness Level (Beginner / Intermediate / Advanced)',
-      'Exercise Frequency per Week',
-      'Preferred Physical Activities & Modalities',
-    ],
+      'Executive Leader Personality Profile (ELPP) based on Myers-Briggs typology: Energy, Information, Decisions, and Work Style.',
+    defaultQuestions: MBTI_ASSESSMENT_DATA.sections
+      .flatMap((s) => s.questions)
+      .map((q) => `${q.id}. ${q.prompt}`),
   },
   {
     id: 2,
-    title: 'Nutrition Assessment',
+    title: 'Senior Executive Leader Soft & Hard Skills Assessment',
     description:
-      'Dietary intake, caloric distribution, hydration, allergies, and supplementation.',
-    defaultQuestions: [
-      'Diet Type & Nutritional Philosophy',
-      'Daily Meal Frequency & Timing',
-      'Daily Water Intake (Liters / Glasses)',
-      'Known Food Allergies or Intolerances',
-      'Supplements / Micronutrients Currently Taken',
-      'Current Eating Habits, Triggers & Roadblocks',
-    ],
+      'Cumulative evaluation across 46 executive competencies: Soft Skills (Leadership, Strategic Thinking, Communication, EQ) and Hard Skills (Financial Acumen, Operations, AI/Tech, Governance, Market Dev).',
+    defaultQuestions: getAllSkillsList().map(
+      (s) => `${s.id}. [${s.competency}] ${s.text}`,
+    ),
   },
   {
     id: 3,
-    title: 'Lifestyle Assessment',
+    title: 'Executive Leader: Client Personal & Professional Assessment',
     description:
-      'Sleep hygiene, executive stress thresholds, travel schedule, and cognitive recovery.',
+      '360-degree baseline evaluation of personal values, professional beliefs, work-life balance, career trajectory, leadership style, and board relations.',
     defaultQuestions: [
-      'Average Sleep Hours per Night & Quality Score',
-      'Current Stress Level (Low / Moderate / High / Severe)',
-      'Executive Work Hours & Travel Cadence',
-      'Tobacco / Nicotine Usage',
-      'Alcohol Consumption Frequency',
-      'Daily Routine Structure & Productivity Cadence',
+      '1.1 Personal & Family Details',
+      '1.2 Family & Friend Relationships',
+      '1.3 Personal Beliefs & Values',
+      '1.4 Professional Beliefs & Values',
+      '1.5 Likes & Dislikes',
+      '1.6 Hobbies & Interests',
+      '1.7 Work-Life Balance (%)',
+      '1.8 Personal Happiness Assessment',
+      '1.9 Interpersonal & Community Networking',
+      '2.1 Current Professional Role & Speaking Confidence',
+      '2.2 Multi-Industry Work Experience',
+      '2.3 Strategic Associations & Alliances',
+      '2.4 Professional Happiness & Job Satisfaction',
+      '2.5 Professional Networking',
+      '2.6 Leadership Style Archetypes & Traits',
+      '2.7 Stakeholder & Board Relationships',
+      '2.8 Final Reflection & Certification',
     ],
   },
   {
     id: 4,
-    title: 'Goal Setting',
+    title: 'Senior Executive Leadership Core Competencies Assessment',
     description:
-      'Executive health targets, leadership performance metrics, and accountability milestones.',
-    defaultQuestions: [
-      'Primary Performance & Leadership Health Goal',
-      'Target Timeline to Achieve Outcomes',
-      'Motivation Level & Core Driving Purpose',
-      'Past Performance Coaching Attempts & Learnings',
-      'Personal Support System & Accountability Structure',
-      'Preferred Progress Tracking & Measurement Metrics',
-    ],
+      'Synthesized Multi-Framework Diagnostic (OPM ECQ, Korn Ferry, Wharton, OLLU) across 38 competencies in 6 domains.',
+    defaultQuestions: getAllCompetencySkills().map(
+      (s) => `${s.id}. [${s.domainTitle}] ${s.text}`,
+    ),
   },
   {
     id: 5,
-    title: 'Medical History',
+    title: 'Global Industry Experience Assessment',
     description:
-      'Clinical conditions, prescription medications, past surgeries, and physician clearance.',
-    defaultQuestions: [
-      'Pre-existing Medical Conditions or Diagnoses',
-      'Prescription Medications & Current Dosages',
-      'Past Musculoskeletal Injuries or Physical Restrictions',
-      'Surgical History & Recovery Milestones',
-      'Family Cardiovascular / Metabolic Health History',
-      'Recent Physician Physical / Bloodwork Findings',
-    ],
+      'Quantitative & sectoral mapping of executive breadth, functional depth, and cross-industry experience across 18 core and specialized industries.',
+    defaultQuestions: getAllIndustryCategories().map(
+      (c) => `${c.id}. ${c.name} (${c.type})`,
+    ),
   },
   {
     id: 6,
-    title: 'Preferences & Availability',
+    title: "The Senior Leader's Big 5 Personality Profile Assessment",
     description:
-      'Coaching cadence, availability windows, facility access, and preferred communication.',
-    defaultQuestions: [
-      'Preferred Weekly Coaching Day (Tuesday / Wednesday / Thursday)',
-      'Preferred Time Window for Live Video Sessions',
-      'Primary Communication Channel Preference',
-      'Access to Gym / Training Facility / Home Setup',
-      'Fitness Equipment & Technology Available',
-      'Coaching Accountability Style & Feedback Preference',
-    ],
+      'Scientifically validated OCEAN diagnostic: Openness, Conscientiousness, Extraversion, Agreeableness, and Emotional Stability for executive optimization.',
+    defaultQuestions: BIG_FIVE_ASSESSMENT_DATA.statements.map(
+      (s) => `${s.id}. ${s.text}`,
+    ),
   },
 ]
 
@@ -765,14 +764,15 @@ export default function CoachingDashboard() {
     })
   }
 
-  const handleSaveAssessmentToMasterDb = async () => {
-    if (!currentAssessmentClient?.clientID || !activeEditingAssessment) return
+  const handleSaveAssessmentToMasterDb = async (customPayload = null) => {
+    const assessmentToSave = customPayload || activeEditingAssessment
+    if (!currentAssessmentClient?.clientID || !assessmentToSave) return
     setIsSavingAssessment(true)
     try {
       const payload = {
-        assessment_id: activeEditingAssessment.id,
-        questionnaire_title: activeEditingAssessment.title,
-        data: activeEditingAssessment.data,
+        assessment_id: assessmentToSave.id,
+        questionnaire_title: assessmentToSave.title,
+        data: assessmentToSave.data,
       }
       const response = await authService.saveCoachingClientAssessment(
         currentAssessmentClient.clientID,
@@ -780,22 +780,22 @@ export default function CoachingDashboard() {
       )
       toast.success(
         response?.message ||
-          `${activeEditingAssessment.title} saved to master internal database!`,
+          `${assessmentToSave.title} saved to master internal database!`,
       )
 
-      const answeredCount = activeEditingAssessment.data.filter((q) =>
-        String(q.answer || '').trim(),
+      const answeredCount = assessmentToSave.data.filter((q) =>
+        String(q.answer || '').trim() && !String(q.question || '').startsWith('__'),
       ).length
 
       setSelectedClientAssessments((prev) =>
         prev.map((item) =>
-          item.id === activeEditingAssessment.id
+          item.id === assessmentToSave.id
             ? {
                 ...item,
                 completed: answeredCount > 0,
                 completedAt: new Date().toISOString(),
                 answeredCount: answeredCount,
-                data: activeEditingAssessment.data,
+                data: assessmentToSave.data,
               }
             : item,
         ),
@@ -948,6 +948,42 @@ export default function CoachingDashboard() {
                 <ExternalLink className='w-3.5 h-3.5' />
               </Link>
             )}
+          </div>
+        </div>
+
+        {/* Next Step: Initial 2-Hour New Client Discovery Meeting Review Callout */}
+        <div className='bg-[#F6B72D] text-black rounded-xl p-4 sm:p-5 border-2 border-amber-500 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4 font-exo'>
+          <div className='space-y-1.5'>
+            <div className='flex items-center gap-2'>
+              <span className='px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-black text-[#F6B72D]'>
+                Next Step
+              </span>
+              <span className='text-xs font-black uppercase tracking-wide text-black/85'>
+                Initial 2-Hour New Client Discovery Meeting
+              </span>
+            </div>
+            <h3 className='text-base sm:text-lg font-black text-black leading-snug'>
+              Review 6 TCI Assessment Diagnostic Results with {currentAssessmentClient?.clientName || 'Client'}
+            </h3>
+            <p className='text-xs sm:text-sm text-black/80 leading-relaxed max-w-3xl'>
+              As the Executive Coaching Influencer, review and evaluate the client's 6 baseline assessments during your initial 2-hour discovery meeting to establish signature strengths, core leadership competencies, blind spots, and formalize the executive development roadmap.
+            </p>
+          </div>
+
+          <div className='flex items-center gap-2 shrink-0'>
+            <button
+              type='button'
+              onClick={() =>
+                handleOpenAssessmentModal(
+                  currentAssessmentClient?.clientID,
+                  currentAssessmentClient?.clientName,
+                )
+              }
+              className='inline-flex items-center gap-2 bg-black hover:bg-gray-900 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs sm:text-sm shadow transition-all hover:scale-105 active:scale-95'
+            >
+              <Target className='w-4 h-4 text-[#F6B72D]' />
+              Review Diagnostic Suite
+            </button>
           </div>
         </div>
 
@@ -1532,8 +1568,80 @@ export default function CoachingDashboard() {
         </div>
       )}
 
-      {/* Modal for Entering / Editing Assessment Results directly into Master Internal Database */}
-      {activeEditingAssessment && (
+      {/* Dedicated MBTI Assessment 1 Modal (Enter / Update) */}
+      {activeEditingAssessment && activeEditingAssessment.id === 1 && (
+        <MbtiAssessmentModal
+          isOpen={true}
+          client={currentAssessmentClient}
+          initialData={activeEditingAssessment.data}
+          onSave={handleSaveAssessmentToMasterDb}
+          isSaving={isSavingAssessment}
+          onClose={() => setActiveEditingAssessment(null)}
+        />
+      )}
+
+      {/* Dedicated Skills Assessment 2 Modal (Enter / Update) */}
+      {activeEditingAssessment && activeEditingAssessment.id === 2 && (
+        <SkillsAssessmentModal
+          isOpen={true}
+          client={currentAssessmentClient}
+          initialData={activeEditingAssessment.data}
+          onSave={handleSaveAssessmentToMasterDb}
+          isSaving={isSavingAssessment}
+          onClose={() => setActiveEditingAssessment(null)}
+        />
+      )}
+
+      {/* Dedicated Personal & Professional Assessment 3 Modal (Enter / Update) */}
+      {activeEditingAssessment && activeEditingAssessment.id === 3 && (
+        <PersonalProfessionalAssessmentModal
+          isOpen={true}
+          client={currentAssessmentClient}
+          initialData={activeEditingAssessment.data}
+          onSave={handleSaveAssessmentToMasterDb}
+          isSaving={isSavingAssessment}
+          onClose={() => setActiveEditingAssessment(null)}
+        />
+      )}
+
+      {/* Dedicated Leadership Core Competencies Assessment 4 Modal (Enter / Update) */}
+      {activeEditingAssessment && activeEditingAssessment.id === 4 && (
+        <LeadershipCompetenciesAssessmentModal
+          isOpen={true}
+          client={currentAssessmentClient}
+          initialData={activeEditingAssessment.data}
+          onSave={handleSaveAssessmentToMasterDb}
+          isSaving={isSavingAssessment}
+          onClose={() => setActiveEditingAssessment(null)}
+        />
+      )}
+
+      {/* Dedicated Global Industry Experience Assessment 5 Modal (Enter / Update) */}
+      {activeEditingAssessment && activeEditingAssessment.id === 5 && (
+        <GlobalIndustryAssessmentModal
+          isOpen={true}
+          client={currentAssessmentClient}
+          initialData={activeEditingAssessment.data}
+          onSave={handleSaveAssessmentToMasterDb}
+          isSaving={isSavingAssessment}
+          onClose={() => setActiveEditingAssessment(null)}
+        />
+      )}
+
+      {/* Dedicated Senior Leader Big 5 Assessment 6 Modal (Enter / Update) */}
+      {activeEditingAssessment && activeEditingAssessment.id === 6 && (
+        <BigFiveAssessmentModal
+          isOpen={true}
+          client={currentAssessmentClient}
+          initialData={activeEditingAssessment.data}
+          onSave={handleSaveAssessmentToMasterDb}
+          isSaving={isSavingAssessment}
+          onClose={() => setActiveEditingAssessment(null)}
+        />
+      )}
+
+      {/* Modal for Entering / Editing Assessment Results directly into Master Internal Database (Fallback > 6) */}
+      {activeEditingAssessment && activeEditingAssessment.id > 6 && (
         <div
           className='fixed inset-0 bg-black/70 backdrop-blur-sm z-[99999] flex items-center justify-center p-4 overflow-y-auto'
           onClick={() => setActiveEditingAssessment(null)}
@@ -1624,8 +1732,74 @@ export default function CoachingDashboard() {
         </div>
       )}
 
-      {/* Modal for Viewing Single Assessment Diagnostic Results */}
-      {viewingSingleAssessment && (
+      {/* Dedicated MBTI Assessment 1 Modal (View Diagnostic Results) */}
+      {viewingSingleAssessment && viewingSingleAssessment.id === 1 && (
+        <MbtiAssessmentModal
+          isOpen={true}
+          client={currentAssessmentClient}
+          initialData={viewingSingleAssessment.data}
+          isReadOnly={true}
+          onClose={() => setViewingSingleAssessment(null)}
+        />
+      )}
+
+      {/* Dedicated Skills Assessment 2 Modal (View Diagnostic Results) */}
+      {viewingSingleAssessment && viewingSingleAssessment.id === 2 && (
+        <SkillsAssessmentModal
+          isOpen={true}
+          client={currentAssessmentClient}
+          initialData={viewingSingleAssessment.data}
+          isReadOnly={true}
+          onClose={() => setViewingSingleAssessment(null)}
+        />
+      )}
+
+      {/* Dedicated Personal & Professional Assessment 3 Modal (View Diagnostic Results) */}
+      {viewingSingleAssessment && viewingSingleAssessment.id === 3 && (
+        <PersonalProfessionalAssessmentModal
+          isOpen={true}
+          client={currentAssessmentClient}
+          initialData={viewingSingleAssessment.data}
+          isReadOnly={true}
+          onClose={() => setViewingSingleAssessment(null)}
+        />
+      )}
+
+      {/* Dedicated Leadership Core Competencies Assessment 4 Modal (View Diagnostic Results) */}
+      {viewingSingleAssessment && viewingSingleAssessment.id === 4 && (
+        <LeadershipCompetenciesAssessmentModal
+          isOpen={true}
+          client={currentAssessmentClient}
+          initialData={viewingSingleAssessment.data}
+          isReadOnly={true}
+          onClose={() => setViewingSingleAssessment(null)}
+        />
+      )}
+
+      {/* Dedicated Global Industry Experience Assessment 5 Modal (View Diagnostic Results) */}
+      {viewingSingleAssessment && viewingSingleAssessment.id === 5 && (
+        <GlobalIndustryAssessmentModal
+          isOpen={true}
+          client={currentAssessmentClient}
+          initialData={viewingSingleAssessment.data}
+          isReadOnly={true}
+          onClose={() => setViewingSingleAssessment(null)}
+        />
+      )}
+
+      {/* Dedicated Senior Leader Big 5 Assessment 6 Modal (View Diagnostic Results) */}
+      {viewingSingleAssessment && viewingSingleAssessment.id === 6 && (
+        <BigFiveAssessmentModal
+          isOpen={true}
+          client={currentAssessmentClient}
+          initialData={viewingSingleAssessment.data}
+          isReadOnly={true}
+          onClose={() => setViewingSingleAssessment(null)}
+        />
+      )}
+
+      {/* Modal for Viewing Single Assessment Diagnostic Results (Fallback > 6) */}
+      {viewingSingleAssessment && viewingSingleAssessment.id > 6 && (
         <div
           className='fixed inset-0 bg-black/70 backdrop-blur-sm z-[99999] flex items-center justify-center p-4 overflow-y-auto'
           onClick={() => setViewingSingleAssessment(null)}

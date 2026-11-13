@@ -226,6 +226,20 @@ class SalesAPIService {
     )
     return this.handleResponse(response)
   }
+
+  // ==================== 6 TCI ASSESSMENTS ASSIGNMENT ====================
+
+  // Assign 6 TCI Executive Assessments to new paid client
+  async assignClientAssessments(userId) {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/people/sales/clients/${userId}/assign-assessments/`,
+      {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+      },
+    )
+    return this.handleResponse(response)
+  }
 }
 
 export default new SalesAPIService()

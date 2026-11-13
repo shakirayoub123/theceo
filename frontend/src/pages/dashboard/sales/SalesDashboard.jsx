@@ -829,13 +829,16 @@ export default function SalesDashboard() {
       <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
         <Link
           to={URLS.sales.newClients}
-          className='flex items-center justify-between px-4 py-4 rounded-xl border-2 border-[#F6B72D] bg-white shadow-sm'
+          className='flex items-center justify-between px-4 py-4 rounded-xl border-2 border-[#F6B72D] bg-white shadow-sm hover:border-black transition-colors'
         >
           <div>
             <p className='text-xs uppercase tracking-wide text-gray-500'>
               Clients
             </p>
             <p className='text-base font-semibold text-gray-900'>New Clients</p>
+            <p className='text-[11px] text-[#b8860b] font-bold mt-0.5'>
+              ★ Assign 6 TCI Assessments
+            </p>
           </div>
           <UserPlus className='w-6 h-6 text-[#1a2332]' />
         </Link>
