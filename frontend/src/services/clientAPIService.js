@@ -74,6 +74,31 @@ class ClientAPIService {
     return this.handleResponse(response)
   }
 
+  // Get full structured list of 6 assessments for client
+  async getClientAssessments() {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/lms/client/assessments/`,
+      { method: 'GET', headers: this.getAuthHeaders() },
+    )
+    return this.handleResponse(response)
+  }
+
+  // Save client assessment answers
+  async saveClientAssessment(payload) {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/lms/client/assessments/`,
+      {
+        method: 'POST',
+        headers: {
+          ...this.getAuthHeaders(),
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      },
+    )
+    return this.handleResponse(response)
+  }
+
   // Get client overview data
   async getClientOverview() {
     const response = await this.fetchWithCredentials(

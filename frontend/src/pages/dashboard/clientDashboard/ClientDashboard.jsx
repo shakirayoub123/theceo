@@ -4,6 +4,7 @@ import authService from '@/services/authService'
 import { getAssetUrl } from '@/lib/utils'
 import { Link } from 'react-router-dom'
 import { useEffect, useMemo, useState, useCallback } from 'react'
+import { toast } from 'react-hot-toast'
 import {
   CalendarDays,
   Clock,
@@ -15,8 +16,20 @@ import {
   Play,
   Save,
   X,
+  CheckCircle2,
+  Sparkles,
+  ClipboardList,
+  ShieldCheck,
+  ArrowRight,
+  ExternalLink,
 } from 'lucide-react'
 import { URLS } from '@/config/urls'
+import MbtiAssessmentModal from '../coaching/MbtiAssessmentModal'
+import SkillsAssessmentModal from '../coaching/SkillsAssessmentModal'
+import PersonalProfessionalAssessmentModal from '../coaching/PersonalProfessionalAssessmentModal'
+import LeadershipCompetenciesAssessmentModal from '../coaching/LeadershipCompetenciesAssessmentModal'
+import GlobalIndustryAssessmentModal from '../coaching/GlobalIndustryAssessmentModal'
+import BigFiveAssessmentModal from '../coaching/BigFiveAssessmentModal'
 
 const PAGE_SIZE = 8
 const HERO_TAGLINE_OUTLINE = {
@@ -150,6 +163,57 @@ const normalizeDashboardMeeting = (meeting) => {
   }
 }
 
+const CLIENT_SIX_ASSESSMENTS_METADATA = [
+  {
+    id: 1,
+    title: 'MBTI – Meyers-Briggs Personality Profile Assessment',
+    category: 'Personality & Leadership Blueprint',
+    questionsCount: 32,
+    description:
+      'Evaluate your strategic communication styles, information processing, and decision-making dynamics across the 4 Myers-Briggs executive dimensions.',
+  },
+  {
+    id: 2,
+    title: 'Senior Executive Leader Soft & Hard Skill Sets Assessment',
+    category: 'Executive Capability & Mastery',
+    questionsCount: 75,
+    description:
+      'Comprehensive self-evaluation across 15 core leadership categories spanning change management, M&A negotiation, board relations, and crisis leadership.',
+  },
+  {
+    id: 3,
+    title: 'Executive Leader: Client Personal & Professional Assessment',
+    category: 'Comprehensive Leadership Diagnostic',
+    questionsCount: 100,
+    description:
+      'In-depth 10-domain diagnostic evaluating leadership foundations, work-life vitality, executive presence, and strategic coaching goals.',
+  },
+  {
+    id: 4,
+    title: 'Senior Executive Leadership Core Competencies Assessment',
+    category: 'C-Suite Core Competencies',
+    questionsCount: 75,
+    description:
+      'Rigorous appraisal of 75 foundational competencies covering visionary stewardship, corporate governance, talent pipeline, and enterprise systems.',
+  },
+  {
+    id: 5,
+    title: 'Global Industry Experience Assessment',
+    category: 'Marketplace & Domain Experience',
+    questionsCount: 125,
+    description:
+      'Identify cross-sector operational experience and functional expertise across 25 major global industries.',
+  },
+  {
+    id: 6,
+    title: "The Senior Leader's Big 5 Personality Profile Assessment",
+    category: 'OCEAN Psychological Profile',
+    questionsCount: 35,
+    description:
+      'Examine the Big 5 personality traits (Openness, Conscientiousness, Extraversion, Agreeableness, Emotional Stability) with executive coaching implications.',
+  },
+]
+
 export default function ClientDashboard() {
   const [overviewData, setOverviewData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -168,6 +232,11 @@ export default function ClientDashboard() {
   const [introModalLoading, setIntroModalLoading] = useState(false)
   const [introModalError, setIntroModalError] = useState('')
   const [completedAssessments, setCompletedAssessments] = useState(null)
+  const [showAssessmentHub, setShowAssessmentHub] = useState(false)
+  const [clientAssessmentsList, setClientAssessmentsList] = useState([])
+  const [loadingAssessmentsList, setLoadingAssessmentsList] = useState(false)
+  const [activeTakingAssessment, setActiveTakingAssessment] = useState(null)
+  const [isSavingClientAssessment, setIsSavingClientAssessment] = useState(false)
 
   const getStoredUser = () => {
     try {
@@ -183,22 +252,83 @@ export default function ClientDashboard() {
 
   const storedUser = getStoredUser()
 
-  // Fetch completed assessment count
+  const fetchClientAssessmentsData = useCallback(async () => {
+    try {
+      const res = await clientAPIService.getClientAssessments()
+      if (res && res.assessments) {
+        setClientAssessmentsList(res.assessments)
+        setCompletedAssessments(res.completedCount ?? 0)
+        return res.assessments
+      }
+    } catch (err) {
+      console.warn('Could not fetch structured assessments, falling back to count:', err)
+      const userEmail = storedUser?.email || localStorage.getItem('userEmail') || ''
+      if (userEmail) {
+        clientAPIService
+          .getAssessmentProgress(userEmail)
+          .then((data) => {
+            const count = Array.isArray(data?.questionnaires)
+              ? data.questionnaires.length
+              : Array.isArray(data)
+                ? data.length
+                : 0
+            setCompletedAssessments(count)
+          })
+          .catch(() => setCompletedAssessments(0))
+      }
+    }
+    return []
+  }, [storedUser?.email])
+
+  // Fetch completed assessment count & structured assessments on mount
   useEffect(() => {
-    const userEmail =
-      storedUser?.email ||
-      localStorage.getItem('userEmail') ||
-      ''
-    if (!userEmail) return
-    clientAPIService.getAssessmentProgress(userEmail)
-      .then((data) => {
-        const count = Array.isArray(data?.questionnaires)
-          ? data.questionnaires.length
-          : (Array.isArray(data) ? data.length : 0)
-        setCompletedAssessments(count)
-      })
-      .catch(() => setCompletedAssessments(0))
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    fetchClientAssessmentsData()
+  }, [fetchClientAssessmentsData])
+
+  const handleOpenAssessmentHub = async () => {
+    setShowAssessmentHub(true)
+    setLoadingAssessmentsList(true)
+    await fetchClientAssessmentsData()
+    setLoadingAssessmentsList(false)
+  }
+
+  const handleOpenTakeAssessment = (assessment) => {
+    setActiveTakingAssessment(assessment)
+  }
+
+  const handleSaveClientAssessment = async (savedPayload) => {
+    if (!savedPayload) return
+    setIsSavingClientAssessment(true)
+    try {
+      const payload = {
+        assessment_id: savedPayload.id,
+        questionnaire_title: savedPayload.title,
+        data: savedPayload.data,
+      }
+      const res = await clientAPIService.saveClientAssessment(payload)
+      toast.success(res?.message || `${savedPayload.title} saved successfully!`)
+      setActiveTakingAssessment(null)
+      await fetchClientAssessmentsData()
+    } catch (err) {
+      console.error('Error saving client assessment:', err)
+      toast.error(err?.message || 'Failed to save assessment.')
+    } finally {
+      setIsSavingClientAssessment(false)
+    }
+  }
+
+  const assessmentsToDisplay = useMemo(() => {
+    return CLIENT_SIX_ASSESSMENTS_METADATA.map((meta) => {
+      const live = clientAssessmentsList.find((a) => a.id === meta.id)
+      return {
+        ...meta,
+        ...(live || {}),
+        is_completed: live?.is_completed || false,
+        status: live?.status || 'pending',
+        data: live?.data || [],
+      }
+    })
+  }, [clientAssessmentsList])
   const hasFullDashboardAccess = !(
     overviewData?.hasFullDashboardAccess === false ||
     storedUser?.hasFullDashboardAccess === false
@@ -864,14 +994,14 @@ export default function ClientDashboard() {
               {completedAssessments} of 6 completed
             </p>
           </div>
-          <a
-            href='https://assessment.theceoinfluencers.com'
-            target='_blank'
-            rel='noopener noreferrer'
-            className='inline-flex items-center gap-2 whitespace-nowrap bg-[#F6B72D] hover:bg-[#e6b82a] text-black font-bold py-2.5 px-6 rounded-full text-sm transition-all duration-300 hover:scale-105'
+          <button
+            type='button'
+            onClick={handleOpenAssessmentHub}
+            className='inline-flex items-center gap-2 whitespace-nowrap bg-[#F6B72D] hover:bg-[#e6b82a] text-black font-bold py-2.5 px-6 rounded-full text-sm transition-all duration-300 hover:scale-105 shadow-md cursor-pointer'
           >
+            <ClipboardList className='w-4 h-4' />
             Go to Assessments
-          </a>
+          </button>
         </div>
       )}
 
@@ -1543,6 +1673,195 @@ export default function ClientDashboard() {
             </div>
           </div>
         </>
+      )}
+
+      {/* Assessment Hub Modal */}
+      {showAssessmentHub && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200'>
+          <div className='bg-[#0B132B] border-2 border-[#F6B72D] rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden'>
+            {/* Header */}
+            <div className='flex items-center justify-between px-6 py-5 border-b border-[#F6B72D]/20 bg-[#0F172A]'>
+              <div className='space-y-1'>
+                <div className='flex items-center gap-2'>
+                  <span className='px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#F6B72D]/20 text-[#F6B72D] border border-[#F6B72D]/40 uppercase tracking-wider'>
+                    Leadership Diagnostic
+                  </span>
+                  <span className='text-xs text-white/50'>•</span>
+                  <span className='text-xs text-white/70'>
+                    {assessmentsToDisplay.filter((a) => a.is_completed).length} of 6 Completed
+                  </span>
+                </div>
+                <h2 className='text-lg sm:text-xl font-bold text-white tracking-wide'>
+                  Executive Leadership Assessments
+                </h2>
+                <p className='text-xs sm:text-sm text-white/70 max-w-2xl'>
+                  Complete all 6 diagnostic assessments to build your executive profile and allow your coaching advisors to tailor your leadership acceleration curriculum.
+                </p>
+              </div>
+              <button
+                type='button'
+                onClick={() => setShowAssessmentHub(false)}
+                className='p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors'
+              >
+                <X className='w-5 h-5' />
+              </button>
+            </div>
+
+            {/* Assessment Cards List */}
+            <div className='p-6 overflow-y-auto space-y-4 flex-1'>
+              {loadingAssessmentsList ? (
+                <div className='flex flex-col items-center justify-center py-16 text-white/70'>
+                  <div className='animate-spin rounded-full h-10 w-10 border-b-2 border-[#F6B72D] mb-3'></div>
+                  <p className='text-sm'>Loading your assessment profile...</p>
+                </div>
+              ) : (
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  {assessmentsToDisplay.map((assessment, idx) => {
+                    const isDone = Boolean(assessment.is_completed)
+                    return (
+                      <div
+                        key={assessment.id || idx}
+                        className={`rounded-xl border p-5 flex flex-col justify-between transition-all duration-200 ${
+                          isDone
+                            ? 'bg-[#132238]/60 border-emerald-500/40 hover:border-emerald-500/80'
+                            : 'bg-[#132238] border-white/10 hover:border-[#F6B72D]/50 hover:shadow-lg'
+                        }`}
+                      >
+                        <div className='space-y-3'>
+                          <div className='flex items-start justify-between gap-3'>
+                            <span className='inline-flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold bg-[#F6B72D]/20 text-[#F6B72D] border border-[#F6B72D]/30'>
+                              {idx + 1}
+                            </span>
+                            {isDone ? (
+                              <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'>
+                                <CheckCircle2 className='w-3.5 h-3.5' /> Completed
+                              </span>
+                            ) : (
+                              <span className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40'>
+                                <Clock className='w-3.5 h-3.5' /> Pending
+                              </span>
+                            )}
+                          </div>
+                          <div>
+                            <span className='text-[11px] font-semibold uppercase tracking-wider text-[#F6B72D]'>
+                              {assessment.category}
+                            </span>
+                            <h3 className='text-white font-bold text-sm sm:text-base line-clamp-2 mt-0.5'>
+                              {assessment.title}
+                            </h3>
+                          </div>
+                          <p className='text-xs text-white/60 line-clamp-3 leading-relaxed'>
+                            {assessment.description}
+                          </p>
+                        </div>
+
+                        <div className='pt-4 mt-3 border-t border-white/10 flex items-center justify-between'>
+                          <span className='text-xs text-white/50'>
+                            {assessment.questions_count || assessment.questionsCount || 0} Diagnostic Questions
+                          </span>
+                          <button
+                            type='button'
+                            onClick={() => handleOpenTakeAssessment(assessment)}
+                            className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                              isDone
+                                ? 'bg-white/10 hover:bg-white/20 text-white'
+                                : 'bg-[#F6B72D] hover:bg-[#e6b82a] text-black shadow-md hover:scale-[1.02]'
+                            }`}
+                          >
+                            {isDone ? 'Review Answers' : 'Take Assessment'}
+                            <ArrowRight className='w-3.5 h-3.5' />
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className='px-6 py-4 border-t border-[#F6B72D]/20 bg-[#0F172A] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/60'>
+              <div className='flex items-center gap-2'>
+                <ShieldCheck className='w-4 h-4 text-emerald-400' />
+                <span>Responses are securely recorded and synchronized with your assigned executive advisors.</span>
+              </div>
+              <button
+                type='button'
+                onClick={() => setShowAssessmentHub(false)}
+                className='px-5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold transition-colors'
+              >
+                Close Hub
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Assessment Modals (1 - 6) */}
+      {activeTakingAssessment?.id === 1 && (
+        <MbtiAssessmentModal
+          isOpen={true}
+          onClose={() => setActiveTakingAssessment(null)}
+          client={{ name: storedUser?.name || 'Client', email: storedUser?.email || '' }}
+          initialData={activeTakingAssessment.data || []}
+          onSave={handleSaveClientAssessment}
+          isSaving={isSavingClientAssessment}
+        />
+      )}
+
+      {activeTakingAssessment?.id === 2 && (
+        <SkillsAssessmentModal
+          isOpen={true}
+          onClose={() => setActiveTakingAssessment(null)}
+          client={{ name: storedUser?.name || 'Client', email: storedUser?.email || '' }}
+          initialData={activeTakingAssessment.data || []}
+          onSave={handleSaveClientAssessment}
+          isSaving={isSavingClientAssessment}
+        />
+      )}
+
+      {activeTakingAssessment?.id === 3 && (
+        <PersonalProfessionalAssessmentModal
+          isOpen={true}
+          onClose={() => setActiveTakingAssessment(null)}
+          client={{ name: storedUser?.name || 'Client', email: storedUser?.email || '' }}
+          initialData={activeTakingAssessment.data || []}
+          onSave={handleSaveClientAssessment}
+          isSaving={isSavingClientAssessment}
+        />
+      )}
+
+      {activeTakingAssessment?.id === 4 && (
+        <LeadershipCompetenciesAssessmentModal
+          isOpen={true}
+          onClose={() => setActiveTakingAssessment(null)}
+          client={{ name: storedUser?.name || 'Client', email: storedUser?.email || '' }}
+          initialData={activeTakingAssessment.data || []}
+          onSave={handleSaveClientAssessment}
+          isSaving={isSavingClientAssessment}
+        />
+      )}
+
+      {activeTakingAssessment?.id === 5 && (
+        <GlobalIndustryAssessmentModal
+          isOpen={true}
+          onClose={() => setActiveTakingAssessment(null)}
+          client={{ name: storedUser?.name || 'Client', email: storedUser?.email || '' }}
+          initialData={activeTakingAssessment.data || []}
+          onSave={handleSaveClientAssessment}
+          isSaving={isSavingClientAssessment}
+        />
+      )}
+
+      {activeTakingAssessment?.id === 6 && (
+        <BigFiveAssessmentModal
+          isOpen={true}
+          onClose={() => setActiveTakingAssessment(null)}
+          client={{ name: storedUser?.name || 'Client', email: storedUser?.email || '' }}
+          initialData={activeTakingAssessment.data || []}
+          onSave={handleSaveClientAssessment}
+          isSaving={isSavingClientAssessment}
+        />
       )}
     </div>
   )

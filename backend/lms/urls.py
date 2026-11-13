@@ -270,6 +270,11 @@ urlpatterns = [
         name="client-onboarding",
     ),
     path(
+        "client/assessments/",
+        client_views.ClientAssessmentsView.as_view(),
+        name="client-assessments",
+    ),
+    path(
         "client/chapter-progress/<chapter_id>/progress/<progress>/",
         views.UpdateChapterProgressView.as_view(),
         name="update-chapter-progress",

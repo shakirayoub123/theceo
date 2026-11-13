@@ -34,6 +34,10 @@ from scheduling.models import (
     MeetingType,
     Appointment as SchedulingAppointment,
 )
+from .assessment_config import (
+    get_structured_assessments_for_user,
+    save_assessment_for_user,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -1208,8 +1212,6 @@ class ClientOnboardingProgressView(APIView):
                 {"error": "This endpoint is only available for clients"},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        if not _client_has_full_dashboard_access(user):
-            return _full_dashboard_access_error()
 
         # Get user_email from query parameters
         user_email = request.query_params.get("user_email")
@@ -1281,8 +1283,6 @@ class ClientQuestionnaireProgressView(APIView):
                 {"error": "This endpoint is only available for clients"},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        if not _client_has_full_dashboard_access(user):
-            return _full_dashboard_access_error()
 
         # Get parameters from query parameters
         user_email = request.query_params.get("user_email")
@@ -1364,8 +1364,6 @@ class ClientOnboardingView(APIView):
                 {"error": "This endpoint is only available for clients"},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        if not _client_has_full_dashboard_access(user):
-            return _full_dashboard_access_error()
 
         try:
             # Get data from request
@@ -1518,3 +1516,73 @@ class ClientOnboardingView(APIView):
                 )
             except Exception as e:
                 logger.warning(f"Failed to send assessments completion email to client: {e}")
+
+
+class ClientAssessmentsView(APIView):
+    """
+    GET /api/lms/client/assessments/ - Get all 6 assessments and their completion status
+    POST /api/lms/client/assessments/ - Save a completed/in-progress assessment
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if user.role != "client":
+            return Response(
+                {"error": "This endpoint is only available for clients"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        assessments = get_structured_assessments_for_user(user)
+        completed_count = sum(1 for a in assessments if a.get("completed"))
+        return Response(
+            {
+                "assessments": assessments,
+                "completedCount": completed_count,
+                "totalCount": 6,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    def post(self, request):
+        user = request.user
+        if user.role != "client":
+            return Response(
+                {"error": "This endpoint is only available for clients"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        assessment_id = request.data.get("assessment_id")
+        questionnaire_title = request.data.get("questionnaire_title")
+        data = request.data.get("data") or []
+
+        if not questionnaire_title:
+            return Response(
+                {"error": "questionnaire_title is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        form_answer = save_assessment_for_user(
+            user=user,
+            assessment_id=assessment_id,
+            questionnaire_title=questionnaire_title,
+            data=data,
+        )
+
+        # Check if all 6 completed to notify advisor
+        assessments = get_structured_assessments_for_user(user)
+        completed_count = sum(1 for a in assessments if a.get("completed"))
+        if completed_count >= 6:
+            try:
+                ClientOnboardingView()._notify_advisors_of_completion(user)
+            except Exception as e:
+                logger.warning(f"Could not notify advisors: {e}")
+
+        return Response(
+            {
+                "message": f"{questionnaire_title} saved successfully.",
+                "id": form_answer.id,
+                "completed": True,
+                "completedCount": completed_count,
+            },
+            status=status.HTTP_200_OK,
+        )
