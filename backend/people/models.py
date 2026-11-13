@@ -119,6 +119,25 @@ class Lead(models.Model):
                 [self.email],
                 fail_silently=False,
             )
+            try:
+                from comms.utils import send_ops_email
+                send_ops_email(
+                    subject=f"New Lead Captured: {self.full_name}",
+                    message=(
+                        f"New lead registered on website:\n\n"
+                        f"Name: {self.full_name}\n"
+                        f"Email: {self.email}\n"
+                        f"Phone: {self.phone}\n"
+                        f"Job Title: {self.job_title or '-'}\n"
+                        f"Position/Company: {self.position or '-'}\n"
+                        f"Industry: {self.industry or '-'}\n"
+                        f"Requested Date/Time: {self.requested_meeting_date} {self.requested_meeting_time}\n"
+                        f"Access Code: {self.access_code}"
+                    ),
+                    fail_silently=True,
+                )
+            except Exception:
+                pass
             return True
         except Exception as e:
             print(f"Failed to send email to {self.email}: {e}")

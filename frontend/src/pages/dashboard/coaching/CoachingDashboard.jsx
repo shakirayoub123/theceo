@@ -12,7 +12,18 @@ import {
   Play,
   Save,
   Users,
+  FileText,
+  ExternalLink,
+  X,
+  CheckCircle2,
+  Clock,
+  Edit3,
+  FileDown,
+  AlertCircle,
+  Sparkles,
 } from 'lucide-react'
+import { FormAnswersCard } from '@/components/FormAnswersCard'
+import { QuestionnaireProgressCard } from '@/components/QuestionnaireProgressCard'
 import { URLS } from '@/config/urls'
 
 const PAGE_SIZE = 8
@@ -62,6 +73,93 @@ const formatDate = (dateString) => {
   })
 }
 
+const SIX_CORE_ASSESSMENTS = [
+  {
+    id: 1,
+    title: 'Fitness Assessment',
+    description:
+      'Physical baseline, metabolic markers, cardiovascular health, and workout background.',
+    defaultQuestions: [
+      'Current Weight (lbs/kg)',
+      'Target Weight (lbs/kg)',
+      'Height',
+      'Current Fitness Level (Beginner / Intermediate / Advanced)',
+      'Exercise Frequency per Week',
+      'Preferred Physical Activities & Modalities',
+    ],
+  },
+  {
+    id: 2,
+    title: 'Nutrition Assessment',
+    description:
+      'Dietary intake, caloric distribution, hydration, allergies, and supplementation.',
+    defaultQuestions: [
+      'Diet Type & Nutritional Philosophy',
+      'Daily Meal Frequency & Timing',
+      'Daily Water Intake (Liters / Glasses)',
+      'Known Food Allergies or Intolerances',
+      'Supplements / Micronutrients Currently Taken',
+      'Current Eating Habits, Triggers & Roadblocks',
+    ],
+  },
+  {
+    id: 3,
+    title: 'Lifestyle Assessment',
+    description:
+      'Sleep hygiene, executive stress thresholds, travel schedule, and cognitive recovery.',
+    defaultQuestions: [
+      'Average Sleep Hours per Night & Quality Score',
+      'Current Stress Level (Low / Moderate / High / Severe)',
+      'Executive Work Hours & Travel Cadence',
+      'Tobacco / Nicotine Usage',
+      'Alcohol Consumption Frequency',
+      'Daily Routine Structure & Productivity Cadence',
+    ],
+  },
+  {
+    id: 4,
+    title: 'Goal Setting',
+    description:
+      'Executive health targets, leadership performance metrics, and accountability milestones.',
+    defaultQuestions: [
+      'Primary Performance & Leadership Health Goal',
+      'Target Timeline to Achieve Outcomes',
+      'Motivation Level & Core Driving Purpose',
+      'Past Performance Coaching Attempts & Learnings',
+      'Personal Support System & Accountability Structure',
+      'Preferred Progress Tracking & Measurement Metrics',
+    ],
+  },
+  {
+    id: 5,
+    title: 'Medical History',
+    description:
+      'Clinical conditions, prescription medications, past surgeries, and physician clearance.',
+    defaultQuestions: [
+      'Pre-existing Medical Conditions or Diagnoses',
+      'Prescription Medications & Current Dosages',
+      'Past Musculoskeletal Injuries or Physical Restrictions',
+      'Surgical History & Recovery Milestones',
+      'Family Cardiovascular / Metabolic Health History',
+      'Recent Physician Physical / Bloodwork Findings',
+    ],
+  },
+  {
+    id: 6,
+    title: 'Preferences & Availability',
+    description:
+      'Coaching cadence, availability windows, facility access, and preferred communication.',
+    defaultQuestions: [
+      'Preferred Weekly Coaching Day (Tuesday / Wednesday / Thursday)',
+      'Preferred Time Window for Live Video Sessions',
+      'Primary Communication Channel Preference',
+      'Access to Gym / Training Facility / Home Setup',
+      'Fitness Equipment & Technology Available',
+      'Coaching Accountability Style & Feedback Preference',
+    ],
+  },
+]
+
 export default function CoachingDashboard() {
   const [dashboardData, setDashboardData] = useState(null)
   const [upcomingMeetings, setUpcomingMeetings] = useState([])
@@ -73,6 +171,15 @@ export default function CoachingDashboard() {
   const [activeProgramModules, setActiveProgramModules] = useState([])
   const [notes, setNotes] = useState('')
   const [notesSavedAt, setNotesSavedAt] = useState(null)
+  const [assignedClients, setAssignedClients] = useState([])
+  const [selectedClientForAssessment, setSelectedClientForAssessment] = useState(null)
+  const [clientAssessmentDetails, setClientAssessmentDetails] = useState(null)
+  const [loadingAssessmentDetails, setLoadingAssessmentDetails] = useState(false)
+  const [showAssessmentModal, setShowAssessmentModal] = useState(false)
+  const [selectedClientAssessments, setSelectedClientAssessments] = useState([])
+  const [activeEditingAssessment, setActiveEditingAssessment] = useState(null)
+  const [isSavingAssessment, setIsSavingAssessment] = useState(false)
+  const [viewingSingleAssessment, setViewingSingleAssessment] = useState(null)
 
   const downloadFile = useCallback(async (file) => {
     const fileUrl = getAssetUrl(file?.fileUrl || file?.url || file?.file)
@@ -137,6 +244,7 @@ export default function CoachingDashboard() {
           calendarThisMonth,
           calendarNextMonth,
           allProgramsResponse,
+          coachingClientsResponse,
         ] = await Promise.all([
           authService.getCoachingDashboard(),
           authService.getCoachingCalendar({
@@ -148,8 +256,13 @@ export default function CoachingDashboard() {
             month: nextMonth.getMonth() + 1,
           }),
           authService.getAllPrograms(),
+          authService.getCoachingClients().catch(() => ({ clients: [] })),
         ])
         setDashboardData(response)
+        const clientList = Array.isArray(coachingClientsResponse?.clients)
+          ? coachingClientsResponse.clients
+          : []
+        setAssignedClients(clientList)
         const mergedCalendar = mergeCalendarMonths(
           calendarThisMonth,
           calendarNextMonth,
@@ -511,6 +624,202 @@ export default function CoachingDashboard() {
     ? `/coaching-dashboard/clients/${activeClientId}`
     : URLS.coaching.clients
 
+  const currentAssessmentClient = useMemo(() => {
+    if (selectedClientForAssessment) return selectedClientForAssessment
+    if (activeClientId) {
+      const match = assignedClients.find(
+        (c) => String(c.clientID) === String(activeClientId),
+      )
+      if (match) return match
+      return {
+        clientID: activeClientId,
+        clientName: activeProgram?.clientName || 'Assigned Client',
+        completedAssessments: null,
+      }
+    }
+    return assignedClients[0] || null
+  }, [activeClientId, activeProgram, assignedClients, selectedClientForAssessment])
+
+  // Load assessments whenever selected client changes
+  useEffect(() => {
+    const fetchAssessmentsForClient = async () => {
+      if (!currentAssessmentClient?.clientID) {
+        setSelectedClientAssessments(
+          SIX_CORE_ASSESSMENTS.map((a) => ({
+            ...a,
+            completed: false,
+            answeredCount: 0,
+            totalQuestions: a.defaultQuestions.length,
+            data: a.defaultQuestions.map((q) => ({ question: q, answer: '' })),
+          })),
+        )
+        return
+      }
+
+      try {
+        setLoadingAssessmentDetails(true)
+        const details = await authService.getCoachingClientDetails(
+          currentAssessmentClient.clientID,
+        )
+        setClientAssessmentDetails(details)
+
+        if (Array.isArray(details?.assessments) && details.assessments.length > 0) {
+          const merged = SIX_CORE_ASSESSMENTS.map((base) => {
+            const found = details.assessments.find(
+              (a) =>
+                a.id === base.id ||
+                a.title?.toLowerCase() === base.title.toLowerCase(),
+            )
+            if (found) {
+              return {
+                ...base,
+                ...found,
+                data:
+                  Array.isArray(found.data) && found.data.length > 0
+                    ? found.data
+                    : base.defaultQuestions.map((q) => ({ question: q, answer: '' })),
+              }
+            }
+            return {
+              ...base,
+              completed: false,
+              answeredCount: 0,
+              totalQuestions: base.defaultQuestions.length,
+              data: base.defaultQuestions.map((q) => ({ question: q, answer: '' })),
+            }
+          })
+          setSelectedClientAssessments(merged)
+        } else {
+          const answersList = Array.isArray(details?.formAnswers)
+            ? details.formAnswers
+            : []
+          const built = SIX_CORE_ASSESSMENTS.map((base) => {
+            const found = answersList.find(
+              (f) =>
+                f.questionnaireTitle?.toLowerCase() === base.title.toLowerCase(),
+            )
+            if (found && Array.isArray(found.data) && found.data.length > 0) {
+              const answered = found.data.filter((q) =>
+                String(q?.answer || '').trim(),
+              ).length
+              return {
+                ...base,
+                completed: answered > 0,
+                completedAt: found.createdAt || found.updatedAt,
+                answeredCount: answered,
+                totalQuestions: found.data.length,
+                data: found.data,
+              }
+            }
+            return {
+              ...base,
+              completed: false,
+              completedAt: null,
+              answeredCount: 0,
+              totalQuestions: base.defaultQuestions.length,
+              data: base.defaultQuestions.map((q) => ({ question: q, answer: '' })),
+            }
+          })
+          setSelectedClientAssessments(built)
+        }
+      } catch (err) {
+        console.error('Failed to load client assessment details:', err)
+      } finally {
+        setLoadingAssessmentDetails(false)
+      }
+    }
+
+    fetchAssessmentsForClient()
+  }, [currentAssessmentClient?.clientID])
+
+  const handleOpenAssessmentModal = async (clientId, clientName) => {
+    setShowAssessmentModal(true)
+    setLoadingAssessmentDetails(true)
+    try {
+      if (clientId) {
+        const details = await authService.getCoachingClientDetails(clientId)
+        setClientAssessmentDetails(details)
+      } else {
+        setClientAssessmentDetails(null)
+      }
+    } catch (err) {
+      console.error('Failed to fetch client assessment details:', err)
+      setClientAssessmentDetails(null)
+    } finally {
+      setLoadingAssessmentDetails(false)
+    }
+  }
+
+  const handleOpenEditAssessment = (assessment) => {
+    const questionsData =
+      Array.isArray(assessment.data) && assessment.data.length > 0
+        ? assessment.data.map((item) => ({ ...item }))
+        : (assessment.defaultQuestions || []).map((q) => ({
+            question: q,
+            answer: '',
+          }))
+
+    setActiveEditingAssessment({
+      ...assessment,
+      data: questionsData,
+    })
+  }
+
+  const handleSaveAssessmentToMasterDb = async () => {
+    if (!currentAssessmentClient?.clientID || !activeEditingAssessment) return
+    setIsSavingAssessment(true)
+    try {
+      const payload = {
+        assessment_id: activeEditingAssessment.id,
+        questionnaire_title: activeEditingAssessment.title,
+        data: activeEditingAssessment.data,
+      }
+      const response = await authService.saveCoachingClientAssessment(
+        currentAssessmentClient.clientID,
+        payload,
+      )
+      toast.success(
+        response?.message ||
+          `${activeEditingAssessment.title} saved to master internal database!`,
+      )
+
+      const answeredCount = activeEditingAssessment.data.filter((q) =>
+        String(q.answer || '').trim(),
+      ).length
+
+      setSelectedClientAssessments((prev) =>
+        prev.map((item) =>
+          item.id === activeEditingAssessment.id
+            ? {
+                ...item,
+                completed: answeredCount > 0,
+                completedAt: new Date().toISOString(),
+                answeredCount: answeredCount,
+                data: activeEditingAssessment.data,
+              }
+            : item,
+        ),
+      )
+
+      // Refresh client details from backend
+      authService
+        .getCoachingClientDetails(currentAssessmentClient.clientID)
+        .then((refreshed) => setClientAssessmentDetails(refreshed))
+        .catch(() => {})
+
+      setActiveEditingAssessment(null)
+    } catch (err) {
+      console.error('Failed to save assessment to master database:', err)
+      toast.error('Failed to save assessment to master internal database')
+    } finally {
+      setIsSavingAssessment(false)
+    }
+  }
+
+  const handleViewSingleAssessment = (assessment) => {
+    setViewingSingleAssessment(assessment)
+  }
+
   if (isLoading) {
     return (
       <div className='max-w-7xl mx-auto space-y-8'>
@@ -566,6 +875,195 @@ export default function CoachingDashboard() {
               )}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Initial Coaching New Client Discovery Meeting (2-Hour): 6 Client Assessments Suite */}
+      <div className='bg-[#0f172a] border-2 border-[#F6B72D] rounded-2xl p-6 shadow-xl space-y-6 text-white'>
+        {/* Section Header */}
+        <div className='flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-white/10 pb-5'>
+          <div className='flex-1 min-w-0'>
+            <div className='flex items-center gap-2 mb-1.5 flex-wrap'>
+              <span className='px-2.5 py-0.5 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-[#F6B72D] text-black shadow-sm'>
+                Coaching Discovery Protocol
+              </span>
+              <span className='px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white/10 text-[#F6B72D] border border-[#F6B72D]/40'>
+                6 Core Client Assessments
+              </span>
+            </div>
+            <h2 className='text-xl sm:text-2xl font-black uppercase tracking-wide text-white'>
+              Initial Coaching New Client Discovery Meeting (2-Hour)
+            </h2>
+            <p className='text-xs sm:text-sm text-white/70 mt-1 max-w-3xl leading-relaxed'>
+              Prior to your initial 2-hour coaching discovery meeting, the client completes these 6 foundational personal and professional assessments. Results are stored in the master internal database for the coaching advisory team to review and evaluate together.
+            </p>
+          </div>
+
+          {/* Client Selector & Profile */}
+          <div className='flex flex-wrap items-center gap-3 shrink-0'>
+            {assignedClients.length > 0 && (
+              <div className='flex items-center gap-2 bg-slate-800 border border-[#F6B72D]/60 rounded-xl px-3 py-2'>
+                <span className='text-xs text-white/60 font-medium'>Client:</span>
+                <select
+                  value={currentAssessmentClient?.clientID || ''}
+                  onChange={(e) => {
+                    const found = assignedClients.find(
+                      (c) => String(c.clientID) === String(e.target.value),
+                    )
+                    setSelectedClientForAssessment(found || null)
+                  }}
+                  className='bg-transparent text-white text-xs font-semibold focus:outline-none cursor-pointer pr-2'
+                >
+                  {assignedClients.map((c) => (
+                    <option
+                      key={c.clientID}
+                      value={c.clientID}
+                      className='bg-slate-900 text-white'
+                    >
+                      {c.clientName} ({c.completedAssessments ?? 0}/6 Complete)
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            <button
+              type='button'
+              onClick={() =>
+                handleOpenAssessmentModal(
+                  currentAssessmentClient?.clientID,
+                  currentAssessmentClient?.clientName,
+                )
+              }
+              className='inline-flex items-center gap-2 bg-[#F6B72D] hover:bg-[#e6b82a] text-black font-bold py-2 px-4 rounded-xl text-xs sm:text-sm transition-all shadow-md'
+            >
+              <FileText className='w-4 h-4' />
+              All Diagnostic Answers
+            </button>
+            {currentAssessmentClient?.clientID && (
+              <Link
+                to={`/coaching-dashboard/clients/${currentAssessmentClient.clientID}`}
+                className='inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-3.5 rounded-xl text-xs sm:text-sm border border-white/20 transition-colors'
+              >
+                Client Profile
+                <ExternalLink className='w-3.5 h-3.5' />
+              </Link>
+            )}
+          </div>
+        </div>
+
+        {/* Progress Summary Banner */}
+        <div className='bg-slate-800/80 rounded-xl p-4 border border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4'>
+          <div className='flex items-center gap-4'>
+            <div className='w-12 h-12 rounded-xl bg-[#F6B72D]/20 border border-[#F6B72D] flex items-center justify-center font-black text-lg text-[#F6B72D]'>
+              {selectedClientAssessments.filter((a) => a.completed).length}/6
+            </div>
+            <div>
+              <p className='text-xs uppercase tracking-wider text-white/60 font-semibold'>
+                Discovery Assessment Status
+              </p>
+              <p className='text-sm sm:text-base font-bold text-white'>
+                {currentAssessmentClient?.clientName || 'Client'}:{' '}
+                <span className='text-[#F6B72D]'>
+                  {selectedClientAssessments.filter((a) => a.completed).length} of 6 Assessments Completed
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <div className='flex-1 max-w-md'>
+            <div className='flex justify-between text-xs text-white/70 mb-1.5'>
+              <span>Master Internal Database Sync</span>
+              <span className='font-bold text-[#F6B72D]'>
+                {Math.round(
+                  (selectedClientAssessments.filter((a) => a.completed).length /
+                    6) *
+                    100,
+                )}
+                % Complete
+              </span>
+            </div>
+            <div className='h-2.5 w-full rounded-full bg-slate-700 overflow-hidden'>
+              <div
+                className='h-full bg-gradient-to-r from-[#F6B72D] to-amber-300 transition-all duration-500 rounded-full'
+                style={{
+                  width: `${Math.round(
+                    (selectedClientAssessments.filter((a) => a.completed).length /
+                      6) *
+                      100,
+                  )}%`,
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* 6 Assessments Interactive Grid */}
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+          {selectedClientAssessments.map((assessment) => {
+            const isCompleted = Boolean(assessment.completed)
+            return (
+              <div
+                key={assessment.id}
+                className='bg-slate-800/90 border border-white/10 hover:border-[#F6B72D]/60 rounded-xl p-4 flex flex-col justify-between transition-all duration-200 hover:shadow-lg space-y-3'
+              >
+                <div>
+                  <div className='flex items-start justify-between gap-2 mb-2'>
+                    <span className='w-7 h-7 rounded-lg bg-[#F6B72D]/20 text-[#F6B72D] font-extrabold text-xs flex items-center justify-center border border-[#F6B72D]/40'>
+                      #{assessment.id}
+                    </span>
+                    {isCompleted ? (
+                      <span className='inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'>
+                        <CheckCircle2 className='w-3 h-3' />
+                        Completed
+                      </span>
+                    ) : (
+                      <span className='inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40'>
+                        <Clock className='w-3 h-3' />
+                        Not Completed
+                      </span>
+                    )}
+                  </div>
+
+                  <h3 className='text-sm sm:text-base font-bold text-white mb-1'>
+                    {assessment.title}
+                  </h3>
+                  <p className='text-xs text-white/60 line-clamp-2'>
+                    {assessment.description ||
+                      'Foundational assessment for initial coaching discovery review.'}
+                  </p>
+                </div>
+
+                <div className='pt-3 border-t border-white/10 space-y-2.5'>
+                  <div className='flex items-center justify-between text-xs text-white/70'>
+                    <span>Recorded Responses:</span>
+                    <span className='font-semibold text-white'>
+                      {assessment.answeredCount || 0} /{' '}
+                      {assessment.totalQuestions || 6}
+                    </span>
+                  </div>
+
+                  <div className='grid grid-cols-2 gap-2'>
+                    <button
+                      type='button'
+                      onClick={() => handleViewSingleAssessment(assessment)}
+                      className='inline-flex items-center justify-center gap-1 text-xs font-semibold py-2 px-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors'
+                    >
+                      <FileText className='w-3.5 h-3.5' />
+                      View Results
+                    </button>
+                    <button
+                      type='button'
+                      onClick={() => handleOpenEditAssessment(assessment)}
+                      className='inline-flex items-center justify-center gap-1 text-xs font-bold py-2 px-2.5 rounded-lg bg-[#F6B72D] hover:bg-[#e6b82a] text-black transition-colors'
+                    >
+                      <Edit3 className='w-3.5 h-3.5' />
+                      {isCompleted ? 'Edit Results' : 'Add Results'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
 
@@ -955,6 +1453,277 @@ export default function CoachingDashboard() {
           <LogOut className='w-6 h-6 text-[#1a2332]' />
         </Link>
       </div>
+
+      {/* Assessment Results Modal for Coaches */}
+      {showAssessmentModal && (
+        <div
+          className='fixed inset-0 bg-black/60 backdrop-blur-sm z-[99999] flex items-center justify-center p-4 overflow-y-auto'
+          onClick={() => setShowAssessmentModal(false)}
+        >
+          <div
+            className='bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl border-2 border-[#F6B72D] overflow-hidden'
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className='bg-[#0f172a] text-white p-5 border-b border-[#F6B72D]/40 flex items-center justify-between'>
+              <div>
+                <p className='text-xs uppercase tracking-widest text-[#F6B72D] font-bold'>
+                  Diagnostic Assessment Suite
+                </p>
+                <h3 className='text-xl font-bold mt-0.5'>
+                  {currentAssessmentClient?.clientName || 'Client'} — 6 Leadership Onboarding Assessments
+                </h3>
+              </div>
+              <button
+                type='button'
+                onClick={() => setShowAssessmentModal(false)}
+                className='text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors'
+              >
+                <X className='w-5 h-5' />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className='p-6 overflow-y-auto space-y-6 flex-1'>
+              {loadingAssessmentDetails ? (
+                <div className='flex justify-center items-center py-16'>
+                  <div className='animate-spin rounded-full h-10 w-10 border-b-2 border-[#F6B72D]'></div>
+                </div>
+              ) : (
+                <>
+                  <QuestionnaireProgressCard
+                    formAnswers={clientAssessmentDetails?.formAnswers || []}
+                  />
+
+                  <FormAnswersCard
+                    formAnswers={clientAssessmentDetails?.formAnswers || []}
+                    clientName={currentAssessmentClient?.clientName || 'Client'}
+                  />
+                </>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className='bg-gray-50 px-6 py-4 border-t border-gray-200 flex flex-wrap items-center justify-between gap-3'>
+              <span className='text-xs text-gray-500'>
+                The CEO Influencers • Confidential Coaching Diagnostics
+              </span>
+              <div className='flex items-center gap-3'>
+                {currentAssessmentClient?.clientID && (
+                  <Link
+                    to={`/coaching-dashboard/clients/${currentAssessmentClient.clientID}`}
+                    onClick={() => setShowAssessmentModal(false)}
+                    className='inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0f172a] hover:text-[#F6B72D] transition-colors'
+                  >
+                    Open Client Details Page
+                    <ExternalLink className='w-3.5 h-3.5' />
+                  </Link>
+                )}
+                <button
+                  type='button'
+                  onClick={() => setShowAssessmentModal(false)}
+                  className='px-5 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-lg text-sm font-semibold transition-colors'
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for Entering / Editing Assessment Results directly into Master Internal Database */}
+      {activeEditingAssessment && (
+        <div
+          className='fixed inset-0 bg-black/70 backdrop-blur-sm z-[99999] flex items-center justify-center p-4 overflow-y-auto'
+          onClick={() => setActiveEditingAssessment(null)}
+        >
+          <div
+            className='bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl border-2 border-[#F6B72D] overflow-hidden text-gray-900'
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className='bg-[#0f172a] text-white p-5 border-b border-[#F6B72D]/40 flex items-center justify-between'>
+              <div>
+                <div className='flex items-center gap-2 mb-1'>
+                  <span className='px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F6B72D] text-black'>
+                    Assessment #{activeEditingAssessment.id}
+                  </span>
+                  <span className='text-xs text-white/70'>
+                    Client: {currentAssessmentClient?.clientName}
+                  </span>
+                </div>
+                <h3 className='text-xl font-bold text-white'>
+                  {activeEditingAssessment.title} — Enter / Update Results
+                </h3>
+              </div>
+              <button
+                type='button'
+                onClick={() => setActiveEditingAssessment(null)}
+                className='text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors'
+              >
+                <X className='w-5 h-5' />
+              </button>
+            </div>
+
+            {/* Questions Form Body */}
+            <div className='p-6 overflow-y-auto space-y-4 flex-1 font-exo'>
+              <div className='text-xs text-gray-700 bg-amber-50 p-3 rounded-xl border border-amber-200 flex items-start gap-2'>
+                <Sparkles className='w-4 h-4 text-amber-600 shrink-0 mt-0.5' />
+                <p>
+                  <strong>Coach Discovery Protocol:</strong> Record or verify answers during the initial 2-hour new client coaching discovery meeting. Saving will persist results directly into the <strong>master internal database</strong>.
+                </p>
+              </div>
+
+              {activeEditingAssessment.data.map((item, idx) => (
+                <div key={idx} className='space-y-1.5'>
+                  <label className='block text-xs font-bold text-gray-700 uppercase tracking-wide'>
+                    {idx + 1}. {item.question}
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={item.answer || ''}
+                    onChange={(e) => {
+                      const updated = [...activeEditingAssessment.data]
+                      updated[idx].answer = e.target.value
+                      setActiveEditingAssessment({
+                        ...activeEditingAssessment,
+                        data: updated,
+                      })
+                    }}
+                    placeholder={`Enter client's response for ${item.question}...`}
+                    className='w-full border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#F6B72D] focus:border-transparent font-sans'
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Footer */}
+            <div className='bg-gray-50 px-6 py-4 border-t border-gray-200 flex items-center justify-between gap-3'>
+              <button
+                type='button'
+                onClick={() => setActiveEditingAssessment(null)}
+                className='px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded-lg text-sm font-semibold transition-colors'
+              >
+                Cancel
+              </button>
+
+              <button
+                type='button'
+                disabled={isSavingAssessment}
+                onClick={handleSaveAssessmentToMasterDb}
+                className='inline-flex items-center gap-2 px-6 py-2.5 bg-[#F6B72D] hover:bg-[#e6b82a] text-black rounded-lg text-sm font-bold shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50'
+              >
+                <Save className='w-4 h-4' />
+                {isSavingAssessment
+                  ? 'Saving to Database...'
+                  : 'Save to Master Internal Database'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for Viewing Single Assessment Diagnostic Results */}
+      {viewingSingleAssessment && (
+        <div
+          className='fixed inset-0 bg-black/70 backdrop-blur-sm z-[99999] flex items-center justify-center p-4 overflow-y-auto'
+          onClick={() => setViewingSingleAssessment(null)}
+        >
+          <div
+            className='bg-white rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl border-2 border-[#F6B72D] overflow-hidden text-gray-900'
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className='bg-[#0f172a] text-white p-5 border-b border-[#F6B72D]/40 flex items-center justify-between'>
+              <div>
+                <span className='px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F6B72D] text-black'>
+                  Assessment #{viewingSingleAssessment.id}
+                </span>
+                <h3 className='text-lg font-bold text-white mt-1'>
+                  {viewingSingleAssessment.title} — Diagnostic Results
+                </h3>
+                <p className='text-xs text-white/70'>
+                  Client: {currentAssessmentClient?.clientName} • Status:{' '}
+                  {viewingSingleAssessment.completed ? (
+                    <span className='text-emerald-400 font-semibold'>
+                      Completed
+                    </span>
+                  ) : (
+                    <span className='text-amber-400 font-semibold'>
+                      Pending / Incomplete
+                    </span>
+                  )}
+                </p>
+              </div>
+              <button
+                type='button'
+                onClick={() => setViewingSingleAssessment(null)}
+                className='text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors'
+              >
+                <X className='w-5 h-5' />
+              </button>
+            </div>
+
+            <div className='p-6 overflow-y-auto space-y-4 flex-1 font-exo'>
+              {viewingSingleAssessment.data &&
+              viewingSingleAssessment.data.some((d) => d.answer?.trim()) ? (
+                viewingSingleAssessment.data.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className='bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-1.5'
+                  >
+                    <p className='text-xs font-bold text-gray-700 uppercase'>
+                      {idx + 1}. {item.question}
+                    </p>
+                    <p className='text-sm text-gray-900 whitespace-pre-wrap font-sans'>
+                      {item.answer ? (
+                        item.answer
+                      ) : (
+                        <span className='text-gray-400 italic'>
+                          (No response recorded)
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <div className='text-center py-10 text-gray-500'>
+                  <AlertCircle className='w-8 h-8 text-amber-500 mx-auto mb-2' />
+                  <p className='text-sm font-semibold'>
+                    No responses recorded yet for this assessment.
+                  </p>
+                  <p className='text-xs mt-1 text-gray-400'>
+                    Click "Enter / Edit Results" to record answers during the
+                    2-hour discovery meeting.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className='bg-gray-50 px-6 py-4 border-t border-gray-200 flex items-center justify-between gap-3'>
+              <button
+                type='button'
+                onClick={() => {
+                  const target = viewingSingleAssessment
+                  setViewingSingleAssessment(null)
+                  handleOpenEditAssessment(target)
+                }}
+                className='inline-flex items-center gap-1.5 px-4 py-2 bg-[#F6B72D] text-black font-bold rounded-lg text-xs hover:bg-[#e6b82a] transition-colors'
+              >
+                <Edit3 className='w-3.5 h-3.5' />
+                Edit / Enter Answers
+              </button>
+              <button
+                type='button'
+                onClick={() => setViewingSingleAssessment(null)}
+                className='px-5 py-2 bg-gray-900 text-white rounded-lg text-xs font-semibold hover:bg-gray-800 transition-colors'
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

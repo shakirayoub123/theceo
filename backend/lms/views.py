@@ -2213,13 +2213,45 @@ class ScheduleAppointmentView(APIView):
                 salesperson_email=salesperson_email,
                 temporary_password=generated_password,
             )
-            send_mail(
-                subject=subject,
-                message=message,
-                recipient_list=[user.email],
-                fail_silently=False,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-            )
+            try:
+                send_mail(
+                    subject=subject,
+                    message=message,
+                    recipient_list=[user.email],
+                    fail_silently=False,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                )
+            except Exception as mail_err:
+                logger.warning(
+                    f"Failed to send discovery call confirmation email to client {user.email}: {mail_err}"
+                )
+
+            if assigned_sales and assigned_sales.email:
+                sales_subject = f"New Discovery Call Assigned: {user.get_full_name() or user.email}"
+                sales_message = (
+                    f"Hi {salesperson_name},\n\n"
+                    f"A new discovery call has been booked and assigned to you.\n\n"
+                    f"Client: {user.get_full_name() or user.username} ({user.email})\n"
+                    f"Phone: {submitted_phone or '-'}\n"
+                    f"Industry: {client.industry or '-'}\n"
+                    f"Company/Position: {client.position or '-'}\n"
+                    f"Job Title: {client.job_title or '-'}\n"
+                    f"Country: {client.country or '-'}\n"
+                    f"Scheduled for: {appointment.preferred_date} at {appointment.preferred_time}\n\n"
+                    f"Meeting link: {links.get('direct_meeting_url') or links.get('meeting_url')}\n\n"
+                    "Best regards,\n"
+                    "The CEO Influencers System"
+                )
+                try:
+                    send_mail(
+                        subject=sales_subject,
+                        message=sales_message,
+                        recipient_list=[assigned_sales.email],
+                        fail_silently=True,
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                    )
+                except Exception as exc:
+                    logger.warning(f"Failed to send discovery call email to assigned sales: {exc}")
 
             return Response(
                 {
@@ -2445,8 +2477,11 @@ class SalesScheduleMeetingView(APIView):
                 related_id=meeting.id,
             )
 
-            # Send invitation emails (optional - can be implemented later)
-            # meeting.send_invitation_emails()
+            # Send invitation emails to all attendees (client and sales representative)
+            try:
+                meeting.send_invitation_emails()
+            except Exception as exc:
+                logger.warning(f"Failed to send sales meeting invitation emails for meeting {meeting.id}: {exc}")
 
             return Response(
                 {

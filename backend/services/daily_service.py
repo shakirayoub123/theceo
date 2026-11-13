@@ -10,19 +10,18 @@ class DailyService:
     """Service for integrating with Daily.co video conferencing"""
 
     def __init__(self):
-        self.api_key = os.getenv("DAILY_API_KEY")
         self.rest_domain = os.getenv("DAILY_REST_DOMAIN", "https://api.daily.co/v1")
-        self.headers = {
+
+    @property
+    def api_key(self):
+        return os.getenv("DAILY_API_KEY")
+
+    @property
+    def headers(self):
+        return {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
         }
-        logger.info(
-            f"DailyService initialized with API key present: {bool(self.api_key)}"
-        )
-        if self.api_key:
-            logger.info(f"API key starts with: {self.api_key[:10]}...")
-        else:
-            logger.error("DAILY_API_KEY environment variable not set!")
 
     def create_room(self, room_name=None, properties=None):
         """
@@ -36,7 +35,15 @@ class DailyService:
             dict: Room data from Daily.co
         """
         if not self.api_key:
-            raise ValueError("DAILY_API_KEY environment variable not set")
+            logger.warning(
+                "DAILY_API_KEY environment variable not set. Generating dev fallback room."
+            )
+            fallback_name = room_name or f"room-{int(timezone.now().timestamp())}"
+            domain = os.getenv("DAILY_DOMAIN", "theceoinfluencers.daily.co")
+            return {
+                "name": fallback_name,
+                "url": f"https://{domain}/{fallback_name}",
+            }
 
         url = f"{self.rest_domain}/rooms"
 
@@ -48,11 +55,12 @@ class DailyService:
             "start_video_off": False,
             "start_audio_off": False,
             "owner_only_broadcast": False,
-            "enable_recording": "cloud",  # Allow cloud recording
             "eject_at_room_exp": True,
             "eject_after_elapsed": 3600,  # 1 hour
             "lang": "en",
         }
+        if os.getenv("DAILY_ENABLE_CLOUD_RECORDING", "false").lower() == "true":
+            default_properties["enable_recording"] = "cloud"
 
         # Merge with provided properties
         if properties:
@@ -74,13 +82,42 @@ class DailyService:
             # If the API doesn't return a URL, construct it
             if "url" not in room_data:
                 room_name = room_data.get("name")
-                domain = os.getenv("DAILY_DOMAIN", "daily.co")
+                domain = os.getenv("DAILY_DOMAIN", "theceoinfluencers.daily.co")
                 room_data["url"] = f"https://{domain}/{room_name}"
                 logger.info(f"Constructed room URL: {room_data['url']}")
 
             return room_data
 
         except requests.exceptions.RequestException as e:
+            if (
+                hasattr(e, "response")
+                and e.response is not None
+                and "enable_recording" in (e.response.text or "")
+                and "enable_recording" in default_properties
+            ):
+                logger.warning(
+                    "Daily plan does not support cloud recording. Retrying without enable_recording..."
+                )
+                default_properties.pop("enable_recording", None)
+                data["properties"] = default_properties
+                try:
+                    retry_response = requests.post(
+                        url, json=data, headers=self.headers
+                    )
+                    retry_response.raise_for_status()
+                    room_data = retry_response.json()
+                    logger.info(
+                        f"Created Daily.co room on retry: {room_data.get('name')}"
+                    )
+                    if "url" not in room_data:
+                        r_name = room_data.get("name")
+                        domain = os.getenv("DAILY_DOMAIN", "theceoinfluencers.daily.co")
+                        room_data["url"] = f"https://{domain}/{r_name}"
+                    return room_data
+                except Exception as retry_err:
+                    logger.error(
+                        f"Failed retry room creation without recording: {retry_err}"
+                    )
             logger.error(f"Failed to create Daily.co room: {e}")
             if hasattr(e, "response") and e.response:
                 logger.error(f"Response status: {e.response.status_code}")
@@ -129,6 +166,12 @@ class DailyService:
         Returns:
             str: Room token
         """
+        if not self.api_key:
+            logger.warning(
+                "DAILY_API_KEY environment variable not set. Skipping room token generation."
+            )
+            return None
+
         url = f"{self.rest_domain}/meeting-tokens"
 
         # Default token properties
@@ -142,8 +185,8 @@ class DailyService:
             "start_audio_off": False,
         }
 
-        # Add recording capability only for owners
-        if is_owner:
+        # Add recording capability only for owners when enabled
+        if is_owner and os.getenv("DAILY_ENABLE_CLOUD_RECORDING", "false").lower() == "true":
             default_properties["enable_recording"] = "cloud"
 
         # Set token expiration (24 hours from now)

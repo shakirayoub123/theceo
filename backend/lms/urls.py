@@ -316,6 +316,11 @@ urlpatterns = [
         name="trainer-client-detail",
     ),
     path(
+        "trainer/clients/<int:client_id>/assessments/",
+        trainer_views.TrainerClientAssessmentView.as_view(),
+        name="trainer-client-assessments",
+    ),
+    path(
         "trainer/calendar/",
         trainer_views.TrainerCalendarView.as_view(),
         name="trainer-calendar",

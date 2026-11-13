@@ -28,6 +28,7 @@ import AddService from '@/pages/dashboard/master/AddService'
 import Blogs from '@/pages/dashboard/master/Blogs'
 import Ebooks from '@/pages/dashboard/master/Ebooks'
 import MasterDashboard from '@/pages/dashboard/master/MasterDashboard'
+import MasterCalendar from '@/pages/dashboard/master/MasterCalendar'
 import Newsletter from '@/pages/dashboard/master/Newsletter'
 import Referrals from '@/pages/dashboard/master/Referrals'
 import Series from '@/pages/dashboard/master/Series'
@@ -106,6 +107,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={['master', 'admin']}>
               <MasterDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={URLS.master.calendar}
+          element={
+            <ProtectedRoute allowedRoles={['master', 'admin']}>
+              <MasterCalendar />
             </ProtectedRoute>
           }
         />

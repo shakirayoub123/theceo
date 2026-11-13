@@ -1492,3 +1492,29 @@ class ClientOnboardingView(APIView):
             message=email_body,
             recipient_list=advisor_emails,
         )
+
+        # Send confirmation email to client
+        if client_user.email:
+            try:
+                from django.core.mail import send_mail
+                from django.conf import settings
+                client_email_body = (
+                    f"Hi {client_name},\n\n"
+                    "Congratulations! All 6 of your comprehensive personal and professional leadership assessments have been received.\n\n"
+                    "Your assigned coaching influencer advisory team will review your responses in depth to ensure our upcoming coaching sessions are customized specifically to your leadership blueprint and strategic goals.\n\n"
+                    "All of your assessment information is kept strictly confidential and will only be reviewed by your dedicated advisory team.\n\n"
+                    "Next Steps:\n"
+                    "- Review your program overview on your Client Dashboard: https://theceoinfluencers.com/client-dashboard\n"
+                    "- Please keep your weekly one-hour coaching sessions calendar open for Tuesday, Wednesday, or Thursday.\n\n"
+                    "Best regards,\n"
+                    "The CEO Influencers Coaching Advisor Team"
+                )
+                send_mail(
+                    subject="All 6 Onboarding Assessments Received - The CEO Influencers",
+                    message=client_email_body,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[client_user.email],
+                    fail_silently=True,
+                )
+            except Exception as e:
+                logger.warning(f"Failed to send assessments completion email to client: {e}")

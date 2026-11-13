@@ -34,6 +34,7 @@ export const URLS = {
     editNewsletter: '/admin-dashboard/newsletters/edit-newsletter/:id',
     referrals: '/admin-dashboard/referrals',
     siteSettings: '/admin-dashboard/settings',
+    calendar: '/admin-dashboard/calendar',
   },
 
   sales: {

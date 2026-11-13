@@ -234,22 +234,33 @@ class TrainerClientsView(APIView):
                     elif not enrollment.service.status == "active":
                         client_status = "inactive"
 
+                completed_count = ClientFormAnswers.objects.filter(
+                    user_email=client_user.email
+                ).values("questionnaire_title").distinct().count()
+
                 clients_data.append(
                     {
                         "clientID": str(client_user.id),
                         "clientName": f"{client_user.first_name} {client_user.last_name}".strip()
                         or client_user.username,
+                        "clientEmail": client_user.email,
                         "status": client_status,
+                        "completedAssessments": completed_count,
                     }
                 )
             except Client.DoesNotExist:
+                completed_count = ClientFormAnswers.objects.filter(
+                    user_email=client_user.email
+                ).values("questionnaire_title").distinct().count()
                 # If client profile doesn't exist, use basic user data
                 clients_data.append(
                     {
                         "clientID": str(client_user.id),
                         "clientName": f"{client_user.first_name} {client_user.last_name}".strip()
                         or client_user.username,
+                        "clientEmail": client_user.email,
                         "status": "unknown",
+                        "completedAssessments": completed_count,
                     }
                 )
 
@@ -296,20 +307,36 @@ class TrainerCalendarView(APIView):
             end_date = timezone.datetime(year, month, last_day).date()
 
         # Query meetings where trainer is either the organizer or an attendee with role="trainer"
-        trainer_meetings = (
-            Meeting.objects.filter(
-                models.Q(scheduled_by=trainer)  # Trainer is the organizer
-                | models.Q(
-                    attendees__user=trainer,
-                    attendees__role="trainer",  # Trainer is an attendee with role="trainer"
-                ),
-                scheduled_at__date__gte=start_date,
-                scheduled_at__date__lte=end_date,
-                status__in=["scheduled", "confirmed", "active"],
+        # Check if user requested mine-only or master calendar (default: master calendar for internal staff)
+        is_mine_only = request.query_params.get("view") == "mine"
+
+        if is_mine_only:
+            trainer_meetings = (
+                Meeting.objects.filter(
+                    models.Q(scheduled_by=trainer)
+                    | models.Q(
+                        attendees__user=trainer,
+                        attendees__role="trainer",
+                    ),
+                    scheduled_at__date__gte=start_date,
+                    scheduled_at__date__lte=end_date,
+                    status__in=["scheduled", "confirmed", "active"],
+                )
+                .select_related("meeting_type", "scheduled_by")
+                .distinct()
             )
-            .select_related("meeting_type", "scheduled_by")
-            .distinct()
-        )
+        else:
+            trainer_meetings = (
+                Meeting.objects.filter(
+                    scheduled_at__date__gte=start_date,
+                    scheduled_at__date__lte=end_date,
+                    status__in=["scheduled", "confirmed", "active"],
+                )
+                .select_related("meeting_type", "scheduled_by")
+                .distinct()
+            )
+
+        from scheduling.calendar_helpers import format_meeting_for_calendar
 
         # Group meetings by date
         meetings_by_date = {}
@@ -320,81 +347,7 @@ class TrainerCalendarView(APIView):
             if meeting_date not in meetings_by_date:
                 meetings_by_date[meeting_date] = []
 
-            # Get client from meeting attendees
-            client_attendee = (
-                MeetingAttendee.objects.filter(meeting=meeting, role="client")
-                .select_related("user")
-                .first()
-            )
-
-            client_name = "Unknown Client"
-            client_programs = []
-            if client_attendee:
-                client_name = f"{client_attendee.user.first_name} {client_attendee.user.last_name}".strip()
-
-                # Get programs/services the client is enrolled in where this trainer is involved
-                enrollments = Enrollment.objects.filter(
-                    user=client_attendee.user,
-                    service__in=Service.objects.filter(
-                        Q(trainer=trainer) | Q(advisors=trainer)
-                    ),
-                ).select_related("service")[:3]  # Limit to 3 programs
-
-                client_programs = [
-                    enrollment.service.title for enrollment in enrollments
-                ]
-
-            # Get other trainers or advisors from meeting attendees
-            other_trainer_attendees = (
-                MeetingAttendee.objects.filter(
-                    meeting=meeting, role__in=["trainer", "sales", "organizer"]
-                )
-                .select_related("user")
-                .exclude(user=trainer)
-            )
-
-            other_trainers = []
-            for other_trainer in other_trainer_attendees:
-                name = f"{other_trainer.user.first_name} {other_trainer.user.last_name}".strip()
-                other_trainers.append(name)
-
-            other_trainers_display = (
-                ", ".join(other_trainers) if other_trainers else "None"
-            )
-
-            # Combine programs for display
-            program_display = (
-                " & ".join(client_programs) if client_programs else "General Session"
-            )
-
-            # Determine meeting type code
-            # 01: Initial consultation, 02: Program session, 03: Follow-up, 04: Other
-            meeting_type_code = "02"  # Default to Program session
-            meeting_type_name = (
-                meeting.meeting_type.name.lower() if meeting.meeting_type else ""
-            )
-
-            if "initial" in meeting_type_name or "consultation" in meeting_type_name:
-                meeting_type_code = "01"
-            elif "follow" in meeting_type_name:
-                meeting_type_code = "03"
-            elif not client_programs:
-                meeting_type_code = "04"
-
-            meeting_data = {
-                "id": meeting.id,
-                "title": meeting.title,
-                "otherTrainers": other_trainers_display,
-                "program": program_display,
-                "meetingType": (
-                    meeting.meeting_type.name if meeting.meeting_type else "Session"
-                ),
-                "clientName": client_name,
-                "time": meeting.scheduled_at.strftime("%I:%M %p"),
-                "type": meeting_type_code,
-            }
-
-            meetings_by_date[meeting_date].append(meeting_data)
+            meetings_by_date[meeting_date].append(format_meeting_for_calendar(meeting))
 
         return Response(meetings_by_date, status=status.HTTP_200_OK)
 
@@ -556,6 +509,159 @@ class TrainerClientDetailView(APIView):
             for answer in form_answers
         ]
 
+        # 6 Core Leadership Assessments for Initial Discovery Meeting
+        SIX_ASSESSMENTS = [
+            (
+                1,
+                "Fitness Assessment",
+                [
+                    "Current Weight",
+                    "Target Weight",
+                    "Height",
+                    "Fitness Level",
+                    "Exercise Frequency",
+                    "Preferred Activities",
+                ],
+            ),
+            (
+                2,
+                "Nutrition Assessment",
+                [
+                    "Diet Type",
+                    "Meal Frequency",
+                    "Water Intake",
+                    "Food Allergies",
+                    "Supplements",
+                    "Eating Habits",
+                ],
+            ),
+            (
+                3,
+                "Lifestyle Assessment",
+                [
+                    "Sleep Hours",
+                    "Stress Level",
+                    "Work Schedule",
+                    "Smoking",
+                    "Alcohol Consumption",
+                    "Daily Routine",
+                ],
+            ),
+            (
+                4,
+                "Goal Setting",
+                [
+                    "Primary Goal",
+                    "Timeline",
+                    "Motivation Level",
+                    "Past Attempts",
+                    "Support System",
+                    "Measurement Preference",
+                ],
+            ),
+            (
+                5,
+                "Medical History",
+                [
+                    "Medical Conditions",
+                    "Medications",
+                    "Injuries",
+                    "Surgeries",
+                    "Family History",
+                    "Doctor Visits",
+                ],
+            ),
+            (
+                6,
+                "Preferences & Availability",
+                [
+                    "Preferred Time",
+                    "Available Days",
+                    "Communication Preference",
+                    "Workout Location",
+                    "Equipment Access",
+                    "Group Preference",
+                ],
+            ),
+        ]
+
+        from people.models import Lead, LeadAssessmentEntry
+
+        lead = Lead.objects.filter(email__iexact=client_user.email).first()
+        structured_assessments = []
+
+        for a_id, a_title, default_questions in SIX_ASSESSMENTS:
+            cfa = ClientFormAnswers.objects.filter(
+                user_email__iexact=client_user.email,
+                questionnaire_title__iexact=a_title,
+            ).order_by("-created_at").first()
+
+            lae = None
+            if not cfa and lead:
+                lae = LeadAssessmentEntry.objects.filter(
+                    lead=lead, assessment_id=a_id
+                ).first()
+
+            if cfa and cfa.data:
+                answered_count = len(
+                    [x for x in cfa.data if str(x.get("answer", "")).strip()]
+                )
+                is_completed = answered_count > 0
+                structured_assessments.append(
+                    {
+                        "id": a_id,
+                        "title": a_title,
+                        "completed": is_completed,
+                        "completedAt": (
+                            cfa.created_at.isoformat() if cfa.created_at else None
+                        ),
+                        "answeredCount": answered_count,
+                        "totalQuestions": len(cfa.data),
+                        "data": cfa.data,
+                    }
+                )
+            elif lae and lae.assessment_data:
+                formatted_data = [
+                    {
+                        "question": k.replace("_", " ").title(),
+                        "answer": str(v),
+                    }
+                    for k, v in lae.assessment_data.items()
+                ]
+                is_completed = bool(getattr(lae, "is_completed", False)) or len(
+                    formatted_data
+                ) > 0
+                structured_assessments.append(
+                    {
+                        "id": a_id,
+                        "title": a_title,
+                        "completed": is_completed,
+                        "completedAt": (
+                            lae.completed_at.isoformat()
+                            if getattr(lae, "completed_at", None)
+                            else None
+                        ),
+                        "answeredCount": len(formatted_data),
+                        "totalQuestions": len(formatted_data),
+                        "data": formatted_data,
+                    }
+                )
+            else:
+                structured_assessments.append(
+                    {
+                        "id": a_id,
+                        "title": a_title,
+                        "completed": False,
+                        "completedAt": None,
+                        "answeredCount": 0,
+                        "totalQuestions": len(default_questions),
+                        "data": [
+                            {"question": q, "answer": ""}
+                            for q in default_questions
+                        ],
+                    }
+                )
+
         return Response(
             {
                 "client": client_details,
@@ -563,6 +669,77 @@ class TrainerClientDetailView(APIView):
                 "meetings": meetings_data,
                 "progress": progress_data,
                 "formAnswers": form_answers_data,
+                "assessments": structured_assessments,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class TrainerClientAssessmentView(APIView):
+    """
+    POST /api/lms/trainer/clients/<client_id>/assessments/
+    Save or update client assessment results in the master internal database.
+    """
+
+    permission_classes = [IsAuthenticated, IsTrainer]
+
+    def post(self, request, client_id):
+        try:
+            client_user = User.objects.get(id=client_id, role="client")
+        except User.DoesNotExist:
+            return Response(
+                {"error": "Client not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        assessment_id = request.data.get("assessment_id")
+        questionnaire_title = request.data.get("questionnaire_title")
+        data = request.data.get("data") or []
+
+        if not questionnaire_title:
+            return Response(
+                {"error": "questionnaire_title is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Save to ClientFormAnswers in the master database
+        form_answer, _ = ClientFormAnswers.objects.update_or_create(
+            user_email=client_user.email,
+            questionnaire_title=questionnaire_title,
+            defaults={
+                "data": data,
+                "created_at": timezone.now(),
+            },
+        )
+
+        # Also sync to LeadAssessmentEntry if a lead exists
+        from people.models import Lead, LeadAssessmentEntry
+
+        lead = Lead.objects.filter(email__iexact=client_user.email).first()
+        if lead and assessment_id:
+            try:
+                dict_data = {
+                    item.get("question", f"q{i}"): item.get("answer", "")
+                    for i, item in enumerate(data)
+                }
+                LeadAssessmentEntry.objects.update_or_create(
+                    lead=lead,
+                    assessment_id=int(assessment_id),
+                    defaults={
+                        "assessment_data": dict_data,
+                        "is_completed": True,
+                        "completed_at": timezone.now(),
+                    },
+                )
+            except Exception as e:
+                logger.warning(f"Could not sync to LeadAssessmentEntry: {e}")
+
+        return Response(
+            {
+                "message": f"{questionnaire_title} results saved to master internal database successfully.",
+                "id": form_answer.id,
+                "client": client_user.email,
+                "questionnaire_title": questionnaire_title,
+                "completed": True,
             },
             status=status.HTTP_200_OK,
         )

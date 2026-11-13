@@ -19,6 +19,7 @@ import { URLS } from './urls'
 export const sidebarConfigs = {
   admin: [
     { label: 'Overview', icon: Home, href: URLS.master.overview },
+    { label: 'Master Calendar', icon: Calendar, href: URLS.master.calendar },
     { label: 'Clients', icon: CircleUserRound, href: URLS.master.clients },
     { label: 'Services', icon: LaptopMinimal, href: URLS.master.services },
     { label: 'Ebooks', icon: BookOpen, href: URLS.master.ebooks },

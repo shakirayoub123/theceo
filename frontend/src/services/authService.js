@@ -1255,6 +1255,22 @@ class AuthService {
     return this.handleResponse(response)
   }
 
+  // Save/update coaching client assessment results to master database
+  async saveCoachingClientAssessment(clientId, payload) {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/lms/trainer/clients/${clientId}/assessments/`,
+      {
+        method: 'POST',
+        headers: {
+          ...this.getAuthHeaders(),
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      },
+    )
+    return this.handleResponse(response)
+  }
+
   // Get coaching calendar data
   async getCoachingCalendar({ year, month } = {}) {
     const params =

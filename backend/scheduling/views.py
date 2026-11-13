@@ -474,78 +474,63 @@ class CalendarView(APIView):
 
         # Calculate start and end dates for the month
         from calendar import monthrange
+        from .calendar_helpers import format_meeting_for_calendar
 
         start_date = timezone.datetime(year, month, 1).date()
         _, last_day = monthrange(year, month)
         end_date = timezone.datetime(year, month, last_day).date()
 
-        # Get user's meetings for this month
-        user_meetings = MeetingAttendee.objects.filter(
-            user=request.user,
-            meeting__scheduled_at__date__gte=start_date,
-            meeting__scheduled_at__date__lte=end_date,
-            meeting__status__in=["scheduled", "confirmed", "active"],
-        ).select_related("meeting", "meeting__meeting_type")
+        # Check if internal staff or master view requested
+        is_internal_staff = (
+            request.user.is_staff
+            or request.user.is_superuser
+            or getattr(request.user, "role", "") in ["sales", "trainer", "admin", "master"]
+        )
+        is_mine_only = request.query_params.get("view") == "mine"
+
+        if is_internal_staff and not is_mine_only:
+            meetings_qs = (
+                Meeting.objects.filter(
+                    scheduled_at__date__gte=start_date,
+                    scheduled_at__date__lte=end_date,
+                    status__in=["scheduled", "confirmed", "active"],
+                )
+                .select_related("meeting_type", "scheduled_by")
+                .distinct()
+            )
+        else:
+            meetings_qs = (
+                Meeting.objects.filter(
+                    attendees__user=request.user,
+                    scheduled_at__date__gte=start_date,
+                    scheduled_at__date__lte=end_date,
+                    status__in=["scheduled", "confirmed", "active"],
+                )
+                .select_related("meeting_type", "scheduled_by")
+                .distinct()
+            )
 
         # Group meetings by date
         meetings_by_date = {}
-        meeting_colors = self._get_meeting_type_colors()
-
-        for attendee in user_meetings:
-            meeting = attendee.meeting
-            meeting_date = meeting.scheduled_at.date()
-
-            if meeting_date not in meetings_by_date:
-                meetings_by_date[meeting_date] = []
-
-            # Get attendees for this meeting
-            attendees = (
-                MeetingAttendee.objects.filter(meeting=meeting)
-                .select_related("user")
-                .values_list("user__first_name", "user__last_name", "role")
-            )
-
-            attendee_names = []
-            for first_name, last_name, role in attendees:
-                name = f"{first_name} {last_name}".strip()
-                if role == "organizer":
-                    attendee_names.insert(0, f"{name} (Organizer)")
-                else:
-                    attendee_names.append(f"{name} ({role.title()})")
-
-            meeting_data = {
-                "id": meeting.id,
-                "title": meeting.title,
-                "meeting_type": meeting.meeting_type.name,
-                "scheduled_at": meeting.scheduled_at,
-                "duration_minutes": int(meeting.duration.total_seconds() / 60),
-                "status": meeting.status,
-                "location": meeting.location,
-                "notes": meeting.notes,
-                "attendees": attendee_names,
-                "my_role": attendee.role,
-                "is_confirmed": attendee.is_confirmed,
-                "color": meeting_colors.get(
-                    meeting.meeting_type.name, "#3174ad"
-                ),  # Default blue
-                "time_display": meeting.scheduled_at.strftime("%I:%M %p"),
-                "end_time_display": (meeting.scheduled_at + meeting.duration).strftime(
-                    "%I:%M %p"
-                ),
-            }
-
-            meetings_by_date[meeting_date].append(meeting_data)
+        for meeting in meetings_qs:
+            meeting_date_str = meeting.scheduled_at.date().isoformat()
+            if meeting_date_str not in meetings_by_date:
+                meetings_by_date[meeting_date_str] = []
+            meetings_by_date[meeting_date_str].append(format_meeting_for_calendar(meeting))
 
         # Convert to list format for frontend
         calendar_data = []
-        for date, meetings in meetings_by_date.items():
-            calendar_data.append({"date": date.isoformat(), "meetings": meetings})
+        for date_str, m_list in sorted(meetings_by_date.items()):
+            calendar_data.append({"date": date_str, "meetings": m_list})
+
+        meeting_colors = self._get_meeting_type_colors()
 
         return Response(
             {
                 "year": year,
                 "month": month,
                 "meetings": calendar_data,
+                "meetings_by_date": meetings_by_date,
                 "meeting_types": list(meeting_colors.keys()),
             },
             status=status.HTTP_200_OK,

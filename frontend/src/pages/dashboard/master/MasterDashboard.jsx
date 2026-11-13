@@ -186,7 +186,7 @@ const MasterDashboard = () => {
               The CEO Influencers • Building Better Leaders
             </p>
             <h1 className='text-2xl sm:text-3xl font-extrabold text-gray-900'>
-              Admin Dashboard
+              ADMINISTRATIVE DASHBOARD
             </h1>
             <p className='text-lg font-exo text-gray-600'>
               Track platform performance, users, and operations in one view.
@@ -216,12 +216,20 @@ const MasterDashboard = () => {
 
       <div className='bg-white border-2 border-[#F6B72D] rounded-xl p-6 shadow-sm'>
         <div className='flex items-center justify-between mb-4'>
-          <h3 className='text-xl font-extrabold text-gray-900'>
-            Upcoming Meetings
-          </h3>
-          <span className='text-sm text-gray-600'>
-            Overview of upcoming sessions
-          </span>
+          <div>
+            <h3 className='text-xl font-extrabold text-gray-900'>
+              Upcoming Meetings
+            </h3>
+            <p className='text-xs text-gray-500'>
+              Overview of upcoming sessions across all internal staff
+            </p>
+          </div>
+          <Link
+            to={URLS.master.calendar}
+            className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0f172a] text-[#F6B72D] hover:text-white text-xs font-semibold hover:bg-slate-800 transition-colors border border-amber-400/40 shadow-xs'
+          >
+            <span>Open Master Calendar →</span>
+          </Link>
         </div>
         {upcomingMeetings.length === 0 ? (
           <p className='text-sm text-gray-600'>

@@ -1134,17 +1134,17 @@ export default function ClientDashboard() {
           </div>
         </div>
       ) : (
-        <div className='grid grid-cols-1 xl:grid-cols-12 gap-6 xl:items-stretch'>
-          <div className='col-span-12 xl:col-span-8'>
-            <div className='bg-white border-2 border-[#F6B72D] rounded-xl p-6 shadow-sm space-y-6'>
-              <div className='space-y-3'>
-                <p className='text-xs uppercase tracking-[0.2em] text-[#F6B72D] font-semibold'>
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch'>
+          <div className='flex flex-col'>
+            <div className='bg-white border-2 border-[#F6B72D] rounded-xl p-6 sm:p-7 shadow-sm space-y-6 h-full flex flex-col justify-between'>
+              <div className='space-y-3.5'>
+                <p className='text-xs sm:text-sm uppercase tracking-[0.2em] text-[#d99f1b] font-bold'>
                   Dashboard Access
                 </p>
-                <h2 className='text-2xl sm:text-3xl font-extrabold text-gray-900'>
+                <h2 className='text-2xl sm:text-3xl lg:text-3xl font-extrabold text-gray-900 leading-snug'>
                   Full program materials unlock after payment confirmation
                 </h2>
-                <p className='text-sm sm:text-base text-gray-600 font-exo'>
+                <p className='text-base sm:text-lg text-gray-700 font-exo leading-relaxed'>
                   You can review demo videos here while your account remains in
                   overview-only mode. Scheduling, workspace files, products, and
                   chat unlock after payment and confirmation are complete.
@@ -1153,14 +1153,14 @@ export default function ClientDashboard() {
 
               <div className='rounded-2xl border-2 border-[#F6B72D] bg-[#0f172a] text-white p-6 shadow-lg space-y-4'>
                 <div>
-                  <p className='text-xs uppercase tracking-[0.2em] text-[#F6B72D]'>
+                  <p className='text-xs sm:text-sm uppercase tracking-[0.2em] text-[#F6B72D] font-bold'>
                     Selected Demo
                   </p>
-                  <h3 className='text-2xl font-extrabold mt-2'>
+                  <h3 className='text-2xl sm:text-3xl font-black mt-2'>
                     {activeProgram?.name || activeProgram?.title || 'Program demo'}
                   </h3>
                   <p
-                    className='text-sm text-white/75 mt-2'
+                    className='text-sm sm:text-base text-white/80 mt-2 leading-relaxed'
                     dangerouslySetInnerHTML={{
                       __html:
                         activeProgram?.shortDescription ||
@@ -1175,49 +1175,53 @@ export default function ClientDashboard() {
                     type='button'
                     onClick={() => openIntroModalForLockedProgram(activeProgram)}
                     disabled={!activeProgram}
-                    className='inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold bg-[#F6B72D] text-black hover:bg-[#e6b82a] disabled:opacity-60 disabled:cursor-not-allowed'
+                    className='inline-flex items-center px-5 py-2.5 rounded-lg text-sm sm:text-base font-bold bg-[#F6B72D] text-black hover:bg-[#e6b82a] disabled:opacity-60 disabled:cursor-not-allowed shadow'
                   >
                     <Play className='w-4 h-4 mr-2' />
                     Watch Demo Video
                   </button>
-                  <span className='inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 text-white/85'>
+                  <span className='inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-semibold bg-white/10 text-white/85'>
                     Access Level: Overview Only
                   </span>
                 </div>
               </div>
 
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <div className='rounded-xl border border-gray-200 p-4 bg-gray-50'>
-                  <p className='text-xs uppercase tracking-wide text-gray-500'>
-                    Current Status
-                  </p>
-                  <p className='text-lg font-semibold text-gray-900 mt-2'>
-                    {clientProgramStatus === 'paid'
-                      ? 'Paid'
-                      : 'Awaiting Payment Confirmation'}
-                  </p>
-                  <p className='text-sm text-gray-600 mt-2'>
-                    Your account can review overview content only until payment
-                    confirmation is complete.
-                  </p>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                <div className='rounded-xl border-2 border-[#d99f1b] p-5 bg-[#F6B72D] shadow-md text-gray-950 flex flex-col justify-between'>
+                  <div>
+                    <p className='text-xs uppercase tracking-wider font-extrabold text-black/75'>
+                      Current Status
+                    </p>
+                    <p className='text-xl sm:text-2xl font-black text-gray-950 mt-2'>
+                      {clientProgramStatus === 'paid'
+                        ? 'Paid'
+                        : 'Awaiting Payment Confirmation'}
+                    </p>
+                    <p className='text-sm sm:text-base font-medium text-black/85 mt-2 leading-relaxed'>
+                      Your account can review overview content only until payment
+                      confirmation is complete.
+                    </p>
+                  </div>
                 </div>
-                <div className='rounded-xl border border-gray-200 p-4 bg-gray-50'>
-                  <p className='text-xs uppercase tracking-wide text-gray-500'>
-                    Next Step
-                  </p>
-                  <p className='text-lg font-semibold text-gray-900 mt-2'>
-                    Complete payment and watch for confirmation
-                  </p>
-                  <p className='text-sm text-gray-600 mt-2'>
-                    Once payment is confirmed, the full client workspace and
-                    schedule tools will unlock automatically.
-                  </p>
+                <div className='rounded-xl border-2 border-[#d99f1b] p-5 bg-[#F6B72D] shadow-md text-gray-950 flex flex-col justify-between'>
+                  <div>
+                    <p className='text-xs uppercase tracking-wider font-extrabold text-black/75'>
+                      Next Step
+                    </p>
+                    <p className='text-xl sm:text-2xl font-black text-gray-950 mt-2'>
+                      Complete payment and watch for confirmation
+                    </p>
+                    <p className='text-sm sm:text-base font-medium text-black/85 mt-2 leading-relaxed'>
+                      Once payment is confirmed, the full client workspace and
+                      schedule tools will unlock automatically.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className='col-span-12 xl:col-span-4 flex flex-col gap-6 xl:self-stretch xl:min-h-0'>
+          <div className='flex flex-col gap-6 self-stretch min-h-0'>
             <div className='bg-white border-2 border-[#F6B72D] rounded-xl p-5 shadow-sm'>
               <div className='flex items-start justify-between gap-3'>
                 <div>
@@ -1266,7 +1270,7 @@ export default function ClientDashboard() {
               </div>
             </div>
 
-            <div className='bg-white border-2 border-[#F6B72D] rounded-xl shadow-sm overflow-hidden flex flex-col xl:flex-1 xl:min-h-0'>
+            <div className='bg-white border-2 border-[#F6B72D] rounded-xl shadow-sm overflow-hidden flex flex-col flex-1 min-h-0'>
               <div className='px-4 py-3 border-b border-black/10 bg-[#F6B72D] flex items-center justify-between'>
                 <span className='text-sm font-extrabold uppercase tracking-wide text-black'>
                   Program Demos
@@ -1275,7 +1279,7 @@ export default function ClientDashboard() {
                   {selectablePrograms.length}
                 </span>
               </div>
-              <div className='max-h-[420px] xl:max-h-none xl:flex-1 xl:min-h-0 overflow-y-auto divide-y divide-gray-100'>
+              <div className='max-h-[420px] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto divide-y divide-gray-100'>
                 {selectablePrograms.length ? (
                   selectablePrograms.map((program, idx) => {
                     const isActive =

@@ -869,6 +869,44 @@ class ApproveMeetingView(APIView):
             lead.assigned_sales = request.user
             lead.save()
 
+            # Send email confirmation to the prospective client
+            if lead.email:
+                sales_name = request.user.get_full_name() or request.user.username
+                client_msg = (
+                    f"Hi {lead.first_name},\n\n"
+                    f"Your meeting with The CEO Influencers has been approved.\n\n"
+                    f"Date: {approved_date}\n"
+                    f"Time: {approved_time}\n"
+                    f"Sales Representative: {sales_name} ({request.user.email})\n\n"
+                    "We look forward to speaking with you.\n\n"
+                    "Best regards,\n"
+                    "The CEO Influencers Team"
+                )
+                try:
+                    send_mail(
+                        subject="Your Discovery Meeting Has Been Approved - The CEO Influencers",
+                        message=client_msg,
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[lead.email],
+                        fail_silently=True,
+                    )
+                except Exception as exc:
+                    logger.warning(f"Failed to send lead meeting approval email: {exc}")
+
+            # Notify ops and sales rep
+            try:
+                send_ops_email(
+                    subject=f"Meeting Approved: {lead.full_name}",
+                    message=(
+                        f"Sales Representative {request.user.email} approved meeting for lead:\n"
+                        f"Client: {lead.full_name} ({lead.email})\n"
+                        f"Approved Date/Time: {approved_date} at {approved_time}\n"
+                    ),
+                    fail_silently=True,
+                )
+            except Exception:
+                pass
+
             return Response(
                 {
                     "message": "Meeting approved successfully",
@@ -890,6 +928,44 @@ class ApproveMeetingView(APIView):
             lead.approved_meeting_time = approved_time
             lead.meeting_status = "rescheduled"
             lead.save()
+
+            # Send reschedule email to the prospective client
+            if lead.email:
+                sales_name = request.user.get_full_name() or request.user.username
+                client_msg = (
+                    f"Hi {lead.first_name},\n\n"
+                    f"Your meeting with The CEO Influencers has been rescheduled.\n\n"
+                    f"New Date: {approved_date}\n"
+                    f"New Time: {approved_time}\n"
+                    f"Sales Representative: {sales_name} ({request.user.email})\n\n"
+                    "If you have any questions or need to request a different time, please reply to this email.\n\n"
+                    "Best regards,\n"
+                    "The CEO Influencers Team"
+                )
+                try:
+                    send_mail(
+                        subject="Your Meeting Has Been Rescheduled - The CEO Influencers",
+                        message=client_msg,
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[lead.email],
+                        fail_silently=True,
+                    )
+                except Exception as exc:
+                    logger.warning(f"Failed to send lead meeting reschedule email: {exc}")
+
+            # Notify ops
+            try:
+                send_ops_email(
+                    subject=f"Meeting Rescheduled: {lead.full_name}",
+                    message=(
+                        f"Meeting rescheduled by {request.user.email} for lead:\n"
+                        f"Client: {lead.full_name} ({lead.email})\n"
+                        f"New Date/Time: {approved_date} at {approved_time}\n"
+                    ),
+                    fail_silently=True,
+                )
+            except Exception:
+                pass
 
             return Response(
                 {
@@ -970,6 +1046,56 @@ class SubmitAssessmentView(APIView):
                 serializer.save()
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Send confirmation email to lead
+        if lead.email:
+            try:
+                send_mail(
+                    subject="Assessment Received - The CEO Influencers",
+                    message=(
+                        f"Hi {lead.first_name},\n\n"
+                        "Thank you for submitting your assessment with The CEO Influencers.\n\n"
+                        "Our team is reviewing your responses to prepare for your upcoming session and customize our guidance to your specific leadership goals.\n\n"
+                        "If you have any questions, reply to this email or contact us at info@theceoinfluencers.com.\n\n"
+                        "Best regards,\n"
+                        "The CEO Influencers Team"
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[lead.email],
+                    fail_silently=True,
+                )
+            except Exception as exc:
+                logger.warning(f"Failed to send assessment confirmation email to lead: {exc}")
+
+        # Notify assigned sales representative and ops
+        try:
+            sales_email = lead.assigned_sales.email if (lead.assigned_sales and lead.assigned_sales.email) else None
+            send_ops_email(
+                subject=f"Assessment Submitted: {lead.full_name}",
+                message=(
+                    f"Lead {lead.full_name} ({lead.email}) has submitted their assessment.\n"
+                    f"Assigned Sales: {sales_email or 'Unassigned'}\n"
+                    f"Phone: {lead.phone}\n"
+                    f"Job Title: {lead.job_title or '-'}\n"
+                    f"Company/Position: {lead.position or '-'}\n"
+                    f"Industry: {lead.industry or '-'}"
+                ),
+                fail_silently=True,
+            )
+            if sales_email:
+                send_internal_email(
+                    subject=f"Assessment Submitted: {lead.full_name}",
+                    message=(
+                        f"Hi,\n\n"
+                        f"Your assigned lead {lead.full_name} ({lead.email}) has submitted their assessment.\n"
+                        f"Log in to the sales portal to review their details.\n\n"
+                        "The CEO Influencers"
+                    ),
+                    recipient_list=[sales_email],
+                    fail_silently=True,
+                )
+        except Exception:
+            pass
 
         return Response(
             {"message": "Assessment submitted successfully"}, status=status.HTTP_200_OK
@@ -1252,7 +1378,7 @@ class SendPaymentLinkView(APIView):
         payment_link = f"https://stripe.com/pay/{lead.id}"
 
         # Send email with payment link
-        subject = "Payment Link for Your Fitness Program"
+        subject = "Payment Link for Your CEO Influencers Program"
         message = f"""
         Hi {lead.first_name},
 
@@ -1261,7 +1387,7 @@ class SendPaymentLinkView(APIView):
         Please complete your payment using this link: {payment_link}
 
         Best regards,
-        TCI Fitness Team
+        The CEO Influencers Team
         """
 
         try:
@@ -2871,6 +2997,34 @@ class CancelMeetingView(APIView):
             # If no status field, delete the meeting
             meeting.delete()
 
+        # Send cancellation emails to all attendees
+        try:
+            if hasattr(meeting, "attendees"):
+                meeting_title = getattr(meeting, "title", "Scheduled Session")
+                scheduled_time_str = (
+                    meeting.scheduled_at.strftime("%B %d, %Y at %I:%M %p")
+                    if hasattr(meeting, "scheduled_at") and meeting.scheduled_at
+                    else "your scheduled time"
+                )
+                for attendee in meeting.attendees.select_related("user").all():
+                    if attendee.user and attendee.user.email:
+                        first_name = (attendee.user.first_name or "").strip() or attendee.user.username
+                        send_mail(
+                            subject=f"Meeting Cancelled: {meeting_title}",
+                            message=(
+                                f"Hi {first_name},\n\n"
+                                f"Please note that the meeting '{meeting_title}' scheduled for {scheduled_time_str} has been cancelled.\n\n"
+                                "If you need to reschedule or have any questions, please contact our team at info@theceoinfluencers.com.\n\n"
+                                "Best regards,\n"
+                                "The CEO Influencers Team"
+                            ),
+                            from_email=settings.DEFAULT_FROM_EMAIL,
+                            recipient_list=[attendee.user.email],
+                            fail_silently=True,
+                        )
+        except Exception as exc:
+            logger.warning(f"Failed to send cancellation emails for meeting {meeting_id}: {exc}")
+
         return Response(
             {"message": "Meeting cancelled successfully"},
             status=status.HTTP_200_OK,
@@ -3302,22 +3456,36 @@ class SalesCalendarView(APIView):
             _, last_day = monthrange(year, month)
             end_date = timezone.datetime(year, month, last_day).date()
 
-        # Query meetings directly instead of attendees to avoid duplicates
-        # Get meetings where sales user is involved
-        sales_meetings = (
-            Meeting.objects.filter(
-                models.Q(scheduled_by=sales_user)
-                | models.Q(
-                    attendees__user=sales_user,
-                    attendees__role__in=["sales", "organizer"],
-                ),
-                scheduled_at__date__gte=start_date,
-                scheduled_at__date__lte=end_date,
-                status__in=["scheduled", "confirmed", "active"],
+        # Check if user requested mine-only or master calendar (default: master calendar for internal staff)
+        is_mine_only = request.query_params.get("view") == "mine"
+
+        if is_mine_only:
+            sales_meetings = (
+                Meeting.objects.filter(
+                    models.Q(scheduled_by=sales_user)
+                    | models.Q(
+                        attendees__user=sales_user,
+                        attendees__role__in=["sales", "organizer"],
+                    ),
+                    scheduled_at__date__gte=start_date,
+                    scheduled_at__date__lte=end_date,
+                    status__in=["scheduled", "confirmed", "active"],
+                )
+                .select_related("meeting_type", "scheduled_by")
+                .distinct()
             )
-            .select_related("meeting_type", "scheduled_by")
-            .distinct()
-        )
+        else:
+            sales_meetings = (
+                Meeting.objects.filter(
+                    scheduled_at__date__gte=start_date,
+                    scheduled_at__date__lte=end_date,
+                    status__in=["scheduled", "confirmed", "active"],
+                )
+                .select_related("meeting_type", "scheduled_by")
+                .distinct()
+            )
+
+        from scheduling.calendar_helpers import format_meeting_for_calendar
 
         # Group meetings by date
         meetings_by_date = {}
@@ -3328,73 +3496,6 @@ class SalesCalendarView(APIView):
             if meeting_date not in meetings_by_date:
                 meetings_by_date[meeting_date] = []
 
-            # Get client from meeting attendees
-            client_attendee = (
-                MeetingAttendee.objects.filter(meeting=meeting, role="client")
-                .select_related("user")
-                .first()
-            )
-
-            client_name = "Unknown Client"
-            client_programs = []
-            if client_attendee:
-                client_name = f"{client_attendee.user.first_name} {client_attendee.user.last_name}".strip()
-
-                # Get programs/services the client is enrolled in
-                from lms.models import Enrollment
-
-                enrollments = Enrollment.objects.filter(
-                    user=client_attendee.user
-                ).select_related("service")[
-                    :3
-                ]  # Limit to 3 programs
-
-                client_programs = [
-                    enrollment.service.title for enrollment in enrollments
-                ]
-
-            # Get advisor/trainers from meeting attendees
-            trainer_attendees = (
-                MeetingAttendee.objects.filter(
-                    meeting=meeting, role__in=["trainer", "organizer"]
-                )
-                .select_related("user")
-                .exclude(user=sales_user)
-            )
-
-            advisor_names = []
-            for trainer_attendee in trainer_attendees:
-                name = f"{trainer_attendee.user.first_name} {trainer_attendee.user.last_name}".strip()
-                advisor_names.append(name)
-
-            advisor_display = ", ".join(advisor_names) if advisor_names else "TBD"
-
-            # Combine programs for display
-            program_display = (
-                " & ".join(client_programs)
-                if client_programs
-                else "General Consultation"
-            )
-
-            # Determine meeting type code (01 for initial, 02 for follow-up/program)
-            meeting_type_code = "01"  # Default
-            if (
-                "Program" in meeting.meeting_type.name
-                or "Follow" in meeting.meeting_type.name
-            ):
-                meeting_type_code = "02"
-
-            meeting_data = {
-                "id": meeting.id,
-                "title": meeting.title,
-                "advisor": advisor_display,
-                "program": program_display,
-                "meetingType": meeting.meeting_type.name,
-                "clientName": client_name,
-                "time": meeting.scheduled_at.strftime("%I:%M %p"),
-                "type": meeting_type_code,
-            }
-
-            meetings_by_date[meeting_date].append(meeting_data)
+            meetings_by_date[meeting_date].append(format_meeting_for_calendar(meeting))
 
         return Response(meetings_by_date, status=status.HTTP_200_OK)

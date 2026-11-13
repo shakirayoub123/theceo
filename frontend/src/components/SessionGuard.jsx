@@ -183,13 +183,18 @@ export default function SessionGuard() {
 
   return (
     <div
-      className={`fixed top-4 left-1/2 -translate-x-1/2 z-[9999] flex items-center justify-center gap-2 px-4 py-1.5 rounded-full shadow-lg transition-colors border ${isWarning
-          ? 'bg-red-500 text-white border-red-600 animate-pulse'
-          : 'bg-[#000023] text-white border-[#F6B72D] shadow-[0_4px_12px_rgba(246,183,45,0.2)] lg:bg-white lg:text-[#000023] lg:border-gray-200 lg:shadow-md hover:opacity-10 opacity-70 transition-opacity'
-        }`}
+      title="Session time remaining"
+      className={`fixed top-3.5 md:top-4 left-1/2 -translate-x-1/2 z-[9999] flex items-center justify-center gap-2.5 px-5 py-2 md:px-6 md:py-2.5 rounded-full transition-all border select-none ${
+        isWarning
+          ? 'bg-red-500 text-white border-red-600 animate-pulse shadow-lg'
+          : 'bg-[#000023] text-white border-[#F6B72D] shadow-[0_4px_16px_rgba(246,183,45,0.25)] lg:bg-white lg:text-[#000023] lg:border-gray-300 lg:shadow-lg hover:shadow-xl'
+      }`}
     >
-      <Clock className={`w-4 h-4 ${isWarning ? 'text-white' : 'text-[#F6B72D]'}`} />
-      <span className='font-mono font-bold text-[13px] tracking-wider'>
+      <Clock
+        className={`w-5 h-5 md:w-6 md:h-6 shrink-0 ${isWarning ? 'text-white' : 'text-[#F6B72D]'}`}
+        strokeWidth={2.25}
+      />
+      <span className='font-mono font-bold text-base md:text-lg tracking-wider leading-none'>
         {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
       </span>
     </div>
