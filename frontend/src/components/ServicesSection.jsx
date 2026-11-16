@@ -152,12 +152,26 @@ export default function ServicesSection() {
     })
   }
 
-  const toTitleCase = (title) =>
-    title
+  const toTitleCase = (title) => {
+    if (!title) return ''
+    let formatted = title
       .toLocaleLowerCase()
       .replace(/(^|[\s:–—-])([a-z])/g, (_, separator, letter) =>
         `${separator}${letter.toLocaleUpperCase()}`,
       )
+
+    // Preserve and capitalize Roman numerals (e.g., Series I-II-III, Phase II, Part IV)
+    formatted = formatted.replace(
+      /\b(i{1,3}|iv|v|vi{0,3}|ix|x)(-(i{1,3}|iv|v|vi{0,3}|ix|x))+\b/gi,
+      (match) => match.toUpperCase(),
+    )
+    formatted = formatted.replace(
+      /\b(ii|iii|iv|v|vi{1,3}|ix|x)\b/gi,
+      (match) => match.toUpperCase(),
+    )
+
+    return formatted
+  }
 
   if (loading) {
     return (

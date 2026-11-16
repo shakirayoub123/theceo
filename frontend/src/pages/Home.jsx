@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import BlogSection from '@/components/BlogSection'
 import HeroSection from '@/components/HeroSection'
@@ -51,17 +52,47 @@ const Home = () => {
     fetchFeaturedContent()
   }, [])
 
+  const location = useLocation()
+
   useEffect(() => {
-    if (!loading && window.location.hash) {
-      const id = window.location.hash.slice(1)
+    const rawTarget =
+      window.location.hash ||
+      (sessionStorage.getItem('tci_last_home_section')
+        ? `#${sessionStorage.getItem('tci_last_home_section')}`
+        : '')
+    if (!rawTarget) return
+
+    const id = rawTarget.replace(/^#/, '')
+    if (!id) return
+
+    const scrollToTarget = () => {
       const el = document.getElementById(id)
       if (el) {
-        requestAnimationFrame(() => {
-          el.scrollIntoView({ behavior: 'smooth' })
+        const headerOffset = 100
+        const elementPosition = el.getBoundingClientRect().top + window.scrollY
+        window.scrollTo({
+          top: Math.max(0, elementPosition - headerOffset),
+          behavior: 'smooth',
         })
+        return true
       }
+      return false
     }
-  }, [loading])
+
+    scrollToTarget()
+    const t1 = setTimeout(scrollToTarget, 100)
+    const t2 = setTimeout(scrollToTarget, 300)
+    const t3 = setTimeout(() => {
+      scrollToTarget()
+      sessionStorage.removeItem('tci_last_home_section')
+    }, 700)
+
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+      clearTimeout(t3)
+    }
+  }, [loading, location.hash, location.pathname])
 
   const buildTickerItems = () => {
     return [

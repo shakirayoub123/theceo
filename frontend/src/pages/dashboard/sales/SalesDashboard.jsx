@@ -573,8 +573,8 @@ export default function SalesDashboard() {
               <Link
                 to={nextMeeting?.id ? `/client/meeting/${nextMeeting.id}` : '#'}
                 className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold transition-all ${nextMeeting?.id
-                    ? 'bg-[#F6B72D] text-black hover:bg-[#e6b82a]'
-                    : 'bg-white/10 text-white cursor-not-allowed'
+                  ? 'bg-[#F6B72D] text-black hover:bg-[#e6b82a]'
+                  : 'bg-white/10 text-white cursor-not-allowed'
                   }`}
               >
                 <Play className='w-4 h-4 mr-2' />
@@ -655,8 +655,8 @@ export default function SalesDashboard() {
                       key={program.id || `${program.name}-${idx}`}
                       onClick={() => setActiveProgramId(program.id)}
                       className={`block w-full text-left px-4 py-3 transition-colors ${isActive
-                          ? 'bg-[#F6B72D]/15 text-black border-l-4 border-[#F6B72D]'
-                          : 'hover:bg-[#F6B72D]/10'
+                        ? 'bg-[#F6B72D]/15 text-black border-l-4 border-[#F6B72D]'
+                        : 'hover:bg-[#F6B72D]/10'
                         }`}
                     >
                       <p className='text-xs font-semibold uppercase tracking-wide text-gray-500'>
@@ -790,8 +790,8 @@ export default function SalesDashboard() {
                       <Link
                         to={meeting.id ? `/client/meeting/${meeting.id}` : '#'}
                         className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold ${meeting.id
-                            ? 'bg-[#F6B72D] text-black hover:bg-[#e6b82a]'
-                            : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                          ? 'bg-[#F6B72D] text-black hover:bg-[#e6b82a]'
+                          : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                           }`}
                       >
                         Join

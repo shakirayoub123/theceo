@@ -18,8 +18,39 @@ export default function Blog() {
     const fetchBlogDetails = async () => {
       try {
         setLoading(true)
-        const data = await authService.getBlogDetails(slug)
-        setBlogData(data)
+        setError('')
+
+        // 1. Primary fetch using slug
+        try {
+          const data = await authService.getBlogDetails(slug)
+          if (data && (data.id || data.title)) {
+            setBlogData(data)
+            return
+          }
+        } catch (initialErr) {
+          console.warn('Initial blog lookup failed, trying fallback list match:', initialErr)
+        }
+
+        // 2. Secondary fallback: search across published blogs
+        const allBlogsResponse = await authService.getAllBlogs()
+        const list = allBlogsResponse?.blogs || allBlogsResponse?.data?.blogs || []
+        const cleanSlug = slug.toLowerCase()
+        const matched = list.find(
+          (b) =>
+            b.slug === slug ||
+            String(b.id) === slug ||
+            slug.endsWith(`-${b.id}`) ||
+            (b.slug && (b.slug.includes(cleanSlug) || cleanSlug.includes(b.slug))) ||
+            (b.title && b.title.toLowerCase().includes(cleanSlug.replace(/-/g, ' ')))
+        )
+
+        if (matched?.slug) {
+          const data = await authService.getBlogDetails(matched.slug)
+          setBlogData(data)
+          return
+        }
+
+        setError('Failed to load blog details')
       } catch (err) {
         setError('Failed to load blog details')
         console.error('Blog details error:', err)

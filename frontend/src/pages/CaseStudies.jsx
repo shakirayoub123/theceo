@@ -85,6 +85,7 @@ export default function CaseStudies() {
           {allCaseStudies.map((cs, idx) => (
             <Link
               to={`/case-studies/${cs.id}`}
+              state={{ from: '/case-studies' }}
               key={cs.id}
               aria-label={`Read case study ${idx + 1}: ${cs.title}`}
               className='block group h-full cursor-pointer rounded-[24px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6B72D]'

@@ -29,7 +29,7 @@ export default function SalientFeaturesSection() {
       title: 'Global Expertise, Local Impact',
       icon: Map,
       slug: 'global-expertise-local-impact',
-      description: 'Claire and James have successfully served 7,500+ executive clients combined over 20+ years, bringing experience across more than 186 industries.'
+      description: 'The CEO Influencers proven expertise mentoring 7,500 senior executives in over 186 industries globally gives you the strategic edge.'
     },
     {
       title: 'Long-Term Profitability',
@@ -80,10 +80,10 @@ export default function SalientFeaturesSection() {
                 SALIENT FEATURES
               </span>
             </div>
-            <h2 className='text-[30px] md:text-[36px] font-bold text-white mb-3 tracking-tight uppercase leading-[1.1]'>
+            <h2 className='text-[30px] md:text-[36px] font-bold text-white mb-3 tracking-tight uppercase leading-[1.1] [text-wrap:balance]'>
               Salient <span className='text-[#F6B72D]'>Features</span>
             </h2>
-            <p className='text-[12px] md:text-[13px] leading-[19px] md:leading-[21px] text-gray-300 max-w-[820px] mx-auto'>
+            <p className='text-[12px] md:text-[13px] leading-[19px] md:leading-[21px] text-gray-300 max-w-[820px] mx-auto [text-wrap:pretty]'>
               Claire and James bring more than 20 years of combined experience, having successfully served over 7,500 executive clients worldwide. Their shared philosophy is that exceptional leadership is defined not by power or position, but by the ability to develop people, inspire progress, and equip the next generation of leaders with the skills, values, and mindset to drive meaningful, sustainable business and societal impact.
             </p>
           </div>
@@ -97,10 +97,10 @@ export default function SalientFeaturesSection() {
                 aria-label={`Read more about ${feature.title}`}
                 className='site-hover-highlight min-h-[210px] lg:min-h-[225px] w-full group rounded-[20px] p-6 relative flex flex-col cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6B72D] transition-all duration-300 border bg-[#010125]/90 border-[#CBD5E1]/40 hover:bg-white hover:shadow-xl hover:border-[#F6B72D]'
               >
-                {/* The card and arrow share this link to the feature detail page. */}
+                {/* The card and arrow share this link to the feature detail page. Circular box has gold background */}
                 <div aria-hidden='true' className='absolute top-5 right-5'>
-                  <div className='w-8 h-8 rounded-full border flex items-center justify-center transition-colors duration-300 border-white/10 bg-[#010125]/50 group-hover:border-gray-200 group-hover:bg-white'>
-                    <ArrowUpRight className='w-3.5 h-3.5 text-white group-hover:text-black transition-colors duration-300' />
+                  <div className='w-8 h-8 rounded-full border border-[#F6B72D] bg-[#F6B72D] flex items-center justify-center transition-all duration-300 shadow-sm group-hover:scale-110'>
+                    <ArrowUpRight className='w-3.5 h-3.5 text-[#010125] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />
                   </div>
                 </div>
 
@@ -112,11 +112,11 @@ export default function SalientFeaturesSection() {
                 </div>
 
                 {/* Content */}
-                <h3 className='text-[16px] md:text-[17px] font-bold leading-[22px] mb-2 text-white group-hover:text-[#111827] transition-colors duration-300'>
+                <h3 className='text-[16px] md:text-[17px] font-bold leading-[22px] mb-2 text-white group-hover:text-[#111827] transition-colors duration-300 [text-wrap:balance]'>
                   {feature.title}
                 </h3>
 
-                <div className='text-[12px] lg:text-[12.5px] leading-[18px] text-gray-400 group-hover:text-[#4B5563] transition-colors duration-300'>
+                <div className='text-[12px] lg:text-[12.5px] leading-[18px] text-gray-400 group-hover:text-[#4B5563] transition-colors duration-300 [text-wrap:pretty]'>
                   {Array.isArray(feature.description) ? (
                     <ul className='space-y-0.5'>
                       {feature.description.slice(0, 4).map((item, i) => (

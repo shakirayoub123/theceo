@@ -613,6 +613,37 @@ class AuthService {
     return this.handleResponse(response)
   }
 
+  // Newsletter Subscription
+  async subscribeNewsletter(email) {
+    const payload = {
+      subject: 'Newsletter Subscription',
+      body: `New newsletter subscription request from: ${email}`,
+      subscriber_email: email,
+    }
+    try {
+      const response = await this.fetchWithCredentials(
+        `${this.baseURL}/email/`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        },
+      )
+      return await this.handleResponse(response)
+    } catch (err) {
+      // Fallback to /comms/email/ if needed
+      const fallbackResponse = await this.fetchWithCredentials(
+        `${this.baseURL}/comms/email/`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        },
+      )
+      return await this.handleResponse(fallbackResponse)
+    }
+  }
+
   // Schedule Call Appointment
   async scheduleCall(appointmentData) {
     const response = await this.fetchWithCredentials(

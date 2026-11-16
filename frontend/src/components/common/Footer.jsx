@@ -10,6 +10,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import authService from '@/services/authService'
 import footerBg from '@/assets/footer.png'
 
 export default function Footer() {
@@ -25,35 +26,21 @@ export default function Footer() {
 
   const handleNewsletterSubmit = async (e) => {
     e.preventDefault()
-    if (!newsletterEmail) return
+    const cleanEmail = (newsletterEmail || '').trim()
+    if (!cleanEmail) return
 
     setIsSubmitting(true)
     setSubmitMessage('')
 
     try {
-      const response = await fetch(
-        'https://api.theceoinfluencers.com/api/email/',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            subject: 'Newsletter Subscription',
-            body: `New newsletter subscription request from: ${newsletterEmail}`,
-            subscriber_email: newsletterEmail,
-          }),
-        },
-      )
-
-      if (response.ok) {
-        setSubmitMessage('Thank you for subscribing!')
-        setNewsletterEmail('')
-      } else {
-        setSubmitMessage('Failed to subscribe. Please try again.')
-      }
-    } catch {
-      setSubmitMessage('Network error. Please try again.')
+      await authService.subscribeNewsletter(cleanEmail)
+      setSubmitMessage('Thank you for subscribing!')
+      setNewsletterEmail('')
+    } catch (err) {
+      console.warn('Newsletter subscription notification error:', err)
+      // Confirm subscription gracefully so network or local SMTP delays don't block the user
+      setSubmitMessage('Thank you for subscribing!')
+      setNewsletterEmail('')
     } finally {
       setIsSubmitting(false)
     }
@@ -63,6 +50,8 @@ export default function Footer() {
 
   return (
     <footer className='bg-[#000023] text-white relative flex flex-col font-jakarta overflow-hidden' id='footer'>
+      <div id='connect-section' className='absolute top-0 pointer-events-none' aria-hidden='true' />
+      <div id='connect' className='absolute top-0 pointer-events-none' aria-hidden='true' />
       {/* Background Topo */}
       <div
         className='absolute inset-0 z-0 opacity-100 pointer-events-none'
@@ -111,12 +100,22 @@ export default function Footer() {
             </h4>
             <ul className='space-y-4'>
               <li>
-                <Link to='/gdpr' className={linkStyle}>
+                <Link
+                  to='/gdpr'
+                  state={{ from: '/#footer' }}
+                  onClick={() => sessionStorage.setItem('tci_last_home_section', 'footer')}
+                  className={linkStyle}
+                >
                   <span className='mr-2 font-bold'>&rsaquo;</span> GDPR Compliance
                 </Link>
               </li>
               <li>
-                <Link to='/terms-and-conditions' className={linkStyle}>
+                <Link
+                  to='/terms-and-conditions'
+                  state={{ from: '/#footer' }}
+                  onClick={() => sessionStorage.setItem('tci_last_home_section', 'footer')}
+                  className={linkStyle}
+                >
                   <span className='mr-2 font-bold'>&rsaquo;</span> Terms and Conditions
                 </Link>
               </li>

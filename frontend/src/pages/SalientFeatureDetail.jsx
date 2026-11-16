@@ -40,12 +40,16 @@ const getLinesFromSquare = (squareNumber) => {
   const raw = SALIENT_SQUARE_CONTENT[String(squareNumber)] || ''
   if (!raw) return { headingLine: '', lines: [] }
 
-  const lines = raw
-    .split('\n')
-    .map((line) => line.trim())
+  // Split by blank lines so each full sentence/paragraph is cleanly captured
+  const rawParagraphs = raw
+    .split(/\n\s*\n/)
+    .map((line) => line.trim().replace(/\s+/g, ' '))
     .filter(Boolean)
 
-  const [headingLine = '', ...rest] = lines
+  if (rawParagraphs.length === 0) return { headingLine: '', lines: [] }
+
+  const [headingLine = '', ...rest] = rawParagraphs
+
   return {
     headingLine,
     lines: rest,
@@ -124,14 +128,20 @@ export default function SalientFeatureDetail() {
           <div className='relative z-10 w-full px-8 md:px-12 py-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8'>
 
             {/* Left Content */}
-            <div className='max-w-xl flex-1'>
+            <div className='max-w-2xl lg:max-w-3xl flex-1'>
               <div className='inline-flex items-center px-4 py-1.5 rounded-full border border-white/40 mb-4'>
                 <span className='text-[10px] font-semibold tracking-[0.15em] text-white uppercase'>
                   SALIENT FEATURES
                 </span>
               </div>
 
-              <h1 className='text-3xl md:text-4xl lg:text-[44px] font-bold text-white tracking-tight leading-[1.1] mb-5'>
+              <h1
+                className={`font-bold text-white tracking-tight leading-[1.15] mb-5 ${
+                  feature.slug === 'global-expertise-local-impact'
+                    ? 'text-xl sm:text-2xl md:text-[30px] lg:text-[34px] xl:text-[38px] whitespace-nowrap'
+                    : 'text-3xl md:text-4xl lg:text-[44px] [text-wrap:balance]'
+                }`}
+              >
                 {title}
               </h1>
 
@@ -198,16 +208,20 @@ export default function SalientFeatureDetail() {
               </div>
             )}
 
-            {/* Paragraphs */}
+            {/* Paragraphs and Bullet Points */}
             <div className='space-y-6'>
-              {remainingLines.map((paragraph, index) => (
-                <p
-                  key={index}
-                  className='text-[15.5px] lg:text-[16px] text-[#475569] leading-[28px] font-normal'
-                >
-                  {paragraph}
-                </p>
-              ))}
+              {remainingLines.map((paragraph, index) => {
+                const cleanText = paragraph.replace(/^[❖•\-]\s*/, '')
+
+                return (
+                  <div key={index} className='flex items-start gap-3.5'>
+                    <div className='mt-2.5 h-2 w-2 rounded-full bg-[#F6B72D] shrink-0' />
+                    <p className='text-[15.5px] lg:text-[16px] text-[#475569] leading-[28px] font-normal flex-1 [text-wrap:pretty]'>
+                      {cleanText}
+                    </p>
+                  </div>
+                )
+              })}
             </div>
           </div>
 

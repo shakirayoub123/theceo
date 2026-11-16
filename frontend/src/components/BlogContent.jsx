@@ -9,11 +9,11 @@ export default function BlogContent({ content, inlineImage }) {
     <div className='bg-white w-full py-16 md:py-24 font-jakarta'>
       <div className='max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8'>
         {inlineImage && (
-          <div className='mb-16 border-4 border-[#F6B72D] rounded-[20px] overflow-hidden shadow-xl aspect-video'>
+          <div className='mb-12 max-w-[850px] mx-auto border-4 border-[#F6B72D] rounded-[20px] overflow-hidden shadow-xl bg-[#000023] flex items-center justify-center p-2 sm:p-3'>
             <img
               src={inlineImage || '/placeholder.svg'}
               alt='Article Image'
-              className='w-full h-full object-cover object-center'
+              className='w-full h-auto max-h-[600px] object-contain object-center rounded-[12px]'
             />
           </div>
         )}
@@ -51,7 +51,8 @@ export default function BlogContent({ content, inlineImage }) {
             </p>
           </div>
           <a
-            href="/#connect-section"
+            href="/#footer"
+            onClick={() => sessionStorage.setItem('tci_last_home_section', 'footer')}
             className='relative z-10 bg-[#F6B72D] hover:bg-[#e6b82a] text-[#000023] font-bold h-14 px-8 rounded-xl shadow-lg border-b-4 border-[#D99A1A] active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 group whitespace-nowrap'
           >
             CONNECT NOW

@@ -91,23 +91,23 @@ export default function BlogSection({ blogs = [], loading = false }) {
 
         {/* Header */}
         <div className='flex flex-col items-center text-center justify-center mb-6 md:mb-8'>
-          <div className='inline-block border border-gray-400 rounded-full px-5 py-0.5 mb-3 bg-white/80'>
+          <div className='inline-flex items-center justify-center border border-gray-400 rounded-full px-5 py-1 mb-3 bg-white/80 mx-auto'>
             <span className='text-[#111827] font-semibold tracking-widest text-[9px] uppercase'>
-              What We Provide
+              OUR BLOGS
             </span>
           </div>
-          <h2 className='text-[30px] lg:text-[40px] font-bold leading-[1.1] tracking-[-1.01px] text-[#111827] mb-2 uppercase font-jakarta'>
+          <h2 className='text-[30px] lg:text-[40px] font-bold leading-[1.1] tracking-[-1.01px] text-[#111827] mb-2 uppercase font-jakarta text-center'>
             <span className='text-[#111827]'>Our </span>
             <span className='text-[#F6B72D]'>Blogs</span>
           </h2>
-          <p className='text-[13px] lg:text-[15px] leading-[24px] font-normal text-[#4B5563] max-w-2xl mx-auto mb-4'>
+          <p className='text-[13px] lg:text-[15px] leading-[24px] font-normal text-[#4B5563] max-w-2xl mx-auto mb-4 text-center [text-wrap:balance]'>
             Explore our curated blogs packed with case studies, expert insights, and actionable frameworks to elevate executive performance and organizational effectiveness.
           </p>
           <Link
             to='/articles'
             state={{ from: '/#blog' }}
             onClick={() => sessionStorage.setItem('tci_last_home_section', 'blog')}
-            className='group inline-flex items-center gap-2 border border-gray-300 bg-white/90 px-4 py-1.5 rounded-full hover:bg-[#F6B72D] hover:border-[#F6B72D] transition-all duration-300 shadow-sm'
+            className='group inline-flex items-center gap-2 border border-gray-300 bg-white/90 px-4 py-1.5 rounded-full hover:bg-[#F6B72D] hover:border-[#F6B72D] transition-all duration-300 shadow-sm mx-auto'
           >
             <span className='text-[#111827] font-bold text-[11px] sm:text-[12px] uppercase tracking-wider'>Explore all publications</span>
             <div className='w-5 h-5 rounded-full bg-[#F6B72D] group-hover:bg-black/10 flex items-center justify-center group-hover:translate-x-0.5 transition-transform'>

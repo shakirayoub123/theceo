@@ -13,25 +13,29 @@ export default function PageBackButton({
   const handleBack = (e) => {
     e.preventDefault()
 
-    // 1. If explicit 'from' state was passed during navigation
-    if (location.state?.from) {
-      navigate(location.state.from)
+    // 1. If explicit 'from' state was passed during navigation and is an internal route
+    const fromUrl = location.state?.from
+    if (fromUrl && typeof fromUrl === 'string' && fromUrl.startsWith('/')) {
+      if (fromUrl.includes('#')) {
+        const [, hash] = fromUrl.split('#')
+        if (hash) sessionStorage.setItem('tci_last_home_section', hash)
+      }
+      navigate(fromUrl)
       return
     }
 
-    // 2. If browser history exists and user didn't open the tab fresh
-    if (window.history.state && window.history.state.idx > 0) {
-      navigate(-1)
-      return
-    }
-
-    // 3. Fallback to the target section or home
+    // 2. Direct internal navigation to fallback URL
     if (fallbackUrl) {
+      if (fallbackUrl.includes('#')) {
+        const [, hash] = fallbackUrl.split('#')
+        if (hash) sessionStorage.setItem('tci_last_home_section', hash)
+      }
       navigate(fallbackUrl)
       return
     }
 
-    navigate('/')
+    sessionStorage.setItem('tci_last_home_section', 'blog')
+    navigate('/#blog')
   }
 
   // Styles based on variant

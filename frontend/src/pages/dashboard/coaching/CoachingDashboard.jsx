@@ -754,9 +754,9 @@ export default function CoachingDashboard() {
       Array.isArray(assessment.data) && assessment.data.length > 0
         ? assessment.data.map((item) => ({ ...item }))
         : (assessment.defaultQuestions || []).map((q) => ({
-            question: q,
-            answer: '',
-          }))
+          question: q,
+          answer: '',
+        }))
 
     setActiveEditingAssessment({
       ...assessment,
@@ -780,7 +780,7 @@ export default function CoachingDashboard() {
       )
       toast.success(
         response?.message ||
-          `${assessmentToSave.title} saved to master internal database!`,
+        `${assessmentToSave.title} saved to master internal database!`,
       )
 
       const answeredCount = assessmentToSave.data.filter((q) =>
@@ -791,12 +791,12 @@ export default function CoachingDashboard() {
         prev.map((item) =>
           item.id === assessmentToSave.id
             ? {
-                ...item,
-                completed: answeredCount > 0,
-                completedAt: new Date().toISOString(),
-                answeredCount: answeredCount,
-                data: assessmentToSave.data,
-              }
+              ...item,
+              completed: answeredCount > 0,
+              completedAt: new Date().toISOString(),
+              answeredCount: answeredCount,
+              data: assessmentToSave.data,
+            }
             : item,
         ),
       )
@@ -805,7 +805,7 @@ export default function CoachingDashboard() {
       authService
         .getCoachingClientDetails(currentAssessmentClient.clientID)
         .then((refreshed) => setClientAssessmentDetails(refreshed))
-        .catch(() => {})
+        .catch(() => { })
 
       setActiveEditingAssessment(null)
     } catch (err) {
@@ -1013,7 +1013,7 @@ export default function CoachingDashboard() {
                 {Math.round(
                   (selectedClientAssessments.filter((a) => a.completed).length /
                     6) *
-                    100,
+                  100,
                 )}
                 % Complete
               </span>
@@ -1025,7 +1025,7 @@ export default function CoachingDashboard() {
                   width: `${Math.round(
                     (selectedClientAssessments.filter((a) => a.completed).length /
                       6) *
-                      100,
+                    100,
                   )}%`,
                 }}
               />
@@ -1141,9 +1141,8 @@ export default function CoachingDashboard() {
                       <button
                         key={`${item.title}-${idx}`}
                         type='button'
-                        className={`block w-full px-4 py-3 text-left hover:bg-gray-50 ${
-                          item.files?.length ? '' : 'cursor-default'
-                        }`}
+                        className={`block w-full px-4 py-3 text-left hover:bg-gray-50 ${item.files?.length ? '' : 'cursor-default'
+                          }`}
                         onClick={() => handleModuleDownload(item)}
                       >
                         {content}
@@ -1203,11 +1202,10 @@ export default function CoachingDashboard() {
                 to={
                   nextMeeting?.id ? `/coaching/meeting/${nextMeeting.id}` : '#'
                 }
-                className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-                  nextMeeting?.id
-                    ? 'bg-[#F6B72D] text-black hover:bg-[#e6b82a]'
-                    : 'bg-white/10 text-white cursor-not-allowed'
-                }`}
+                className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold transition-all ${nextMeeting?.id
+                  ? 'bg-[#F6B72D] text-black hover:bg-[#e6b82a]'
+                  : 'bg-white/10 text-white cursor-not-allowed'
+                  }`}
               >
                 <Play className='w-4 h-4 mr-2' />
                 {nextMeeting?.id ? 'Join Meeting' : 'Awaiting Schedule'}
@@ -1289,11 +1287,10 @@ export default function CoachingDashboard() {
                       type='button'
                       key={program.id || `${program.name}-${idx}`}
                       onClick={() => setActiveProgramId(program.id)}
-                      className={`block w-full text-left px-4 py-3 transition-colors ${
-                        isActive
-                          ? 'bg-[#F6B72D]/15 text-black border-l-4 border-[#F6B72D]'
-                          : 'hover:bg-[#F6B72D]/10'
-                      }`}
+                      className={`block w-full text-left px-4 py-3 transition-colors ${isActive
+                        ? 'bg-[#F6B72D]/15 text-black border-l-4 border-[#F6B72D]'
+                        : 'hover:bg-[#F6B72D]/10'
+                        }`}
                     >
                       <p className='text-xs font-semibold uppercase tracking-wide text-gray-500'>
                         Program {idx + 1}
@@ -1391,11 +1388,10 @@ export default function CoachingDashboard() {
                         to={
                           meeting.id ? `/coaching/meeting/${meeting.id}` : '#'
                         }
-                        className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold ${
-                          meeting.id
-                            ? 'bg-[#F6B72D] text-black hover:bg-[#e6b82a]'
-                            : 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                        }`}
+                        className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold ${meeting.id
+                          ? 'bg-[#F6B72D] text-black hover:bg-[#e6b82a]'
+                          : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                          }`}
                       >
                         Join
                       </Link>
@@ -1840,7 +1836,7 @@ export default function CoachingDashboard() {
 
             <div className='p-6 overflow-y-auto space-y-4 flex-1 font-exo'>
               {viewingSingleAssessment.data &&
-              viewingSingleAssessment.data.some((d) => d.answer?.trim()) ? (
+                viewingSingleAssessment.data.some((d) => d.answer?.trim()) ? (
                 viewingSingleAssessment.data.map((item, idx) => (
                   <div
                     key={idx}

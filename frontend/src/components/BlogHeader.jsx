@@ -51,16 +51,20 @@ export default function BlogHeader({
               <h1 className='text-4xl md:text-[50px] font-bold font-jakarta text-[#000023] mb-5 tracking-tight uppercase'>
                 Blog Details
               </h1>
-            <div className='flex items-center text-[15px] font-semibold font-jakarta flex-wrap justify-center'>
+            <div className='flex items-center text-[15px] font-semibold font-jakarta flex-wrap justify-center gap-y-1'>
               <a href='/' className='text-[#161616] hover:text-[#F6B72D] transition-colors'>
                 Home
               </a>
               <span className='mx-3 text-[#161616] tracking-widest'>&gt;</span>
-              <a href='/#blog' className='text-[#F6B72D] hover:text-[#e6a820] transition-colors'>
+              <a
+                href='/#blog'
+                onClick={() => sessionStorage.setItem('tci_last_home_section', 'blog')}
+                className='text-[#F6B72D] hover:text-[#e6a820] transition-colors'
+              >
                 Blog
               </a>
               <span className='mx-3 text-[#161616] tracking-widest'>&gt;</span>
-              <span className='text-[#F6B72D] text-center max-w-[600px] truncate'>
+              <span className='text-[#F6B72D] text-center'>
                 {title}
               </span>
             </div>
@@ -70,7 +74,13 @@ export default function BlogHeader({
 
       {/* Meta details section placed above the blog content */}
       <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 mb-4">
-        <h1 className='text-3xl md:text-5xl lg:text-5xl font-bold text-[#0B132B] tracking-tight leading-[1.2] mb-6'>
+        <h1
+          className={`font-bold text-[#0B132B] tracking-tight leading-[1.2] mb-6 [text-wrap:balance] ${
+            (title || '').length <= 75
+              ? 'text-xl sm:text-2xl md:text-[28px] lg:text-[32px] xl:text-[36px] lg:whitespace-nowrap'
+              : 'text-2xl sm:text-3xl md:text-[32px] lg:text-[38px]'
+          }`}
+        >
           {title}
         </h1>
 

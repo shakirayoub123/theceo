@@ -62,6 +62,8 @@ export default function ClientCaseStudiesSection() {
             <Link
               key={cs.id}
               to={`/case-studies/${cs.id}`}
+              state={{ from: '/#case-studies-section' }}
+              onClick={() => sessionStorage.setItem('tci_last_home_section', 'case-studies-section')}
               aria-label={`Read case study ${cs.id}: ${cs.title}`}
               className='block h-full cursor-pointer rounded-[24px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6B72D]'
             >

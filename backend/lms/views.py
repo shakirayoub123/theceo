@@ -1258,7 +1258,29 @@ class ClientBlogDetailView(APIView):
 
     def get(self, request, blog_slug):
         try:
-            blog = Blog.objects.get(slug=blog_slug, status="published")
+            blog = None
+            # 1. Try exact slug match
+            blog = Blog.objects.filter(slug=blog_slug, status="published").first()
+
+            # 2. Try numeric ID (e.g. /blog/1/)
+            if not blog and blog_slug.isdigit():
+                blog = Blog.objects.filter(id=int(blog_slug), status="published").first()
+
+            # 3. Try blog-N format (e.g. /blog/blog-1/)
+            if not blog and blog_slug.startswith("blog-") and blog_slug[5:].isdigit():
+                blog = Blog.objects.filter(id=int(blog_slug[5:]), status="published").first()
+
+            # 4. Try slug contains or starts with
+            if not blog:
+                blog = Blog.objects.filter(slug__icontains=blog_slug, status="published").first()
+
+            # 5. Try title match
+            if not blog:
+                clean_name = blog_slug.replace("-", " ")
+                blog = Blog.objects.filter(title__icontains=clean_name, status="published").first()
+
+            if not blog:
+                raise Blog.DoesNotExist
 
             blog.views_count += 1
             blog.save()
