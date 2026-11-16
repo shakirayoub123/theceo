@@ -96,35 +96,35 @@ export default function Header() {
               </div>
 
               {/* Center: Navigation Links with responsive gap and spacing */}
-              <nav className='hidden xl:flex flex-1 items-center justify-center gap-1.5 xl:gap-2.5 2xl:gap-5 mx-1.5 xl:mx-3 min-w-0 overflow-hidden'>
-                <Link to='/' className='text-[#F6B72D] text-[11.5px] xl:text-[12px] 2xl:text-[14px] font-medium leading-normal hover:text-[#F6B72D]/80 transition-colors whitespace-nowrap px-0.5 xl:px-1 shrink-0'>
+              <nav className='hidden lg:flex flex-1 items-center justify-center gap-2 lg:gap-2.5 xl:gap-4 2xl:gap-5 mx-1.5 lg:mx-2 xl:mx-3 min-w-0'>
+                <Link to='/' className='text-[#F6B72D] text-[12.5px] lg:text-[13px] xl:text-[14px] 2xl:text-[15px] font-semibold leading-normal hover:text-[#F6B72D]/80 transition-colors whitespace-nowrap px-1 xl:px-1.5 shrink-0'>
                   {t('nav.home', 'Home')}
                 </Link>
-                <a href='/#services-section' className='text-white text-[11.5px] xl:text-[12px] 2xl:text-[14px] font-medium leading-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap px-0.5 xl:px-1 shrink-0'>
+                <a href='/#services-section' className='text-white text-[12.5px] lg:text-[13px] xl:text-[14px] 2xl:text-[15px] font-semibold leading-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap px-1 xl:px-1.5 shrink-0'>
                   {t('nav.services', 'Services')}
                 </a>
-                <a href='/#salient-features' className='text-white text-[11.5px] xl:text-[12px] 2xl:text-[14px] font-medium leading-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap px-0.5 xl:px-1 shrink-0'>
+                <a href='/#salient-features' className='text-white text-[12.5px] lg:text-[13px] xl:text-[14px] 2xl:text-[15px] font-semibold leading-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap px-1 xl:px-1.5 shrink-0'>
                   {t('nav.salientFeatures', 'Salient Features')}
                 </a>
-                <a href='/#our-team' className='text-white text-[11.5px] xl:text-[12px] 2xl:text-[14px] font-medium leading-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap px-0.5 xl:px-1 shrink-0'>
+                <a href='/#our-team' className='text-white text-[12.5px] lg:text-[13px] xl:text-[14px] 2xl:text-[15px] font-semibold leading-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap px-1 xl:px-1.5 shrink-0'>
                   {t('nav.influencers', 'Influencers')}
                 </a>
-                <a href='/#testimonials-section' className='text-white text-[11.5px] xl:text-[12px] 2xl:text-[14px] font-medium leading-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap px-0.5 xl:px-1 shrink-0'>
+                <a href='/#testimonials-section' className='text-white text-[12.5px] lg:text-[13px] xl:text-[14px] 2xl:text-[15px] font-semibold leading-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap px-1 xl:px-1.5 shrink-0'>
                   {t('nav.testimonials', 'Testimonials')}
                 </a>
-                <a href='/#blog' className='text-white text-[11.5px] xl:text-[12px] 2xl:text-[14px] font-medium leading-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap px-0.5 xl:px-1 shrink-0'>
+                <a href='/#blog' className='text-white text-[12.5px] lg:text-[13px] xl:text-[14px] 2xl:text-[15px] font-semibold leading-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap px-1 xl:px-1.5 shrink-0'>
                   {t('nav.insights', 'Insights')}
                 </a>
-                <a href='/#case-studies-section' className='text-white text-[11.5px] xl:text-[12px] 2xl:text-[14px] font-medium leading-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap px-0.5 xl:px-1 shrink-0'>
+                <a href='/#case-studies-section' className='text-white text-[12.5px] lg:text-[13px] xl:text-[14px] 2xl:text-[15px] font-semibold leading-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap px-1 xl:px-1.5 shrink-0'>
                   {t('nav.caseStudies', 'Case Studies')}
                 </a>
-                <a href='/#footer' className='text-white text-[11.5px] xl:text-[12px] 2xl:text-[14px] font-medium leading-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap px-0.5 xl:px-1 shrink-0'>
+                <a href='/#footer' className='text-white text-[12.5px] lg:text-[13px] xl:text-[14px] 2xl:text-[15px] font-semibold leading-normal hover:text-[#F6B72D] transition-colors whitespace-nowrap px-1 xl:px-1.5 shrink-0'>
                   {t('nav.connect', 'Connect')}
                 </a>
               </nav>
 
               {/* Right Actions */}
-              <div className='flex items-center space-x-1.5 sm:space-x-2 xl:space-x-3 flex-shrink-0 z-20 bg-[#000023] pl-2'>
+              <div className='flex items-center space-x-1.5 sm:space-x-2 xl:space-x-3 flex-shrink-0 z-20 bg-[#000023] pl-1.5 lg:pl-2'>
                 {/* Shopping Cart */}
                 <Link
                   to='/cart'
@@ -145,20 +145,20 @@ export default function Header() {
                 <div className='hidden md:block'>
                   {isAuthenticated ? (
                     <Link to={getDashboardRoute()}>
-                      <Button className='bg-white hover:bg-gray-100 text-[#161616] rounded-full pl-1.5 pr-3 xl:pr-4 h-8.5 xl:h-9 flex items-center gap-1.5 xl:gap-2 transition-all duration-300'>
-                        <div className='bg-[#F6B72D] h-6 w-6 rounded-full flex items-center justify-center shrink-0'>
+                      <Button className='bg-white hover:bg-gray-100 text-[#161616] rounded-full pl-1.5 pr-2.5 xl:pr-4 h-8 xl:h-9 flex items-center gap-1 xl:gap-2 transition-all duration-300'>
+                        <div className='bg-[#F6B72D] h-5.5 w-5.5 xl:h-6 xl:w-6 rounded-full flex items-center justify-center shrink-0'>
                           <ArrowRight className='h-3 w-3 text-black' />
                         </div>
-                        <span className='font-bold text-xs xl:text-sm whitespace-nowrap'>{t('nav.dashboard', 'Dashboard')}</span>
+                        <span className='font-bold text-[11px] xl:text-xs 2xl:text-sm whitespace-nowrap'>{t('nav.dashboard', 'Dashboard')}</span>
                       </Button>
                     </Link>
                   ) : (
                     <Link to='/login'>
-                      <Button className='bg-white hover:bg-gray-100 text-[#161616] rounded-full pl-1.5 pr-3 xl:pr-4 h-8.5 xl:h-9 flex items-center gap-1.5 xl:gap-2 transition-all duration-300'>
-                        <div className='bg-[#F6B72D] h-6 w-6 rounded-full flex items-center justify-center shrink-0'>
+                      <Button className='bg-white hover:bg-gray-100 text-[#161616] rounded-full pl-1.5 pr-2.5 xl:pr-4 h-8 xl:h-9 flex items-center gap-1 xl:gap-2 transition-all duration-300'>
+                        <div className='bg-[#F6B72D] h-5.5 w-5.5 xl:h-6 xl:w-6 rounded-full flex items-center justify-center shrink-0'>
                           <ArrowRight className='h-3 w-3 text-black' />
                         </div>
-                        <span className='font-bold text-xs xl:text-sm whitespace-nowrap'>{t('nav.login')}</span>
+                        <span className='font-bold text-[11px] xl:text-xs 2xl:text-sm whitespace-nowrap'>{t('nav.login')}</span>
                       </Button>
                     </Link>
                   )}
@@ -168,7 +168,7 @@ export default function Header() {
                 <Button
                   variant='ghost'
                   size='sm'
-                  className='xl:hidden text-white hover:bg-white/10 p-2 rounded-full'
+                  className='lg:hidden text-white hover:bg-white/10 p-2 rounded-full'
                   onClick={toggleMenu}
                 >
                   {isMenuOpen ? (
