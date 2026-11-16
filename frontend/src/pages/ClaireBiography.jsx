@@ -129,14 +129,14 @@ const ClaireBiography = () => {
     },
     {
       title:
-        "Keogh, C. (2013) 'Portable Care Packages – Care from Housing to Hospital Final Report' Research and Development, Housing 21. (Internal report)",
+        "Keogh, C. (2013) 'Portable Care Packages - Care from Housing to Hospital Final Report' Research and Development, Housing 21. (Internal report)",
       year: '2013',
       journal: 'Reports',
       description: 'Portable care packages',
     },
     {
       title:
-        "Keogh, C. (2011) 'Promoting Dignity and Respect 'Portable Care Packages – Care from Housing to Hospital' Care Talk – The Voice of Excellence in Social Care Magazine, Issue 5, September 2011",
+        "Keogh, C. (2011) 'Promoting Dignity and Respect 'Portable Care Packages - Care from Housing to Hospital' Care Talk - The Voice of Excellence in Social Care Magazine, Issue 5, September 2011",
       year: '2011',
       journal: 'Reports',
       description: 'Promoting dignity and respect',

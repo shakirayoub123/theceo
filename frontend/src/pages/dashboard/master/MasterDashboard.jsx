@@ -270,10 +270,10 @@ const MasterDashboard = () => {
                       {meeting.title || 'Scheduled Meeting'}
                     </td>
                     <td className='px-4 py-2 text-gray-700'>
-                      {meeting.meeting_type || '—'}
+                      {meeting.meeting_type || '-'}
                     </td>
                     <td className='px-4 py-2 text-gray-700'>
-                      {meeting.status || '—'}
+                      {meeting.status || '-'}
                     </td>
                   </tr>
                 ))}

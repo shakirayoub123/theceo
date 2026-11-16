@@ -9,6 +9,7 @@ import {
   Download,
 } from 'lucide-react'
 import bgHeader from '@/assets/bgHeader.png'
+import PageBackButton from '@/components/common/PageBackButton'
 
 export default function BlogHeader({
   title,
@@ -29,22 +30,27 @@ export default function BlogHeader({
 
   return (
     <div className='w-full font-jakarta bg-white'>
+      {/* Back Button */}
+      <div className='max-w-[1383px] mx-auto px-4 sm:px-6 pt-4'>
+        <PageBackButton fallbackUrl='/#blog' label='Back to Insights' />
+      </div>
+
       {/* BLOG DETAILS HERO BANNER */}
-      <div className='w-full pt-6'>
+      <div className='w-full pt-4'>
         <div className='relative w-full max-w-[1383px] mx-auto py-16 md:py-[70px] bg-[#FFFBF0] flex flex-col items-center justify-center overflow-hidden rounded-[28px] shadow-sm mb-12'>
-          {/* Topographic Background */}
-          <div
-            className='absolute inset-0 z-0 pointer-events-none'
-            style={{
-              backgroundImage: `url("${bgHeader}")`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          ></div>
-          <div className='relative z-10 text-center flex flex-col items-center px-4 mt-2'>
-            <h1 className='text-4xl md:text-[50px] font-bold font-jakarta text-[#000023] mb-5 tracking-tight'>
-              Blog Details
-            </h1>
+            {/* Topographic Background */}
+            <div
+              className='absolute inset-0 z-0 pointer-events-none'
+              style={{
+                backgroundImage: `url("${bgHeader}")`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            ></div>
+            <div className='relative z-10 text-center flex flex-col items-center px-4 mt-2'>
+              <h1 className='text-4xl md:text-[50px] font-bold font-jakarta text-[#000023] mb-5 tracking-tight uppercase'>
+                Blog Details
+              </h1>
             <div className='flex items-center text-[15px] font-semibold font-jakarta flex-wrap justify-center'>
               <a href='/' className='text-[#161616] hover:text-[#F6B72D] transition-colors'>
                 Home

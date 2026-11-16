@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import EbookSeriesBooks from '@/components/EbookSeriesBooks'
 import EbookSeriesHero from '@/components/EbookSeriesHero'
+import PageBackButton from '@/components/common/PageBackButton'
 import authService from '@/services/authService'
 
 export default function EbookSeries() {
@@ -98,6 +99,9 @@ export default function EbookSeries() {
         <meta name='twitter:card' content='summary_large_image' />
         <link rel='canonical' href={window.location.href} />
       </Helmet>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4'>
+        <PageBackButton fallbackUrl='/#products-section' label='Back to Ebooks' />
+      </div>
       <EbookSeriesHero seriesData={seriesData.series} />
       <EbookSeriesBooks ebooks={seriesData.ebooks} />
     </div>

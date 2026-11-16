@@ -8,24 +8,34 @@ const resources = {
       // Navigation
       nav: {
         home: 'Home',
-        about: 'About',
         services: 'Services',
+        salientFeatures: 'Salient Features',
+        influencers: 'Influencers',
+        testimonials: 'Testimonials',
+        insights: 'Insights',
+        caseStudies: 'Case Studies',
+        connect: 'Connect',
+        login: 'Login',
+        dashboard: 'Dashboard',
+        about: 'About',
         blog: 'Blog',
         contact: 'Contact',
-        login: 'Login',
       },
       // Hero Section
       hero: {
+        tag: 'Building Better Leaders',
         title: 'Positively ',
-        titleHighlight: 're-defining',
-        titleEnd: ' 21st century leadership',
+        titleHighlight: 'Redefining',
+        titleEnd: '21st Century Leadership.',
+        subtitle:
+          'The CEO Influencers is a next-generation executive leadership and organizational performance optimization coaching consultancy that empowers leaders from start-ups to multinational corporations to maximize success in the 21st-century global business marketplace.',
         subtitleStart: 'The CEO Influencers',
         subtitleEnd:
           ' is a next-generation executive leadership and organizational performance optimization coaching consultancy that empowers leaders from start-ups to multinational corporations to maximize success in the 21st-century global business marketplace.',
         cta: 'Get Started',
         buttons: {
-          viewVideo: 'VIEW INTRODUCTION VIDEO',
-          scheduleCall: 'SCHEDULE A DISCOVERY CALL',
+          viewVideo: 'View Introduction Video',
+          scheduleCall: 'Schedule A Discovery Call',
         },
         railItems: {
           overview: 'OVERVIEW',
@@ -54,11 +64,13 @@ const resources = {
       // Services Section
       services: {
         title: 'Our Services',
+        titlePrefix: 'Our ',
+        titleHighlight: 'Services',
         subtitle: 'Professional services to elevate your business',
         sectionHeader: 'WHAT WE PROVIDE',
         sectionTitle: 'OUR SERVICES',
         sectionDescription:
-          'We deliver tailored leadership and performance programs empowering leaders with clarity and confidence.',
+          'We deliver 9 tailored next generation leadership and organizational performance optimization programs to move leaders and their organizations forward.',
         buttons: {
           purchaseNow: 'PURCHASE NOW',
           bookAppointment: 'BOOK NOW',
@@ -75,7 +87,7 @@ const resources = {
           virtualCoaching:
             'VIRTUAL LEADERSHIP COACHING & EXECUTIVE MENTORING 12-WEEK PROGRAMS',
           virtualCoachingDesc:
-            'Proprietary live two-to-one coaching that elevates self-awareness, communication, emotional intelligence, and strategic vision — driving innovative critical thinking and consistent real-world results.',
+            'Proprietary live two-to-one coaching that elevates self-awareness, communication, emotional intelligence, and strategic vision, driving innovative critical thinking and consistent real-world results.',
           corporateTraining:
             'CORPORATE LEADERSHIP CLIENT-SITE TRAINING 1-WEEK SEMINARS',
           corporateTrainingDesc:
@@ -87,7 +99,7 @@ const resources = {
           businessMastermindInfluencer:
             'BUSINESS MASTERMIND INFLUENCER 1-DAY CLASSES',
           businessMastermindInfluencerDesc:
-            'Proprietary live two-to-one coaching that elevates self-awareness, communication, emotional intelligence, and strategic vision — driving innovative critical thinking and consistent real-world results.',
+            'Proprietary live two-to-one coaching that elevates self-awareness, communication, emotional intelligence, and strategic vision, driving innovative critical thinking and consistent real-world results.',
           trainTheTrainer:
             '"TRAIN-THE-TRAINER" EMOTIONAL INTELLIGENCE & EMPATHY FOCUSED 1-WEEK PROGRAM',
           trainTheTrainerDesc:
@@ -310,24 +322,34 @@ const resources = {
       // Navigation
       nav: {
         home: 'Inicio',
-        about: 'Acerca de',
         services: 'Servicios',
+        salientFeatures: 'Destacados',
+        influencers: 'Influencers',
+        testimonials: 'Testimonios',
+        insights: 'Perspectivas',
+        caseStudies: 'Casos',
+        connect: 'Contacto',
+        login: 'Iniciar sesión',
+        dashboard: 'Panel',
+        about: 'Acerca de',
         blog: 'Blog',
         contact: 'Contacto',
-        login: 'Iniciar sesión',
       },
       // Hero Section
       hero: {
+        tag: 'Construyendo mejores líderes',
         title: 'Positivamente ',
         titleHighlight: 'redefiniendo',
-        titleEnd: ' el negocio del siglo XXI',
+        titleEnd: ' el liderazgo del siglo XXI.',
+        subtitle:
+          'The CEO Influencers es una consultora de coaching ejecutivo de nueva generación y optimización del rendimiento organizacional que capacita a líderes desde startups hasta corporaciones multinacionales para maximizar el éxito en el mercado empresarial global del siglo XXI.',
         subtitleStart: 'The CEO Influencers',
         subtitleEnd:
           ' es una firma de coaching ejecutivo de nueva generación que empodera a líderes desde startups hasta corporaciones multinacionales para tener éxito en el panorama empresarial del siglo XXI.',
         cta: 'Comenzar',
         buttons: {
-          viewVideo: 'VER VIDEO DE INTRODUCCIÓN',
-          scheduleCall: 'PROGRAMAR UNA LLAMADA DE DESCUBRIMIENTO',
+          viewVideo: 'Ver video de introducción',
+          scheduleCall: 'Programar una llamada de descubrimiento',
         },
         railItems: {
           overview: 'RESUMEN',
@@ -356,11 +378,13 @@ const resources = {
       // Services Section
       services: {
         title: 'Nuestros Servicios',
+        titlePrefix: 'Nuestros ',
+        titleHighlight: 'Servicios',
         subtitle: 'Servicios profesionales para elevar tu negocio',
         sectionHeader: 'QUÉ PROPORCIONAMOS',
         sectionTitle: 'NUESTROS SERVICIOS',
         sectionDescription:
-          'Entregamos programas de liderazgo y rendimiento a medida que empoderan a los líderes con claridad y confianza.',
+          'Ofrecemos 9 programas personalizados de liderazgo de nueva generación y optimización del rendimiento organizacional para impulsar a los líderes y sus organizaciones.',
         buttons: {
           purchaseNow: 'COMPRAR AHORA',
           bookAppointment: 'RESERVAR CITA',
@@ -377,7 +401,7 @@ const resources = {
           virtualCoaching:
             'PROGRAMAS DE COACHING DE LIDERAZGO VIRTUAL Y MENTORÍA EJECUTIVA DE 12 SEMANAS',
           virtualCoachingDesc:
-            'Coaching en vivo propietario de dos a uno que eleva la autoconciencia, la comunicación, la inteligencia emocional y la visión estratégica — impulsando el pensamiento crítico innovador y resultados consistentes en el mundo real.',
+            'Coaching en vivo propietario de dos a uno que eleva la autoconciencia, la comunicación, la inteligencia emocional y la visión estratégica, impulsando el pensamiento crítico innovador y resultados consistentes en el mundo real.',
           corporateTraining:
             'ENTRENAMIENTO DE LIDERAZGO CORPORATIVO EN SITIO DEL CLIENTE SEMINARIOS DE 1 SEMANA',
           corporateTrainingDesc:
@@ -389,7 +413,7 @@ const resources = {
           businessMastermindInfluencer:
             'INFLUENCIADOR DE MENTE EMPRESARIAL CLASES DE 1 DÍA',
           businessMastermindInfluencerDesc:
-            'Coaching en vivo propietario de dos a uno que eleva la autoconciencia, la comunicación, la inteligencia emocional y la visión estratégica — impulsando el pensamiento crítico innovador y resultados consistentes en el mundo real.',
+            'Coaching en vivo propietario de dos a uno que eleva la autoconciencia, la comunicación, la inteligencia emocional y la visión estratégica, impulsando el pensamiento crítico innovador y resultados consistentes en el mundo real.',
           trainTheTrainer:
             '"ENTRENAR AL ENTRENADOR" INTELIGENCIA EMOCIONAL Y EMPATÍA ENFOCADA PROGRAMA DE 1 SEMANA',
           trainTheTrainerDesc:
@@ -610,24 +634,34 @@ const resources = {
   de: {
     translation: {
       nav: {
-        home: 'Startseite',
+        home: 'Home',
+        services: 'Leistungen',
+        salientFeatures: 'Highlights',
+        influencers: 'Influencer',
+        testimonials: 'Referenzen',
+        insights: 'Einblicke',
+        caseStudies: 'Fallstudien',
+        connect: 'Kontakt',
+        login: 'Anmelden',
+        dashboard: 'Dashboard',
         about: 'Über uns',
-        services: 'Dienstleistungen',
         blog: 'Blog',
         contact: 'Kontakt',
-        login: 'Anmelden',
       },
       hero: {
+        tag: 'Bessere Führungskräfte aufbauen',
         title: 'Positiv ',
         titleHighlight: 'neu definieren',
-        titleEnd: ' des 21. Jahrhunderts Geschäft',
+        titleEnd: ' die Führung im 21. Jahrhundert.',
+        subtitle:
+          'The CEO Influencers ist ein Coaching-Beratungsunternehmen der nächsten Generation für Führungskräfte und betriebliche Leistungsoptimierung, das Führungskräfte von Start-ups bis hin zu multinationalen Unternehmen dabei unterstützt, ihren Erfolg auf dem globalen Markt des 21. Jahrhunderts zu maximieren.',
         subtitleStart: 'The CEO Influencers',
         subtitleEnd:
           ' ist eine Coaching-Firma der nächsten Generation für Führungskräfte, die Führungskräfte von Start-ups bis hin zu multinationalen Unternehmen dabei unterstützt, im Geschäftsumfeld des 21. Jahrhunderts erfolgreich zu sein.',
         cta: 'Loslegen',
         buttons: {
-          viewVideo: 'EINFÜHRUNGSVIDEO ANSEHEN',
-          scheduleCall: 'ENTDECKUNGSGESPRÄCH VEREINBAREN',
+          viewVideo: 'Einführungsvideo ansehen',
+          scheduleCall: 'Entdeckungsgespräch vereinbaren',
         },
         railItems: {
           overview: 'ÜBERSICHT',
@@ -654,12 +688,14 @@ const resources = {
       },
       services: {
         title: 'Unsere Dienstleistungen',
+        titlePrefix: 'Unsere ',
+        titleHighlight: 'Leistungen',
         subtitle:
           'Professionelle Dienstleistungen zur Weiterentwicklung Ihres Unternehmens',
         sectionHeader: 'WAS WIR BIETEN',
         sectionTitle: 'UNSERE DIENSTLEISTUNGEN',
         sectionDescription:
-          'Wir liefern maßgeschneiderte Führungs- und Leistungsprogramme, die Führungskräfte mit Klarheit und Vertrauen stärken.',
+          'Wir bieten 9 maßgeschneiderte Programme der nächsten Generation für Führung und organisatorische Leistungsoptimierung, um Führungskräfte und ihre Unternehmen voranzubringen.',
         buttons: {
           purchaseNow: 'JETZT KAUFEN',
           bookAppointment: 'TERMIN BUCHEN',
@@ -676,7 +712,7 @@ const resources = {
           virtualCoaching:
             'VIRTUELLES LEITUNGS-COACHING & EXECUTIVE MENTORING 12-WOCHEN-PROGRAMME',
           virtualCoachingDesc:
-            'Proprietäres Live-Zwei-zu-Eins-Coaching, das Selbstbewusstsein, Kommunikation, emotionale Intelligenz und strategische Vision erhöht – innovative kritische Denkweise und konsistente reale Ergebnisse fördert.',
+            'Proprietäres Live-Zwei-zu-Eins-Coaching, das Selbstbewusstsein, Kommunikation, emotionale Intelligenz und strategische Vision erhöht, innovative kritische Denkweise und konsistente reale Ergebnisse fördert.',
           corporateTraining:
             'KORPORATIVE LEITUNG KUNDEN-SITE-SCHULUNG 1-WOCHEN-SEMINARE',
           corporateTrainingDesc:
@@ -688,7 +724,7 @@ const resources = {
           businessMastermindInfluencer:
             'BUSINESS MASTERMIND INFLUENCER 1-TAG-KLASSEN',
           businessMastermindInfluencerDesc:
-            'Proprietäres Live-Zwei-zu-Eins-Coaching, das Selbstbewusstsein, Kommunikation, emotionale Intelligenz und strategische Vision erhöht – innovative kritische Denkweise und konsistente reale Ergebnisse fördert.',
+            'Proprietäres Live-Zwei-zu-Eins-Coaching, das Selbstbewusstsein, Kommunikation, emotionale Intelligenz und strategische Vision erhöht, innovative kritische Denkweise und konsistente reale Ergebnisse fördert.',
           trainTheTrainer:
             '"TRAIN-THE-TRAINER" EMOTIONALE INTELLIGENZ & EMPATHIE FOKUSSIERTES 1-WOCHEN-PROGRAMM',
           trainTheTrainerDesc:
@@ -901,23 +937,33 @@ const resources = {
     translation: {
       nav: {
         home: 'Accueil',
-        about: 'À propos',
         services: 'Services',
+        salientFeatures: 'Points forts',
+        influencers: 'Influenceurs',
+        testimonials: 'Témoignages',
+        insights: 'Insights',
+        caseStudies: 'Études de cas',
+        connect: 'Contact',
+        login: 'Connexion',
+        dashboard: 'Tableau de bord',
+        about: 'À propos',
         blog: 'Blog',
         contact: 'Contact',
-        login: 'Connexion',
       },
       hero: {
+        tag: 'Former de meilleurs leaders',
         title: 'Redéfinir positivement ',
-        titleHighlight: 'les affaires',
-        titleEnd: ' du 21ème siècle',
+        titleHighlight: 'le leadership',
+        titleEnd: ' du 21ème siècle.',
+        subtitle:
+          "The CEO Influencers est un cabinet de conseil en coaching de direction générale et d'optimisation de la performance organisationnelle de nouvelle génération qui permet aux dirigeants, des start-ups aux multinationales, de maximiser leur succès sur le marché mondial des affaires du 21e siècle.",
         subtitleStart: 'The CEO Influencers',
         subtitleEnd:
           ' est une entreprise de coaching exécutif de nouvelle génération qui permet aux leaders des start-ups aux multinationales de réussir dans le paysage commercial du 21ème siècle.',
         cta: 'Commencer',
         buttons: {
-          viewVideo: "VOIR LA VIDÉO D'INTRODUCTION",
-          scheduleCall: 'PLANIFIER UN APPEL DE DÉCOUVERTE',
+          viewVideo: "Voir la vidéo d'introduction",
+          scheduleCall: 'Planifier un appel de découverte',
         },
         railItems: {
           overview: 'APERÇU',
@@ -945,11 +991,13 @@ const resources = {
       },
       services: {
         title: 'Nos Services',
+        titlePrefix: 'Nos ',
+        titleHighlight: 'Services',
         subtitle: 'Services professionnels pour élever votre entreprise',
         sectionHeader: 'CE QUE NOUS PROPOSONS',
         sectionTitle: 'NOS SERVICES',
         sectionDescription:
-          'Nous proposons des programmes de leadership et de performance sur mesure qui donnent aux leaders clarté et confiance.',
+          'Nous proposons 9 programmes sur mesure de leadership de nouvelle génération et d’optimisation de la performance organisationnelle pour faire progresser les dirigeants et leurs organisations.',
         buttons: {
           purchaseNow: 'ACHETER MAINTENANT',
           bookAppointment: 'RÉSERVER UN RENDEZ-VOUS',
@@ -966,7 +1014,7 @@ const resources = {
           virtualCoaching:
             'PROGRAMMES DE COACHING DE LEADERSHIP VIRTUEL & MENTORAT EXECUTIVE 12 SEMAINES',
           virtualCoachingDesc:
-            "Coaching propriétaire en direct deux-à-un qui élève la conscience de soi, la communication, l'intelligence émotionnelle et la vision stratégique — stimulant la pensée critique innovante et des résultats réels cohérents.",
+            "Coaching propriétaire en direct deux-à-un qui élève la conscience de soi, la communication, l'intelligence émotionnelle et la vision stratégique, stimulant la pensée critique innovante et des résultats réels cohérents.",
           corporateTraining:
             "FORMATION EN LEADERSHIP CORPORATIF SUR SITE CLIENT SÉMINAIRES D'1 SEMAINE",
           corporateTrainingDesc:
@@ -978,7 +1026,7 @@ const resources = {
           businessMastermindInfluencer:
             "CLASSES BUSINESS MASTERMIND INFLUENCER D'1 JOUR",
           businessMastermindInfluencerDesc:
-            "Coaching propriétaire en direct deux-à-un qui élève la conscience de soi, la communication, l'intelligence émotionnelle et la vision stratégique — stimulant la pensée critique innovante et des résultats réels cohérents.",
+            "Coaching propriétaire en direct deux-à-un qui élève la conscience de soi, la communication, l'intelligence émotionnelle et la vision stratégique, stimulant la pensée critique innovante et des résultats réels cohérents.",
           trainTheTrainer:
             "PROGRAMME \"FORMATEUR DE FORMATEURS\" AXÉ SUR L'INTELLIGENCE ÉMOTIONNELLE ET L'EMPATHIE D'1 SEMAINE",
           trainTheTrainerDesc:
@@ -1195,23 +1243,33 @@ const resources = {
     translation: {
       nav: {
         home: 'Home',
-        about: 'Chi siamo',
         services: 'Servizi',
+        salientFeatures: 'Punti di forza',
+        influencers: 'Influencer',
+        testimonials: 'Testimonianze',
+        insights: 'Insights',
+        caseStudies: 'Casi di studio',
+        connect: 'Contatto',
+        login: 'Accedi',
+        dashboard: 'Dashboard',
+        about: 'Chi siamo',
         blog: 'Blog',
         contact: 'Contatto',
-        login: 'Accedi',
       },
       hero: {
+        tag: 'Costruire leader migliori',
         title: 'Ridefinire positivamente ',
-        titleHighlight: 'il business',
-        titleEnd: ' del 21° secolo',
+        titleHighlight: 'la leadership',
+        titleEnd: ' del 21° secolo.',
+        subtitle:
+          "The CEO Influencers è una società di consulenza per la leadership esecutiva e l'ottimizzazione delle prestazioni aziendali di nuova generazione che consente ai leader, dalle start-up alle multinazionali, di massimizzare il successo nel mercato globale del 21° secolo.",
         subtitleStart: 'The CEO Influencers',
         subtitleEnd:
           ' è una società di coaching esecutivo di nuova generazione che permette ai leader dalle start-up alle multinazionali di avere successo nel panorama aziendale del 21° secolo.',
         cta: 'Inizia',
         buttons: {
-          viewVideo: 'GUARDA IL VIDEO INTRODUTTIVO',
-          scheduleCall: 'PROGRAMMA UNA CHIAMATA DI SCOPERTA',
+          viewVideo: 'Guarda il video introduttivo',
+          scheduleCall: 'Programma una chiamata di scoperta',
         },
         railItems: {
           overview: 'PANORAMICA',
@@ -1238,11 +1296,13 @@ const resources = {
       },
       services: {
         title: 'I nostri servizi',
+        titlePrefix: 'I nostri ',
+        titleHighlight: 'Servizi',
         subtitle: 'Servizi professionali per elevare la vostra attività',
         sectionHeader: 'QUELLO CHE FORNIAMO',
         sectionTitle: 'I NOSTRI SERVIZI',
         sectionDescription:
-          'Consegniamo programmi di leadership e performance su misura che danno ai leader chiarezza e fiducia.',
+          'Offriamo 9 programmi su misura per la leadership di nuova generazione e l’ottimizzazione delle prestazioni organizzative, per guidare i leader e le loro organizzazioni verso il futuro.',
         buttons: {
           purchaseNow: 'ACQUISTA ORA',
           bookAppointment: 'PRENOTA UN APPUNTAMENTO',
@@ -1259,7 +1319,7 @@ const resources = {
           virtualCoaching:
             'PROGRAMMI DI COACHING DELLA LEADERSHIP VIRTUALE & MENTORING EXECUTIVE 12 SETTIMANE',
           virtualCoachingDesc:
-            "Coaching proprietario dal vivo due-a-uno che eleva la consapevolezza di sé, la comunicazione, l'intelligenza emotiva e la visione strategica — guidando il pensiero critico innovativo e risultati reali coerenti.",
+            "Coaching proprietario dal vivo due-a-uno che eleva la consapevolezza di sé, la comunicazione, l'intelligenza emotiva e la visione strategica, guidando il pensiero critico innovativo e risultati reali coerenti.",
           corporateTraining:
             'FORMAZIONE LEADERSHIP AZIENDALE SUL SITO CLIENTE SEMINARI DI 1 SETTIMANA',
           corporateTrainingDesc:
@@ -1271,7 +1331,7 @@ const resources = {
           businessMastermindInfluencer:
             'CLASSI BUSINESS MASTERMIND INFLUENCER DI 1 GIORNO',
           businessMastermindInfluencerDesc:
-            "Coaching proprietario dal vivo due-a-uno che eleva la consapevolezza di sé, la comunicazione, l'intelligenza emotiva e la visione strategica — guidando il pensiero critico innovativo e risultati reali coerenti.",
+            "Coaching proprietario dal vivo due-a-uno che eleva la consapevolezza di sé, la comunicazione, l'intelligenza emotiva e la visione strategica, guidando il pensiero critico innovativo e risultati reali coerenti.",
           trainTheTrainer:
             'PROGRAMMA "FORMA IL FORMATORE" CONCENTRATO SU INTELLIGENZA EMOTIVA E EMPATIA DI 1 SETTIMANA',
           trainTheTrainerDesc:
@@ -1487,16 +1547,26 @@ const resources = {
     translation: {
       nav: {
         home: '首页',
-        about: '关于我们',
         services: '服务',
+        salientFeatures: '特色',
+        influencers: '影响力者',
+        testimonials: '客户评价',
+        insights: '洞察',
+        caseStudies: '案例',
+        connect: '联系',
+        login: '登录',
+        dashboard: '控制面板',
+        about: '关于我们',
         blog: '博客',
         contact: '联系我们',
-        login: '登录',
       },
       hero: {
-        title: '积极重新定义',
+        tag: '培养更优秀的领导者',
+        title: '积极重新定义 ',
         titleHighlight: '21世纪',
-        titleEnd: '商业',
+        titleEnd: ' 领导力。',
+        subtitle:
+          'The CEO Influencers 是一家专注于高管领导力发展与组织绩效优化的新一代咨询机构，致力于赋能从初创公司到跨国集团的商业领袖，在21世纪全球商业市场中实现卓越成功。',
         subtitleStart: 'The CEO Influencers',
         subtitleEnd:
           '是一家下一代高管教练公司，帮助从初创企业到跨国公司的领导者在21世纪商业环境中取得成功。',
@@ -1530,11 +1600,13 @@ const resources = {
       },
       services: {
         title: '我们的服务',
+        titlePrefix: '我们的',
+        titleHighlight: '服务',
         subtitle: '提升您业务的优质服务',
         sectionHeader: '我们提供什么',
         sectionTitle: '我们的服务',
         sectionDescription:
-          '我们提供定制的领导力和绩效计划，帮助领导者获得清晰度和信心。',
+          '我们提供9个量身定制的下一代领导力与组织绩效优化项目，推动商业领袖及其组织持续前行。',
         buttons: {
           purchaseNow: '立即购买',
           bookAppointment: '预约',
@@ -1549,7 +1621,7 @@ const resources = {
             '自定进度的二人教练课程，旨在建立高绩效团队，嵌入信任和问责制，并根据您的日程安排促进协作和创新。',
           virtualCoaching: '虚拟领导力教练与高管指导12周课程',
           virtualCoachingDesc:
-            '专有的现场二人教练，提升自我意识、沟通、情商和战略视野——推动创新性批判性思维和一致的实际结果。',
+            '专有的现场二人教练，提升自我意识、沟通、情商和战略视野，推动创新性批判性思维和一致的实际结果。',
           corporateTraining: '企业领导力客户现场培训1周研讨会',
           corporateTrainingDesc:
             '定制的现场研讨会，包含互动模块、模拟和角色扮演，以加速技能发展，加强决策制定，并增强组织内的协作。',
@@ -1558,7 +1630,7 @@ const resources = {
             '自定进度的二人教练课程，旨在建立高绩效团队，嵌入信任和问责制，并根据您的日程安排促进协作和创新。',
           businessMastermindInfluencer: '商业智囊团影响者1天课程',
           businessMastermindInfluencerDesc:
-            '专有的现场二人教练，提升自我意识、沟通、情商和战略视野——推动创新性批判性思维和一致的实际结果。',
+            '专有的现场二人教练，提升自我意识、沟通、情商和战略视野，推动创新性批判性思维和一致的实际结果。',
           trainTheTrainer: '"培训师培训" 情绪智力与同理心聚焦1周课程',
           trainTheTrainerDesc:
             '定制的现场研讨会，包含互动模块、模拟和角色扮演，以加速技能发展，加强决策制定，并增强组织内的协作。',

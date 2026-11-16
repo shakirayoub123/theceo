@@ -64,11 +64,11 @@ export default function WebsiteQuestionChatbot() {
           type='button'
           onClick={() => setIsOpen(true)}
           className='h-14 gap-2 rounded-full border border-white/20 bg-[#0B132B] px-5 text-white shadow-[0_12px_30px_rgba(11,19,43,0.28)] transition-transform hover:scale-105 hover:bg-[#17264A]'
-          aria-label='Ask questions about our website'
-          title='Open the AI Website Assistant'
+          aria-label='AI Chatbot - Ask questions regarding the website'
+          title='AI Chatbot - Ask questions regarding the website'
         >
           <Bot className='h-5 w-5 text-[#F6B72D]' />
-          <span className='text-sm font-bold'>Ask AI</span>
+          <span className='text-sm font-bold tracking-wide'>AI Chatbot</span>
         </Button>
       </div>
     )
@@ -84,12 +84,12 @@ export default function WebsiteQuestionChatbot() {
             </span>
             <div className='min-w-0'>
               <CardTitle className='text-[15px] font-bold leading-tight text-[#0B132B]'>
-                AI Website Assistant
-            </CardTitle>
+                AI Chatbot
+              </CardTitle>
               {!isMinimized && (
                 <p className='mt-1 flex items-center gap-1.5 text-[11px] text-[#747987]'>
                   <span className='h-1.5 w-1.5 rounded-full bg-emerald-500' />
-                  Here to help you explore TCI
+                  Ask questions regarding the website
                 </p>
               )}
             </div>

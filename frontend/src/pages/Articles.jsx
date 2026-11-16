@@ -5,6 +5,7 @@ import { ArrowRight, BookOpen, Clock3, Search, X } from 'lucide-react'
 import authService from '@/services/authService'
 import { formatDate, getAssetUrl } from '@/lib/utils'
 import mapBg3 from '@/assets/map bg 3.png'
+import PageBackButton from '@/components/common/PageBackButton'
 
 const fallbackImage = '/images/blog1.svg'
 
@@ -74,18 +75,21 @@ export default function Articles() {
       />
 
       <div className='relative z-10 mx-auto max-w-[1350px] px-4 sm:px-6 lg:px-8'>
-        <header className='mb-8 flex flex-col gap-6 border-b border-slate-200/80 pb-7 lg:mb-10 lg:flex-row lg:items-end lg:justify-between'>
-          <div className='max-w-3xl'>
-            <p className='mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#B47A00]'>Ideas for better leadership</p>
-            <h1 className='text-3xl font-extrabold leading-tight tracking-tight text-[#0B132B] sm:text-4xl lg:text-5xl'>
-              OUR <span className='text-[#F6B72D]'>BLOGS</span>
-            </h1>
-            <p className='mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base'>
-              Explore expert perspectives, practical frameworks, and fresh ideas to strengthen leaders and organizations.
-            </p>
-          </div>
-          <div className='flex shrink-0 items-center gap-2 rounded-full border border-white/80 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm'>
-            <BookOpen className='h-4 w-4 text-[#D99A1A]' aria-hidden='true' />
+        {/* Back Button */}
+        <div className='mb-6'>
+          <PageBackButton fallbackUrl='/#blog' label='Back to Insights' />
+        </div>
+
+        <header className='mb-8 flex flex-col items-center text-center gap-3 border-b border-slate-200/80 pb-7'>
+          <p className='text-xs font-bold uppercase tracking-[0.2em] text-[#B47A00]'>Ideas for better leadership</p>
+          <h1 className='text-3xl font-extrabold leading-tight tracking-tight text-[#0B132B] sm:text-4xl lg:text-5xl uppercase'>
+            OUR <span className='text-[#F6B72D]'>BLOGS</span>
+          </h1>
+          <p className='max-w-2xl text-sm leading-6 text-slate-600 sm:text-base mx-auto'>
+            Explore expert perspectives, practical frameworks, and fresh ideas to strengthen leaders and organizations.
+          </p>
+          <div className='inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/80 px-4 py-1.5 text-xs font-semibold text-slate-600 shadow-sm mt-1'>
+            <BookOpen className='h-3.5 w-3.5 text-[#D99A1A]' aria-hidden='true' />
             <span>{loading ? 'Loading publications…' : `${sortedArticles.length} ${sortedArticles.length === 1 ? 'publication' : 'publications'}`}</span>
           </div>
         </header>
@@ -187,7 +191,7 @@ export default function Articles() {
                       {article.topic || 'Leadership insights'}
                     </p>
                     <h2 className='line-clamp-2 min-h-[3.5rem] text-lg font-bold leading-snug text-[#0B132B] transition-colors group-hover:text-[#A87500]'>
-                      <Link to={articleUrl}>{article.title}</Link>
+                      <Link to={articleUrl} state={{ from: '/articles' }}>{article.title}</Link>
                     </h2>
                     <p className='mt-2 line-clamp-3 min-h-[4.5rem] text-sm leading-6 text-slate-600'>
                       {article.shortDescription || 'Read the latest perspective from The CEO Influencers.'}
@@ -196,7 +200,7 @@ export default function Articles() {
                       <span className='truncate'>{date}</span>
                       <span className='inline-flex shrink-0 items-center gap-1'><Clock3 className='h-3.5 w-3.5' aria-hidden='true' />{article.timeToRead || 5} min read</span>
                     </div>
-                    <Link to={articleUrl} className='mt-3 inline-flex items-center gap-2 text-sm font-bold text-[#0B132B] hover:text-[#A87500]'>
+                    <Link to={articleUrl} state={{ from: '/articles' }} className='mt-3 inline-flex items-center gap-2 text-sm font-bold text-[#0B132B] hover:text-[#A87500]'>
                       Read article <ArrowRight className='h-4 w-4 transition-transform group-hover:translate-x-1' aria-hidden='true' />
                     </Link>
                   </div>

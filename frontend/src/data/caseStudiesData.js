@@ -29,17 +29,17 @@ export const allCaseStudies = [
     ],
     interventionPhases: [
       {
-        window: '01–10',
+        window: '01-10',
         title: 'Phase I: Triage & Mental Fortification',
         body: 'Daily intensive executive coaching to accurately assess root cause challenges and restore clarity. Immediate audit of all personal and professional assets to identify dormant or missed revenue opportunities. Legal and PR shielding to neutralize negative competitor noise and restore consumer confidence.',
       },
       {
-        window: '11–20',
+        window: '11-20',
         title: 'Phase II: The Narrative Pivot',
         body: 'Launch of a strategic Transparency & Innovation performance optimization campaign. Instead of defending against competitors, we moved the goalposts by introducing a new cutting-edge products and services program that outperformed everything currently available in the marketplace.',
       },
       {
-        window: '21–30',
+        window: '21-30',
         title: 'Phase III: The Exponential Surge',
         body: 'Optimizing high-ticket sales funnels and targeted marketing campaigns leveraging the newly restored brand authority to maximize 30-day plan profitability. High-velocity implementation of the new agility framework to ensure long-term performance stability and marketplace profitability.',
       },
@@ -192,7 +192,7 @@ export const allCaseStudies = [
       },
       {
         title: '5.3 Extended Family and Friendships',
-        body: "Years of overwork had eroded extended family relationships and eliminated meaningful friendships, leaving the CEO socially isolated. A deliberate reconnection strategy was developed and implemented. Long-standing relationships were progressively restored, and the CEO's social capital—a critical but often overlooked leadership resource—was rebuilt strategically.",
+        body: "Years of overwork had eroded extended family relationships and eliminated meaningful friendships, leaving the CEO socially isolated. A deliberate reconnection strategy was developed and implemented. Long-standing relationships were progressively restored, and the CEO's social capital, a critical but often overlooked leadership resource, was rebuilt strategically.",
       },
       {
         title: '5.4 Integrated Life Performance',
@@ -209,7 +209,7 @@ export const allCaseStudies = [
       {
         title: '6.2 Loyal, Fully Engaged Organizational Teams',
         metric: 'Staff Retention: 95%: Up From 45% at Prior Organization',
-        body: 'The CEO built an organizational team from scratch using the talent philosophy and cultural architecture developed during coaching. The team showed high engagement, dedication, and near-zero attrition—a reversal of the toxic culture that had plagued his prior leadership environment.',
+        body: 'The CEO built an organizational team from scratch using the talent philosophy and cultural architecture developed during coaching. The team showed high engagement, dedication, and near-zero attrition, marking a reversal of the toxic culture that had plagued his prior leadership environment.',
       },
       {
         title: '6.3 Recognized Leadership Presence',
@@ -290,7 +290,7 @@ export const allCaseStudies = [
     subtitle: 'A Chief Legal Officer Transformation',
     client: 'Former Congressional Legal Executive | Fortune 1,000 Global Energy Sector',
     caseStudyEyebrow: 'GLOBAL BUSINESS CASE STUDY',
-    caseStudyLabel: 'CHIEF LEGAL OFFICER – RAPID CAREER ADVANCEMENT CASE STUDY 4 | CONFIDENTIAL | THE CEO INFLUENCERS LLC',
+    caseStudyLabel: 'CHIEF LEGAL OFFICER - RAPID CAREER ADVANCEMENT CASE STUDY 4 | CONFIDENTIAL | THE CEO INFLUENCERS LLC',
     secondaryTitle: 'How comprehensive coaching intervention unlocked a landmark career transition into Fortune 1,000 global energy sector leadership.',
     caseStudyMarkdown: 'case-study-4',
     challenge:
@@ -351,7 +351,7 @@ export const allCaseStudies = [
     challenge:
       "By year 11, Harmon's organization had catastrophically deteriorated: Employee Engagement 18/100 (vs. industry benchmark 67/100), Executive Team Retention 31% (benchmark 79%), Customer NPS -12 (benchmark +42), Leadership Trust Score 14/100 (benchmark 64/100). Five deeply embedded root causes identified: Formative Leadership Modeling in command-and-control cultures; Unbroken Success Reinforcement causing cognitive distortion; Psychological Safety Collapse eliminating honest feedback; Identity Fusion with the CEO title creating existential defensiveness; and Neurological Habituation from chronic high-cortisol stress impairing prefrontal function.",
     approach:
-      "TCI designed a radical 18-month, multi-modal intervention: Phase 1 (Months 1–3), Awakening, with the breakthrough moment in Session 4 when Harmon encountered unfiltered 360-degree feedback from 214 stakeholders for the first time. Phase 2 (Months 4–6), Foundation Rebuilding across seven leadership competency domains. Phase 3 (Months 7–12), Live Integration including the Organizational Repair Initiative with individual repair conversations with 11 senior leaders. Phase 4 (Months 13–18), Mastery & Legacy Architecture, building Harmon's external leadership platform.",
+      "TCI designed a radical 18-month, multi-modal intervention: Phase 1 (Months 1-3), Awakening, with the breakthrough moment in Session 4 when Harmon encountered unfiltered 360-degree feedback from 214 stakeholders for the first time. Phase 2 (Months 4-6), Foundation Rebuilding across seven leadership competency domains. Phase 3 (Months 7-12), Live Integration including the Organizational Repair Initiative with individual repair conversations with 11 senior leaders. Phase 4 (Months 13-18), Mastery & Legacy Architecture, building Harmon's external leadership platform.",
     outcomes: [
       'Employee Engagement: 18/100 → 79/100 (+61 pts)',
       'Executive Team Retention: 31% → 91% (+60 pts); three formerly departed C-suite executives re-engaged',

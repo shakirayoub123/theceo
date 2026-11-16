@@ -6,6 +6,37 @@ export default function ScrollToTop() {
 
   useEffect(() => {
     if (!hash) {
+      // If returning to home page and user previously came from a section
+      const lastSection = sessionStorage.getItem('tci_last_home_section')
+      if (pathname === '/' && lastSection) {
+        sessionStorage.removeItem('tci_last_home_section')
+        const headerOffset = 100
+        const trySectionScroll = () => {
+          const element = document.getElementById(lastSection)
+          if (element) {
+            const targetTop =
+              element.getBoundingClientRect().top + window.scrollY - headerOffset
+            window.scrollTo({
+              top: Math.max(0, targetTop),
+              left: 0,
+              behavior: 'smooth',
+            })
+            return true
+          }
+          return false
+        }
+
+        if (trySectionScroll()) return
+        let sectionAttempts = 0
+        const sectionInterval = window.setInterval(() => {
+          sectionAttempts += 1
+          if (trySectionScroll() || sectionAttempts >= 10) {
+            window.clearInterval(sectionInterval)
+          }
+        }, 150)
+        return () => window.clearInterval(sectionInterval)
+      }
+
       window.scrollTo({
         top: 0,
         left: 0,

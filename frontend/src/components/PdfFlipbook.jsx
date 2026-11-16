@@ -228,7 +228,7 @@ export default function PdfFlipbook({ fileUrl }) {
                     <span className="min-w-[110px] text-center text-xs font-semibold text-gray-600">
                         {isPortrait
                             ? `Page ${pageNumber} of ${numPages}`
-                            : `Pages ${pageNumber}–${Math.min(pageNumber + 1, numPages)} of ${numPages}`
+                            : `Pages ${pageNumber}-${Math.min(pageNumber + 1, numPages)} of ${numPages}`
                         }
                     </span>
                     <button

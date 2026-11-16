@@ -5,7 +5,7 @@ import { FileDown } from 'lucide-react'
 const downloadAssessmentsPDF = (formAnswers, clientName = 'Client') => {
   const lines = []
   lines.push(`THE CEO INFLUENCERS`)
-  lines.push(`Assessment Responses — ${clientName}`)
+  lines.push(`Assessment Responses: ${clientName}`)
   lines.push(`Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`)
   lines.push('')
   lines.push('='.repeat(70))

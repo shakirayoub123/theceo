@@ -137,7 +137,7 @@ export default function SalientFeaturesSection() {
 
       </section>
 
-      {/* CTA — matches reference design */}
+      {/* CTA: matches reference design */}
       <section className='w-full relative overflow-hidden font-jakarta rounded-b-[20px]'>
 
         {/* Gold chevron background image */}

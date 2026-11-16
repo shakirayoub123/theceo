@@ -53,7 +53,7 @@ export default function TestimonialsSection() {
         {
           client: 'Dr. Sarina S.',
           title: 'Director of Nursing',
-          company: 'NHS – National Health Service',
+          company: 'NHS - National Health Service',
           text: `I have had the privilege of collaborating with Claire over several years across strategic research initiatives, leadership development programs, and innovative organisational transformation projects. Throughout this professional partnership, Claire has consistently demonstrated an exceptional capacity to bridge the gap between rigorous academic research and practical business application.\n\nClaire's distinguishing strength lies in her systematic yet innovative approach to problem-solving. She possesses a rare ability to synthesise complex empirical evidence and translates theoretical frameworks into actionable strategies that deliver measurable impact. Her analytical rigor is matched by her visionary creative thinking, enabling her to develop solutions that are both evidence-informed and contextually relevant.\n\nWhat sets Claire apart is her empathetic holistic perspective on organisational development. She recognises that sustainable organisational improvement must address both individual capability and systemic organisational factors. This dual focus has enabled her to design customised business interventions that not only achieve immediate operational objectives but also build long-term organisational capacity and resilience.\n\nClaire's superior consulting performance consistently demonstrates global commercial awareness and a results-oriented mindset. She engages stakeholders effectively at all levels, ensuring that research insights are not merely documented, but actively embedded into strategic planning and operational practice across the organisation. Her contributions have generated tangible value for both leaders and all key internal and external stakeholders across the broader organisation.\n\nI highly recommend Claire without reservation for senior-level business advisory, research, and leadership development mentoring.`,
         },
         {
@@ -94,7 +94,7 @@ export default function TestimonialsSection() {
             </span>
           </div>
 
-          <h2 className='text-[30px] md:text-[38px] font-bold leading-tight tracking-tight'>
+          <h2 className='text-[30px] md:text-[38px] font-bold leading-tight tracking-tight uppercase'>
             <span className='text-black'>Our Client </span>
             <span className='text-[#F6B72D]'>Testimonials</span>
           </h2>

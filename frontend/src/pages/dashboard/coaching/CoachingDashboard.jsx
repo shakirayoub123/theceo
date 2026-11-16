@@ -89,7 +89,7 @@ const formatDate = (dateString) => {
 const SIX_CORE_ASSESSMENTS = [
   {
     id: 1,
-    title: 'MBTI – MEYERS-BRIGGS PERSONALITY PROFILE ASSESSMENT 1',
+    title: 'MBTI: MEYERS-BRIGGS PERSONALITY PROFILE ASSESSMENT 1',
     description:
       'Executive Leader Personality Profile (ELPP) based on Myers-Briggs typology: Energy, Information, Decisions, and Work Style.',
     defaultQuestions: MBTI_ASSESSMENT_DATA.sections
@@ -514,7 +514,7 @@ export default function CoachingDashboard() {
       ),
     ]
     const normalized = uniqueNames(merged)
-    return normalized.length ? normalized.join(' & ') : '—'
+    return normalized.length ? normalized.join(' & ') : '-'
   }, [activeProgram, dashboardData, sessionsForActiveProgram])
 
   const salesInfluencerDisplay = useMemo(() => {
@@ -530,7 +530,7 @@ export default function CoachingDashboard() {
       ...extractPersonNames(dashboardData?.salesInfluencers),
     ]
     const normalized = uniqueNames(merged)
-    return normalized[0] || '—'
+    return normalized[0] || '-'
   }, [activeProgram, dashboardData])
 
   const activeProgramContent = useMemo(() => {
@@ -863,7 +863,7 @@ export default function CoachingDashboard() {
                 Coaching Influencers: {coachingInfluencersDisplay}
               </p>
               <p className='text-xs sm:text-sm text-white/85'>
-                Client: {activeProgram?.clientName || '—'}
+                Client: {activeProgram?.clientName || '-'}
               </p>
               {activeProgram && (
                 <Link
@@ -1381,10 +1381,10 @@ export default function CoachingDashboard() {
                       {meeting.time || 'TBD'}
                     </td>
                     <td className='px-3 sm:px-4 py-2 text-gray-900'>
-                      {meeting.clientName || meeting.client || '—'}
+                      {meeting.clientName || meeting.client || '-'}
                     </td>
                     <td className='px-3 sm:px-4 py-2 text-gray-700'>
-                      {meeting.program || meeting.title || '—'}
+                      {meeting.program || meeting.title || '-'}
                     </td>
                     <td className='px-3 sm:px-4 py-2'>
                       <Link
@@ -1507,7 +1507,7 @@ export default function CoachingDashboard() {
                   Diagnostic Assessment Suite
                 </p>
                 <h3 className='text-xl font-bold mt-0.5'>
-                  {currentAssessmentClient?.clientName || 'Client'} — 6 Leadership Onboarding Assessments
+                  {currentAssessmentClient?.clientName || 'Client'}: 6 Leadership Onboarding Assessments
                 </h3>
               </div>
               <button
@@ -1662,7 +1662,7 @@ export default function CoachingDashboard() {
                   </span>
                 </div>
                 <h3 className='text-xl font-bold text-white'>
-                  {activeEditingAssessment.title} — Enter / Update Results
+                  {activeEditingAssessment.title}: Enter / Update Results
                 </h3>
               </div>
               <button
@@ -1814,7 +1814,7 @@ export default function CoachingDashboard() {
                   Assessment #{viewingSingleAssessment.id}
                 </span>
                 <h3 className='text-lg font-bold text-white mt-1'>
-                  {viewingSingleAssessment.title} — Diagnostic Results
+                  {viewingSingleAssessment.title}: Diagnostic Results
                 </h3>
                 <p className='text-xs text-white/70'>
                   Client: {currentAssessmentClient?.clientName} • Status:{' '}

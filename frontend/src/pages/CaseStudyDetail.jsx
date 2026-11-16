@@ -3,6 +3,7 @@ import { Link, useParams, Navigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import ReactMarkdown from 'react-markdown'
 import { allCaseStudies } from '@/data/caseStudiesData'
+import PageBackButton from '@/components/common/PageBackButton'
 import caseStudyThreeMarkdown from '../../case-study-3.md?raw'
 import caseStudyFourMarkdown from '../../case-study-4.md?raw'
 import caseStudySixMarkdown from '../../case-study-6.md?raw'
@@ -115,8 +116,13 @@ export default function CaseStudyDetail() {
         <meta name='description' content={cs.excerpt} />
       </Helmet>
 
+      {/* Back Button */}
+      <div className='max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-4'>
+        <PageBackButton fallbackUrl='/#case-studies-section' label='Back to Case Studies' />
+      </div>
+
       {/* Hero Section Container matching Figma */}
-      <div className='pt-6 pb-4 sm:pt-8 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto'>
+      <div className='pt-4 pb-4 sm:pt-6 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto'>
         {/* Hero Card */}
         <div className='bg-[#000023] rounded-[24px] lg:rounded-[32px] pt-16 pb-20 px-8 relative overflow-hidden shadow-md'>
           {/* Topo map */}
@@ -141,7 +147,7 @@ export default function CaseStudyDetail() {
               <span className='text-white text-[11px] uppercase tracking-widest'>CASE STUDY #{cs.id}</span>
             </div>
 
-            <h1 className='text-white text-[38px] md:text-[54px] font-semibold leading-tight tracking-[-1px] mb-4 max-w-4xl'>
+            <h1 className='text-white text-[38px] md:text-[54px] font-semibold leading-tight tracking-[-1px] mb-4 max-w-4xl uppercase'>
               {cs.title}
             </h1>
 
@@ -446,7 +452,7 @@ export default function CaseStudyDetail() {
               <p className='text-[#F6B72D] text-xs font-bold uppercase tracking-widest mb-3'>8. Coaching Summary Statement</p>
               <h3 className='text-2xl font-bold mb-5'>The Definitive Assessment</h3>
               <blockquote className='text-lg leading-relaxed'>“{cs.coachingSummary}”</blockquote>
-              <p className='mt-5 text-sm text-[#CBD5E1]'>— {cs.coachingSummaryAttribution}</p>
+              <p className='mt-5 text-sm text-[#CBD5E1]'>- {cs.coachingSummaryAttribution}</p>
             </section>
 
             <section className='bg-[#FFFBF0] border border-[#F6B72D]/40 rounded-[16px] p-8 md:p-10'>
@@ -497,7 +503,7 @@ export default function CaseStudyDetail() {
             </section>
 
             <section className='bg-[#000023] rounded-[16px] p-8 md:p-10'>
-              <h3 className='text-center text-white text-xl font-bold uppercase tracking-wide mb-7'>Key Performance Indicators (KPIs) — Post-Intervention</h3>
+              <h3 className='text-center text-white text-xl font-bold uppercase tracking-wide mb-7'>Key Performance Indicators (KPIs): Post-Intervention</h3>
               <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
                 {cs.kpis.map((kpi) => (
                   <article key={kpi.label} className='rounded-xl border border-white/15 bg-white/5 p-6 text-center'>
@@ -609,11 +615,9 @@ export default function CaseStudyDetail() {
         </div>
 
         {/* Bottom Nav */}
-        <div className='text-center mt-12 pb-8'>
-          <Link to='/case-studies' className='inline-flex items-center gap-3 bg-[#000023] text-white font-bold py-3.5 px-8 rounded-full text-[12px] uppercase tracking-widest transition-transform hover:-translate-y-1 hover:shadow-lg'>
-            <span className='w-6 h-6 bg-white rounded-full flex items-center justify-center shrink-0'>
-              <ArrowLeft className='h-4 w-4 text-[#000023]' />
-            </span>
+        <div className='flex flex-wrap items-center justify-center gap-4 mt-12 pb-8'>
+          <PageBackButton fallbackUrl='/#case-studies-section' label='Back to Previous Page' variant='dark' />
+          <Link to='/case-studies' className='inline-flex items-center gap-3 bg-[#F6B72D] hover:bg-[#e6a820] text-black font-bold py-2.5 px-6 rounded-full text-[12px] uppercase tracking-wider transition-all shadow-md'>
             VIEW ALL 11 CASE STUDIES
           </Link>
         </div>

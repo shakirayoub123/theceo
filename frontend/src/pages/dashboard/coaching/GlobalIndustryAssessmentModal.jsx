@@ -94,7 +94,7 @@ export default function GlobalIndustryAssessmentModal({
         id: cat.id,
         catId: cat.id,
         question: `${cat.id}. ${cat.name} (Years: ${state.years || '0'})`,
-        answer: `${state.years || '0'} Years — [${state.subsectors.join(', ') || 'No sub-sectors selected'}]`,
+        answer: `${state.years || '0'} Years: [${state.subsectors.join(', ') || 'No sub-sectors selected'}]`,
         category_name: cat.name,
         type: cat.type,
         years: state.years || '0',

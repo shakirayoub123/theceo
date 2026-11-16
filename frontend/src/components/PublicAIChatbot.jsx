@@ -291,12 +291,12 @@ const PublicAIChatbot = () => {
       <div className='fixed bottom-24 right-6 z-50'>
         <Button
           onClick={toggleChat}
-          className='w-14 h-14 rounded-full bg-[#F6B72D] hover:bg-[#F6B72D]/90 shadow-lg'
-          size='icon'
-          aria-label='Ask the AI about our website'
-          title='Ask the AI about our website'
+          className='h-14 gap-2.5 rounded-full bg-[#F6B72D] hover:bg-[#F6B72D]/90 shadow-lg px-5 text-white font-bold text-sm flex items-center'
+          aria-label='AI Chatbot - Ask questions regarding the website'
+          title='AI Chatbot - Ask questions regarding the website'
         >
-          <Bot className='w-6 h-6 text-white' />
+          <Bot className='w-5 h-5 text-white' />
+          <span>AI Chatbot</span>
         </Button>
       </div>
     )
@@ -309,7 +309,7 @@ const PublicAIChatbot = () => {
       >
         <CardHeader className='pb-2 flex flex-row items-center justify-between space-y-0 flex-shrink-0'>
           <CardTitle className='text-sm font-semibold text-gray-900'>
-            AI Assistant
+            AI Chatbot
           </CardTitle>
           <div className='flex gap-1'>
             <Button

@@ -108,11 +108,11 @@ export default function ProductsSection({ loading: externalLoading = false }) {
                 WHAT WE PROVIDE
               </span>
             </div>
-            <h2 className='text-[26px] lg:text-[32px] font-bold leading-none mb-2'>
+            <h2 className='text-[26px] lg:text-[32px] font-bold leading-none mb-2 uppercase'>
               <span className='text-[#0B132B]'>OUR </span>
               <span className='text-[#F6B72D] font-sans text-[28px] lg:text-[36px]'>EBOOKS</span>
             </h2>
-            <p className='text-[#6B7280] text-[12.5px] lg:text-[13.5px] leading-relaxed max-w-xl font-medium'>
+            <p className='text-[#6B7280] text-[12.5px] lg:text-[13.5px] leading-relaxed max-w-xl font-medium mx-auto'>
               Explore our curated eBooks packed with case studies, expert insights, and actionable frameworks to elevate executive performance and organizational effectiveness.
             </p>
           </div>
@@ -195,6 +195,8 @@ export default function ProductsSection({ loading: externalLoading = false }) {
                     <div className='flex flex-col sm:flex-row items-center gap-2 mt-auto'>
                       <Link
                         to={`/ebook-detail/${featuredEbook.id}`}
+                        state={{ from: '/#products-section' }}
+                        onClick={() => sessionStorage.setItem('tci_last_home_section', 'products-section')}
                         className='w-full sm:w-auto bg-[#0B132B] hover:bg-[#1a2b5c] transition-colors text-white rounded-full flex items-center justify-center gap-2 px-4 py-2'
                       >
                         <div className='w-4 h-4 rounded-full bg-white flex items-center justify-center shrink-0'>
@@ -204,6 +206,8 @@ export default function ProductsSection({ loading: externalLoading = false }) {
                       </Link>
                       <Link
                         to={`/ebook-detail/${featuredEbook.id}?preview=true`}
+                        state={{ from: '/#products-section' }}
+                        onClick={() => sessionStorage.setItem('tci_last_home_section', 'products-section')}
                         className='w-full sm:w-auto bg-[#F6B72D] hover:bg-[#e6a820] transition-colors text-black rounded-full flex items-center justify-center gap-2 px-4 py-2'
                       >
                         <div className='w-4 h-4 rounded-full bg-white flex items-center justify-center shrink-0'>
@@ -271,6 +275,8 @@ export default function ProductsSection({ loading: externalLoading = false }) {
                     <div className='flex items-center gap-2'>
                       <Link
                         to={`/ebook-detail/${ebook.id}`}
+                        state={{ from: '/#products-section' }}
+                        onClick={() => sessionStorage.setItem('tci_last_home_section', 'products-section')}
                         className='bg-[#0B132B] hover:bg-[#1a2b5c] transition-colors text-white rounded-full flex items-center gap-1.5 px-3 py-1.5'
                       >
                         <div className='w-3.5 h-3.5 rounded-full bg-white flex items-center justify-center shrink-0'>
@@ -280,6 +286,8 @@ export default function ProductsSection({ loading: externalLoading = false }) {
                       </Link>
                       <Link
                         to={`/ebook-detail/${ebook.id}?preview=true`}
+                        state={{ from: '/#products-section' }}
+                        onClick={() => sessionStorage.setItem('tci_last_home_section', 'products-section')}
                         className='bg-white border border-gray-200 shadow-sm hover:bg-gray-50 flex items-center justify-center rounded-md w-7 h-7 shrink-0 transition-colors'
                         title='Read Preview'
                       >

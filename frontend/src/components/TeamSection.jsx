@@ -83,8 +83,13 @@ export default function TeamSection() {
         <div className='grid md:grid-cols-2 gap-4 lg:gap-6 mb-5 md:mb-6'>
           {teamMembers.map((member, index) => (
             <div key={index} className='site-hover-highlight bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-2.5 sm:p-3 flex flex-col sm:flex-row relative group hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)] transition-all duration-300'>
-              {/* Link Overlay — z-10, sits below the video button */}
-              <Link to={member.link} className="absolute inset-0 z-10" />
+              {/* Link Overlay: z-10, sits below the video button */}
+              <Link
+                to={member.link}
+                state={{ from: '/#our-team' }}
+                onClick={() => sessionStorage.setItem('tci_last_home_section', 'our-team')}
+                className="absolute inset-0 z-10"
+              />
 
               <div className='w-full sm:w-[38%] flex-shrink-0'>
                 <img src={member.image} className='w-full h-[200px] sm:h-[100%] sm:min-h-[220px] object-cover rounded-[16px]' alt={member.name} />
@@ -92,7 +97,12 @@ export default function TeamSection() {
 
               <div className='p-3 md:px-5 md:py-2 flex flex-col justify-center w-full relative'>
                 {/* Arrow icon */}
-                <Link to={member.link} className='hidden sm:flex absolute top-1 right-2 z-20 hover:scale-110 transition-transform duration-200'>
+                <Link
+                  to={member.link}
+                  state={{ from: '/#our-team' }}
+                  onClick={() => sessionStorage.setItem('tci_last_home_section', 'our-team')}
+                  className='hidden sm:flex absolute top-1 right-2 z-20 hover:scale-110 transition-transform duration-200'
+                >
                   {member.iconTheme === 'orange' ? (
                     <div className='w-7 h-7 rounded-full bg-[#F6B72D] flex items-center justify-center shadow-sm'>
                       <ArrowUpRight className="w-3.5 h-3.5 text-white" />

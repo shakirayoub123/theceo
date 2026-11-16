@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const SIX_ASSESSMENTS_LIST = [
-  { id: 1, name: 'MBTI – Meyers-Briggs Personality Profile Assessment' },
+  { id: 1, name: 'MBTI: Meyers-Briggs Personality Profile Assessment' },
   { id: 2, name: 'Senior Executive Leader Soft & Hard Skills Assessment' },
   { id: 3, name: 'Executive Leader: Client Personal & Professional Assessment' },
   { id: 4, name: 'Senior Executive Leadership Core Competencies Assessment' },

@@ -95,10 +95,10 @@ export default function StatsSection() {
             </span>
           </div>
 
-          <h2 className='text-[32px] md:text-[40px] font-bold text-[#111827] leading-[1.1] tracking-tight mb-1'>
+          <h2 className='text-[32px] md:text-[40px] font-bold text-[#111827] leading-[1.1] tracking-tight mb-1 uppercase'>
             Real Numbers. Real Impact.
           </h2>
-          <h2 className='text-[32px] md:text-[40px] font-bold text-[#F6B72D] leading-[1.1] tracking-tight'>
+          <h2 className='text-[32px] md:text-[40px] font-bold text-[#F6B72D] leading-[1.1] tracking-tight uppercase'>
             Real Transformation.
           </h2>
         </div>

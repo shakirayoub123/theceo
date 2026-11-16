@@ -12,11 +12,14 @@ import {
   Lightbulb,
   Mail,
   Sparkles,
+  BookOpen,
 } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useTranslation } from 'react-i18next'
 
 export default function Sidebar({ isOpen, onClose }) {
+  const { t } = useTranslation()
   const { isAuthenticated, user } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -37,42 +40,64 @@ export default function Sidebar({ isOpen, onClose }) {
   }
 
   const navigationItems = [
-    { icon: Home, label: 'Home', href: '/' },
+    { icon: Home, label: t('nav.home', 'Home'), href: '/' },
     {
       icon: LayoutDashboard,
-      label: 'Overview',
+      label: t('hero.railItems.overview', 'Overview'),
       href: '/#gallery-section',
       isAnchor: true,
     },
-    { icon: Users, label: 'Influencers', href: '/#our-team', isAnchor: true },
+    {
+      icon: Users,
+      label: t('nav.influencers', 'Influencers'),
+      href: '/#our-team',
+      isAnchor: true,
+    },
     {
       icon: Briefcase,
-      label: 'Services',
+      label: t('nav.services', 'Services'),
       href: '/#services-section',
       isAnchor: true,
     },
     {
       icon: Sparkles,
-      label: 'Salient Features',
+      label: t('nav.salientFeatures', 'Salient Features'),
       href: '/#salient-features',
       isAnchor: true,
     },
     {
       icon: MessageSquareQuote,
-      label: 'Testimonials',
+      label: t('nav.testimonials', 'Testimonials'),
       href: '/#testimonials-section',
       isAnchor: true,
     },
-    { icon: Lightbulb, label: 'Insights', href: '/#blog', isAnchor: true },
+    {
+      icon: Lightbulb,
+      label: t('nav.insights', 'Insights'),
+      href: '/#blog',
+      isAnchor: true,
+    },
+    {
+      icon: BookOpen,
+      label: t('nav.caseStudies', 'Case Studies'),
+      href: '/#case-studies-section',
+      isAnchor: true,
+    },
     {
       icon: Mail,
-      label: 'Connect',
+      label: t('nav.connect', 'Connect'),
       href: '/#footer',
       isAnchor: true,
     },
     ...(isAuthenticated
-      ? [{ icon: ChartLine, label: 'Dashboard', href: getDashboardRoute() }]
-      : [{ icon: LogIn, label: 'Login', href: URLS.login }]),
+      ? [
+          {
+            icon: ChartLine,
+            label: t('nav.dashboard', 'Dashboard'),
+            href: getDashboardRoute(),
+          },
+        ]
+      : [{ icon: LogIn, label: t('nav.login', 'Login'), href: URLS.login }]),
   ]
 
   const handleAnchorNavigation = (href) => {

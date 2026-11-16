@@ -27,7 +27,7 @@ export default function HeroSection({ tickerItems = [] }) {
               alt='The CEO Influencers'
               className='absolute inset-0 w-full h-full object-cover object-center'
             />
-            {/* Subtle dark gradient focused in centre — keeps city bright, text readable */}
+            {/* Subtle dark gradient focused in centre: keeps city bright, text readable */}
             <div className='absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/20 z-10' />
           </div>
 
@@ -37,19 +37,22 @@ export default function HeroSection({ tickerItems = [] }) {
             {/* Pill Tag */}
             <div className='border border-white/50 rounded-full px-5 py-1 mb-8 inline-block backdrop-blur-sm bg-black/20'>
               <span className='font-jakarta text-[14px] font-medium leading-[15.9px] tracking-normal text-white uppercase'>
-                Building Better Leaders
+                {t('hero.tag', 'Building Better Leaders')}
               </span>
             </div>
 
             {/* Typography Title */}
-            <h1 className='font-goodtimes text-[32px] md:text-[44px] lg:text-[52px] leading-[1.15] lg:leading-[1.2] tracking-tight text-white mb-4 lg:mb-6 font-normal [text-shadow:0_2px_12px_rgba(0,0,0,0.6)]'>
-              Positively <span className='text-[#F6B72D]'>Redefining</span><br />
-              21st Century Leadership.
+            <h1 className='font-goodtimes text-[32px] md:text-[44px] lg:text-[52px] leading-[1.15] lg:leading-[1.2] tracking-tight text-white mb-4 lg:mb-6 font-normal [text-shadow:0_2px_12px_rgba(0,0,0,0.6)] uppercase'>
+              {t('hero.title', 'Positively ')}<span className='text-[#F6B72D]'>{t('hero.titleHighlight', 'Redefining')}</span><br />
+              {t('hero.titleEnd', '21st Century Leadership.')}
             </h1>
 
             {/* Subtitle */}
             <p className='font-jakarta text-[14px] lg:text-[15px] leading-[22px] lg:leading-[24px] tracking-normal text-gray-100 max-w-[850px] mb-6 lg:mb-8 font-medium [text-shadow:0_1px_6px_rgba(0,0,0,0.5)]'>
-              The CEO Influencers is a next-generation executive leadership and organizational performance optimization coaching consultancy that empowers leaders from start-ups to multinational corporations to maximize success in the 21st-century global business marketplace.
+              {t(
+                'hero.subtitle',
+                'The CEO Influencers is a next-generation executive leadership and organizational performance optimization coaching consultancy that empowers leaders from start-ups to multinational corporations to maximize success in the 21st-century global business marketplace.'
+              )}
             </p>
 
             {/* Buttons Row */}
@@ -61,7 +64,7 @@ export default function HeroSection({ tickerItems = [] }) {
                 <div className='bg-[#F6B72D] h-9 w-9 rounded-full flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform'>
                   <ArrowRight className='h-4 w-4 text-white' />
                 </div>
-                <span>View Introduction Video</span>
+                <span>{t('hero.buttons.viewVideo', 'View Introduction Video')}</span>
               </button>
 
               <button
@@ -71,7 +74,7 @@ export default function HeroSection({ tickerItems = [] }) {
                 <div className='bg-[#F6B72D] h-9 w-9 rounded-full flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform'>
                   <ArrowRight className='h-4 w-4 text-white' />
                 </div>
-                <span>Schedule A Discovery Call</span>
+                <span>{t('hero.buttons.scheduleCall', 'Schedule A Discovery Call')}</span>
               </button>
             </div>
           </div>

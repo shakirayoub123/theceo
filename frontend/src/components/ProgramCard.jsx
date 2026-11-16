@@ -37,10 +37,10 @@ export function ProgramCard({
             const key =
               program.programId ?? program.id ?? program.programName ?? idx
             const idDisplay = program.programId ?? program.id ?? idx + 1
-            const name = program.programName ?? program.name ?? '—'
+            const name = program.programName ?? program.name ?? '-'
             const joined = program.enrolledAt
               ? formatDate(program.enrolledAt)
-              : program.joinedOn ?? '—'
+              : program.joinedOn ?? '-'
 
             return (
               <div

@@ -1,7 +1,7 @@
 export const MBTI_ASSESSMENT_DATA = {
   id: 1,
-  title: 'MBTI – MEYERS-BRIGGS PERSONALITY PROFILE ASSESSMENT 1',
-  subtitle: 'The Executive Leader Personality Profile (ELPP) — Based on the Myers-Briggs Typology Framework',
+  title: 'MBTI: MEYERS-BRIGGS PERSONALITY PROFILE ASSESSMENT 1',
+  subtitle: 'The Executive Leader Personality Profile (ELPP): Based on the Myers-Briggs Typology Framework',
   overview:
     'This comprehensive personality profile assessment tool is crafted specifically for the senior executive context and is custom tailored for the complexities and demands of senior executive leadership. By focusing on how personality preferences manifest in high-stakes environments of strategy, leadership, and organizational management you will gain valuable insights and strategic takeaways that can optimize your leadership style and overall organizational results.',
   secondaryOverview:
@@ -13,7 +13,7 @@ export const MBTI_ASSESSMENT_DATA = {
   sections: [
     {
       id: 1,
-      name: 'Section 1: How You Direct and Receive Energy – Your Source of Power',
+      name: 'Section 1: How You Direct and Receive Energy: Your Source of Power',
       dimension: 'EI',
       traitA: 'E',
       traitB: 'I',
@@ -82,7 +82,7 @@ export const MBTI_ASSESSMENT_DATA = {
     },
     {
       id: 2,
-      name: 'Section 2: How You Perceive Information – Your View of Reality',
+      name: 'Section 2: How You Perceive Information: Your View of Reality',
       dimension: 'SN',
       traitA: 'S',
       traitB: 'N',
@@ -151,7 +151,7 @@ export const MBTI_ASSESSMENT_DATA = {
     },
     {
       id: 3,
-      name: 'Section 3: How You Make Decisions – Your Basis for Judgment',
+      name: 'Section 3: How You Make Decisions: Your Basis for Judgment',
       dimension: 'TF',
       traitA: 'T',
       traitB: 'F',
@@ -220,7 +220,7 @@ export const MBTI_ASSESSMENT_DATA = {
     },
     {
       id: 4,
-      name: 'Section 4: How You Approach the Outer World – Your Work Style',
+      name: 'Section 4: How You Approach the Outer World: Your Work Style',
       dimension: 'JP',
       traitA: 'J',
       traitB: 'P',

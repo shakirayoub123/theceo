@@ -18,15 +18,15 @@ export default function ServicesSection() {
   const stripHtml = (text) =>
     text
       ? text
-          .replace(/<\/(p|div|li|h[1-6])\s*>/gi, ' ')
-          .replace(/<br\s*\/?>/gi, ' ')
-          .replace(/<[^>]*>/g, '')
-          .replace(/&nbsp;/gi, ' ')
-          .replace(/&amp;/gi, '&')
-          .replace(/&quot;/gi, '"')
-          .replace(/&#39;|&apos;/gi, "'")
-          .replace(/\s+/g, ' ')
-          .trim()
+        .replace(/<\/(p|div|li|h[1-6])\s*>/gi, ' ')
+        .replace(/<br\s*\/?>/gi, ' ')
+        .replace(/<[^>]*>/g, '')
+        .replace(/&nbsp;/gi, ' ')
+        .replace(/&amp;/gi, '&')
+        .replace(/&quot;/gi, '"')
+        .replace(/&#39;|&apos;/gi, "'")
+        .replace(/\s+/g, ' ')
+        .trim()
       : ''
 
   useEffect(() => {
@@ -188,13 +188,15 @@ export default function ServicesSection() {
           <div className='w-full'>
             <div className='inline-block border border-[#334155]/60 rounded-full px-4 py-1 mb-3'>
               <span className='text-[#334155] font-semibold tracking-[0.08em] text-[10px] uppercase'>
-                What We Provide
+                {t('services.sectionHeader', 'What We Provide')}
               </span>
             </div>
             <h2 className='text-[30px] lg:text-[40px] leading-[1.1] tracking-[-1.01px] font-bold text-[#000023] mb-2 uppercase font-jakarta'>
-              Our <span className='text-[#F6B72D]'>Services</span>
+              {t('services.titlePrefix', 'Our ')}<span className='text-[#F6B72D]'>{t('services.titleHighlight', 'Services')}</span>
             </h2>
-            <p className='text-[13px] lg:text-[15px] leading-[24px] font-normal text-[#4B5563] max-w-3xl mx-auto'>We deliver tailored leadership and performance programs empowering leaders with clarity and confidence.</p>
+            <p className='text-[13px] lg:text-[15px] leading-[24px] font-normal text-[#4B5563] max-w-3xl mx-auto'>
+              {t('services.sectionDescription', 'We deliver 9 tailored next generation leadership and organizational performance optimization programs to move leaders and their organizations forward.')}
+            </p>
           </div>
 
           {/* Top Right Arrows */}
@@ -236,9 +238,9 @@ export default function ServicesSection() {
             const programTitle = toTitleCase(rawProgramTitle)
             const programDescription = stripHtml(
               program.description ||
-                program.fullDescription ||
-                program.shortDesc ||
-                program.shortDescription,
+              program.fullDescription ||
+              program.shortDesc ||
+              program.shortDescription,
             )
             const programImage =
               program.thumbnailImageUrl ||
@@ -253,7 +255,13 @@ export default function ServicesSection() {
                 className='w-[88%] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 snap-start h-full rounded-[20px] flex flex-col p-5 lg:p-6 relative group transition-all duration-300 ease-out bg-white/95 border border-[#E5E7EB] shadow-[0_12px_30px_rgba(0,0,35,0.06)] hover:scale-[1.02] hover:-translate-y-1 hover:z-20 hover:bg-[#000023] hover:border-[#312E81]/40 hover:shadow-[0_24px_48px_rgba(0,0,35,0.2)] focus-within:scale-[1.01] focus-within:-translate-y-1 focus-within:z-20 focus-within:bg-[#000023] focus-within:border-[#312E81]/40 focus-within:shadow-[0_24px_48px_rgba(0,0,35,0.2)]'
               >
                 {/* Arrow icon absolute positioned at top-right */}
-                <Link to={program.id ? `/service/${program.id}` : '#'} aria-label={`View Program ${programIndex + 1}: ${programTitle}`} className='absolute top-5 right-5 z-20 group-hover:scale-110 transition-transform duration-300'>
+                <Link
+                  to={program.id ? `/service/${program.id}` : '#'}
+                  state={{ from: '/#services-section' }}
+                  onClick={() => sessionStorage.setItem('tci_last_home_section', 'services-section')}
+                  aria-label={`View Program ${programIndex + 1}: ${programTitle}`}
+                  className='absolute top-5 right-5 z-20 group-hover:scale-110 transition-transform duration-300'
+                >
                   <div className='w-[38px] h-[38px] rounded-full border border-[#F6B72D] bg-[#F6B72D] flex items-center justify-center shadow-sm'>
                     <ArrowUpRight className='w-3.5 h-3.5 text-[#000023]' />
                   </div>
@@ -281,7 +289,12 @@ export default function ServicesSection() {
                     onError={(e) => { e.currentTarget.src = '/images/services.svg' }}
                   />
                   {/* Invisible interactive overlay trigger just in case */}
-                  <Link to={program.id ? `/service/${program.id}` : '#'} className='absolute inset-0 z-10' />
+                  <Link
+                    to={program.id ? `/service/${program.id}` : '#'}
+                    state={{ from: '/#services-section' }}
+                    onClick={() => sessionStorage.setItem('tci_last_home_section', 'services-section')}
+                    className='absolute inset-0 z-10'
+                  />
                 </div>
               </div>
             )

@@ -200,7 +200,7 @@ const CoachingMeetingContent = ({ meetingId }) => {
   const clientName = meetingDetails?.clientName || 'client'
   const clientJoinedOn = meetingDetails?.clientJoinedOn
     ? formatDate(meetingDetails?.clientJoinedOn)
-    : '—'
+    : '-'
   const clientEmail = meetingDetails?.clientEmail || 'client@example.com'
 
   const clientFields = [

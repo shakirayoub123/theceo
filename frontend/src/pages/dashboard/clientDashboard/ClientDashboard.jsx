@@ -166,7 +166,7 @@ const normalizeDashboardMeeting = (meeting) => {
 const CLIENT_SIX_ASSESSMENTS_METADATA = [
   {
     id: 1,
-    title: 'MBTI – Meyers-Briggs Personality Profile Assessment',
+    title: 'MBTI: Meyers-Briggs Personality Profile Assessment',
     category: 'Personality & Leadership Blueprint',
     questionsCount: 32,
     description:
@@ -770,7 +770,7 @@ export default function ClientDashboard() {
       }),
     ]
     const normalized = uniqueNames(merged)
-    return normalized.length ? normalized.join(' & ') : '—'
+    return normalized.length ? normalized.join(' & ') : '-'
   }, [activeProgram, activeProgramDetails, overviewData, sessionsForActiveProgram])
 
   const salesInfluencerDisplay = useMemo(() => {
@@ -792,7 +792,7 @@ export default function ClientDashboard() {
       ...extractPersonNames(overviewData?.salesInfluencers),
     ]
     const normalized = uniqueNames(merged)
-    return normalized[0] || '—'
+    return normalized[0] || '-'
   }, [activeProgram, activeProgramDetails, overviewData])
 
   const clientNameText =
@@ -812,8 +812,8 @@ export default function ClientDashboard() {
     storedUser?.id ||
     localStorage.getItem('userId') ||
     ''
-  const clientNameDisplay = clientNameText || '—'
-  const clientIdDisplay = clientIdText || '—'
+  const clientNameDisplay = clientNameText || '-'
+  const clientIdDisplay = clientIdText || '-'
 
   const activeProgramContent = useMemo(() => {
     if (activeProgramModules.length) {
@@ -934,10 +934,10 @@ export default function ClientDashboard() {
             </h1>
             <p className='text-lg font-exo text-gray-600'>
               Welcome back
-              {overviewData?.clientName ? `, ${overviewData.clientName}` : ''} —
+              {overviewData?.clientName ? `, ${overviewData.clientName}.` : '.'}
               {hasFullDashboardAccess
-                ? ' your programs and sessions at a glance.'
-                : ' your overview is active. Full workspace access unlocks after payment confirmation.'}
+                ? ' Your programs and sessions at a glance.'
+                : ' Your overview is active. Full workspace access unlocks after payment confirmation.'}
             </p>
           </div>
           <div className='w-full sm:w-auto self-center'>
@@ -980,7 +980,7 @@ export default function ClientDashboard() {
         </div>
       </div>
 
-      {/* Assessment redirect banner — visible until all 6 assessments are complete */}
+      {/* Assessment redirect banner: visible until all 6 assessments are complete */}
       {completedAssessments !== null && completedAssessments < 6 && (
         <div className='bg-[#0f172a] border-2 border-[#F6B72D] rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4'>
           <div>
@@ -1517,7 +1517,7 @@ export default function ClientDashboard() {
                           {meeting.title || meeting.program || 'Scheduled Meeting'}
                         </td>
                         <td className='px-3 sm:px-4 py-2 text-gray-700'>
-                          {meeting.advisor || meeting.salesAdvisor || '—'}
+                          {meeting.advisor || meeting.salesAdvisor || '-'}
                         </td>
                         <td className='px-3 sm:px-4 py-2'>
                           <Link

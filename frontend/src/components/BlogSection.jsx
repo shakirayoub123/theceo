@@ -90,21 +90,28 @@ export default function BlogSection({ blogs = [], loading = false }) {
       <div className='max-w-[1350px] w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
 
         {/* Header */}
-        <div className='flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-5 md:mb-6'>
-          <div className='max-w-3xl'>
-            <h2 className='text-[36px] lg:text-[40px] font-bold leading-[1.05] tracking-[-0.04em] text-[#111827]'>
-              <span className='text-[#111827]'>OUR </span>
-              <span className='text-[#F6B72D]'>BLOGS</span>
-            </h2>
-            <p className='mt-2 text-[#4B5563] text-[12px] sm:text-[13px] lg:text-[14px] leading-relaxed max-w-[720px]'>
-              Explore our curated blogs packed with case studies, expert insights, and actionable frameworks to elevate executive performance and organizational effectiveness.
-            </p>
+        <div className='flex flex-col items-center text-center justify-center mb-6 md:mb-8'>
+          <div className='inline-block border border-gray-400 rounded-full px-5 py-0.5 mb-3 bg-white/80'>
+            <span className='text-[#111827] font-semibold tracking-widest text-[9px] uppercase'>
+              What We Provide
+            </span>
           </div>
-
-          <Link to='/articles' className='group inline-flex items-center gap-2 self-start md:self-end whitespace-nowrap hover:opacity-80 transition-opacity'>
-            <span className='text-[#111827] font-bold text-[11px] sm:text-[12px] lg:text-[13px]'>Explore all publications</span>
-            <div className='w-7 h-7 rounded-full bg-[#F6B72D] flex items-center justify-center group-hover:translate-x-1 transition-transform'>
-              <ArrowRight className='w-3 h-3 text-white' />
+          <h2 className='text-[30px] lg:text-[40px] font-bold leading-[1.1] tracking-[-1.01px] text-[#111827] mb-2 uppercase font-jakarta'>
+            <span className='text-[#111827]'>Our </span>
+            <span className='text-[#F6B72D]'>Blogs</span>
+          </h2>
+          <p className='text-[13px] lg:text-[15px] leading-[24px] font-normal text-[#4B5563] max-w-2xl mx-auto mb-4'>
+            Explore our curated blogs packed with case studies, expert insights, and actionable frameworks to elevate executive performance and organizational effectiveness.
+          </p>
+          <Link
+            to='/articles'
+            state={{ from: '/#blog' }}
+            onClick={() => sessionStorage.setItem('tci_last_home_section', 'blog')}
+            className='group inline-flex items-center gap-2 border border-gray-300 bg-white/90 px-4 py-1.5 rounded-full hover:bg-[#F6B72D] hover:border-[#F6B72D] transition-all duration-300 shadow-sm'
+          >
+            <span className='text-[#111827] font-bold text-[11px] sm:text-[12px] uppercase tracking-wider'>Explore all publications</span>
+            <div className='w-5 h-5 rounded-full bg-[#F6B72D] group-hover:bg-black/10 flex items-center justify-center group-hover:translate-x-0.5 transition-transform'>
+              <ArrowRight className='w-3 h-3 text-[#000023]' />
             </div>
           </Link>
         </div>
@@ -117,6 +124,8 @@ export default function BlogSection({ blogs = [], loading = false }) {
             <div className='lg:col-span-7 h-full'>
               <Link
                 to={`/blog/${featuredPost.slug}`}
+                state={{ from: '/#blog' }}
+                onClick={() => sessionStorage.setItem('tci_last_home_section', 'blog')}
                 className='site-hover-highlight group flex flex-col bg-white rounded-[18px] border border-[#E5E7EB] shadow-[0_10px_24px_rgba(15,23,42,0.06)] hover:shadow-lg transition-all duration-300 h-full overflow-hidden'
               >
                 <div className='relative w-full aspect-[1.9/1] lg:aspect-[2.4/1] overflow-hidden bg-[#F3F4F6] flex items-center justify-center'>
@@ -165,6 +174,8 @@ export default function BlogSection({ blogs = [], loading = false }) {
               <Link
                 key={post.id || index}
                 to={`/blog/${post.slug}`}
+                state={{ from: '/#blog' }}
+                onClick={() => sessionStorage.setItem('tci_last_home_section', 'blog')}
                 className='site-hover-highlight group bg-white rounded-[14px] border border-[#E5E7EB] shadow-[0_10px_24px_rgba(15,23,42,0.04)] hover:shadow-md transition-all duration-300 p-3 lg:p-3 flex items-center gap-3 h-full flex-1 self-stretch'
               >
                 {/* Thumbnail */}

@@ -391,7 +391,7 @@ export default function BigFiveAssessmentModal({
 
                     <div className='text-[11px] text-gray-500 pt-2 border-t border-gray-100 flex items-center justify-between'>
                       <span>Items Answered: {t.answeredItems} / {t.totalItems}</span>
-                      <span>Norm Scale: {t.minScore} – {t.maxScore} pts</span>
+                      <span>Norm Scale: {t.minScore} - {t.maxScore} pts</span>
                     </div>
                   </div>
                 ))}

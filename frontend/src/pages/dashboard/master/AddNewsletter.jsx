@@ -65,7 +65,7 @@ export default function AddNewsletter() {
               name: newsletter.fileDetails?.name?.split('/').pop() || pdfUrl.split('/').pop(),
             })
             setMissingExistingFile(newsletter.fileDetails?.available === false)
-            // Thumbnail — API returns thumbnailImageUrl or thumbnailImage.url
+            // Thumbnail: API returns thumbnailImageUrl or thumbnailImage.url
             const thumbUrl = newsletter.thumbnailImageUrl || newsletter.thumbnailImage?.url || null
             if (thumbUrl) setExistingThumbnail(getAssetUrl(thumbUrl))
           }

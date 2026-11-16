@@ -82,7 +82,7 @@ export default function ClientCaseStudiesSection() {
               <ArrowLeft className='h-4 w-4' aria-hidden='true' />
             </button>
             <span className='min-w-[110px] text-center text-sm font-semibold text-[#4B5563]' aria-live='polite'>
-              {firstVisibleStudy}–{lastVisibleStudy} of {allCaseStudies.length}
+              {firstVisibleStudy}-{lastVisibleStudy} of {allCaseStudies.length}
             </span>
             <button
               type='button'

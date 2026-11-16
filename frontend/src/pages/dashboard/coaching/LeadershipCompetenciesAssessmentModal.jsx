@@ -318,7 +318,7 @@ export default function LeadershipCompetenciesAssessmentModal({
               <div className='bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm'>
                 <div className='bg-slate-900 text-white px-5 py-3'>
                   <h4 className='text-sm font-black uppercase'>
-                    Results Interpretation Guide — From Self-Rating to Action
+                    Results Interpretation Guide: From Self-Rating to Action
                   </h4>
                 </div>
                 <div className='divide-y divide-gray-100'>

@@ -5,6 +5,7 @@ import ContactSidebar from '@/components/ContactSidebar'
 import InfluencerProfile from '@/components/InfluencerProfile'
 import ReviewsContent from '@/components/ReviewsContent'
 import bgHeader from '@/assets/bgHeader.png'
+import PageBackButton from '@/components/common/PageBackButton'
 import { useState, useEffect } from 'react'
 
 const JamesBiography = () => {
@@ -131,7 +132,12 @@ const JamesBiography = () => {
       </Helmet>
 
       <div className='w-full'>
-        <div className='w-full bg-[#F5F4F2] pt-6'>
+        {/* Back Button */}
+        <div className='max-w-[1383px] mx-auto px-4 sm:px-6 pt-4'>
+          <PageBackButton fallbackUrl='/#our-team' label='Back to Influencers' />
+        </div>
+
+        <div className='w-full bg-[#F5F4F2] pt-4'>
           {/* AUTHOR PROFILE HERO BANNER */}
           <div className='relative w-full max-w-[1383px] mx-auto h-[220px] md:h-[280px] bg-[#FFFBF0] flex flex-col items-center justify-center overflow-hidden rounded-[20px] shadow-sm mb-8'>
             {/* Topographic Background */}

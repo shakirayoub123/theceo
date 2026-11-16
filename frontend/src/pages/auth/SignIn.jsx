@@ -95,12 +95,12 @@ const SignIn = () => {
 
   return (
     <div className='w-full'>
-      <div className='mb-8 sm:mb-10'>
-        <h2 className='text-[32px] sm:text-[36px] font-bold text-[#111827] tracking-tight mb-2'>
-          Sign in
+      <div className='mb-8 sm:mb-10 text-center'>
+        <h2 className='text-[30px] sm:text-[34px] font-extrabold text-[#111827] tracking-tight uppercase mb-2'>
+          SIGN IN
         </h2>
         <p className='text-[14px] text-gray-500 font-medium'>
-          Please login to continue to your account.
+          Please log in to continue to your executive workspace.
         </p>
       </div>
 
@@ -111,67 +111,75 @@ const SignIn = () => {
           </div>
         )}
 
-        <div className='relative mt-2'>
+        <div>
           <label
             htmlFor='email'
-            className='absolute -top-2 left-3 bg-white px-1.5 text-[11px] font-bold tracking-wide text-[#F59E0B] z-10'
+            className='block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2'
           >
-            Email
+            Email Address
           </label>
           <Input
             id='email'
             type='email'
             value={formData.email}
             onChange={(e) => handleInputChange('email', e.target.value)}
-            placeholder='jonas_kahnwald@gmail.com'
-            className='w-full h-[52px] sm:h-[56px] px-4 text-[14px] sm:text-[15px] font-medium text-[#111827] rounded-[8px] border-[1.5px] border-[#F59E0B] focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-[#F59E0B] outline-none shadow-sm placeholder:text-gray-400 transition-colors bg-transparent relative z-0'
+            placeholder='executive@theceoinfluencers.com'
+            className='w-full h-[52px] sm:h-[56px] px-4 text-[14px] sm:text-[15px] font-medium text-[#111827] rounded-[10px] border border-gray-300 focus-visible:ring-2 focus-visible:ring-[#F6B72D] focus-visible:border-[#F6B72D] outline-none shadow-sm placeholder:text-gray-400 transition-all bg-white'
             required
             disabled={loading}
           />
         </div>
 
-        <div className='relative'>
-          <Input
-            id='password'
-            type={showPassword ? 'text' : 'password'}
-            value={formData.password}
-            onChange={(e) => handleInputChange('password', e.target.value)}
-            placeholder='Password'
-            className='w-full h-[52px] sm:h-[56px] px-4 text-[14px] sm:text-[15px] font-medium text-[#111827] rounded-[8px] border-[1.5px] border-[#E5E7EB] focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-gray-400 outline-none shadow-sm placeholder:text-gray-400 transition-colors pr-12'
-            required
-            disabled={loading}
-          />
-          <button
-            type='button'
-            onClick={() => setShowPassword(!showPassword)}
-            className='absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none'
-          >
-            {showPassword ? <Eye className='w-5 h-5' /> : <EyeOff className='w-5 h-5' />}
-          </button>
-        </div>
-
-        <div className='flex justify-end pt-1 pb-3'>
-          <Link to='/forget-password' className='text-[13px] font-bold text-[#111827] hover:text-[#F59E0B] transition-colors'>
-            Forget password?
-          </Link>
+        <div>
+          <div className='flex items-center justify-between mb-2'>
+            <label
+              htmlFor='password'
+              className='block text-xs font-bold uppercase tracking-wider text-gray-700'
+            >
+              Password
+            </label>
+            <Link
+              to='/forget-password'
+              className='text-xs font-bold text-[#0B132B] hover:text-[#F6B72D] transition-colors'
+            >
+              Forgot Password?
+            </Link>
+          </div>
+          <div className='relative'>
+            <Input
+              id='password'
+              type={showPassword ? 'text' : 'password'}
+              value={formData.password}
+              onChange={(e) => handleInputChange('password', e.target.value)}
+              placeholder='Enter your password'
+              className='w-full h-[52px] sm:h-[56px] px-4 text-[14px] sm:text-[15px] font-medium text-[#111827] rounded-[10px] border border-gray-300 focus-visible:ring-2 focus-visible:ring-[#F6B72D] focus-visible:border-[#F6B72D] outline-none shadow-sm placeholder:text-gray-400 transition-all pr-12 bg-white'
+              required
+              disabled={loading}
+            />
+            <button
+              type='button'
+              onClick={() => setShowPassword(!showPassword)}
+              className='absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none p-1'
+            >
+              {showPassword ? <Eye className='w-5 h-5' /> : <EyeOff className='w-5 h-5' />}
+            </button>
+          </div>
         </div>
 
         <Button
           type='submit'
           disabled={loading}
-          className='w-full h-[50px] sm:h-[54px] bg-[#F59E0B] hover:bg-[#d98b09] text-white text-[15px] font-bold rounded-[8px] shadow-sm disabled:opacity-50 transition-colors'
+          className='w-full h-[52px] sm:h-[56px] bg-[#F6B72D] hover:bg-[#e6b82a] text-black text-[15px] font-extrabold uppercase tracking-wider rounded-[10px] shadow-md hover:shadow-lg disabled:opacity-50 transition-all duration-300 mt-2'
         >
-          {loading ? 'Logging in...' : 'Log in'}
+          {loading ? 'Logging in...' : 'Log In'}
         </Button>
-
-
 
         <div className='mt-8 pt-6 text-center'>
           <p className='text-[13.5px] text-gray-500 font-medium'>
-            Need Help?{' '}
+            Need help?{' '}
             <a
               href='mailto:info@theceoinfluencers.com'
-              className='text-[#F59E0B] font-bold hover:underline transition-colors'
+              className='text-[#0B132B] font-bold hover:text-[#F6B72D] underline transition-colors'
             >
               Contact Us
             </a>

@@ -30,22 +30,20 @@ export function AuthLayout() {
           <img src='/images/fullLogo.svg' alt='Logo' className='h-12 w-auto brightness-0 invert' />
         </div>
 
-        <div className='mt-auto pb-12 pr-12 max-w-[600px]'>
-          <div className='inline-flex flex-row items-center gap-1.5 bg-white/20 backdrop-blur-[2px] rounded-full px-5 py-2 mb-6 border border-white/40'>
+        <div className='mt-auto pb-12 pr-12 max-w-[560px]'>
+          <div className='inline-flex flex-row items-center gap-2 bg-white/20 backdrop-blur-[2px] rounded-full px-5 py-2 mb-6 border border-white/40'>
             <span className='w-1.5 h-1.5 bg-white rounded-full'></span>
             <span className='text-[10px] font-bold uppercase tracking-widest text-white'>EXECUTIVE PLATFORM</span>
           </div>
 
-          <h1 className='text-[42px] lg:text-[52px] font-bold mb-8 leading-[1.15] text-white tracking-tight'>
-            IMPROVE YOUR SKILL<br />WITH US!
+          <h1 className='text-[38px] lg:text-[46px] font-bold mb-6 leading-[1.15] text-white tracking-tight uppercase'>
+            BUILDING BETTER<br />LEADERS
           </h1>
 
-          <div className='w-20 h-px bg-white/80 mb-6'></div>
+          <div className='w-20 h-[2px] bg-white/80 mb-6'></div>
 
-          <p className='text-[15px] lg:text-[16px] leading-[1.7] text-white/90 font-medium'>
-            Embark on a journey of continuous learning and professional growth.<br className='hidden xl:block' />
-            Our platform empowers you to acquire new skills, connect with<br className='hidden xl:block' />
-            industry experts, and achieve your career goals.
+          <p className='text-[15px] lg:text-[16px] leading-[1.7] text-white font-medium text-left'>
+            Empowering visionary senior executives and corporate leaders with bespoke leadership coaching, high-impact performance optimization, and continuous strategic mentorship.
           </p>
         </div>
       </div>

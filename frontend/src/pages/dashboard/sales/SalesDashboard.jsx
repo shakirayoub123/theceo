@@ -329,7 +329,7 @@ export default function SalesDashboard() {
       (name, idx, arr) => name && arr.indexOf(name) === idx,
     )
 
-    return names.join(' & ') || '—'
+    return names.join(' & ') || '-'
   }, [activeProgram?.assignedAdvisors, sessionsForActiveProgram])
 
   const salesInfluencerDisplay = useMemo(() => {
@@ -345,10 +345,10 @@ export default function SalesDashboard() {
         fullName ||
         stored?.username ||
         dashboardData?.salesInfluencer ||
-        '—'
+        '-'
       )
     } catch {
-      return dashboardData?.salesInfluencer || '—'
+      return dashboardData?.salesInfluencer || '-'
     }
   }, [dashboardData?.salesInfluencer])
 
@@ -781,10 +781,10 @@ export default function SalesDashboard() {
                       {meeting.title || meeting.program || 'Scheduled Meeting'}
                     </td>
                     <td className='px-3 sm:px-4 py-2 text-gray-700'>
-                      {meeting.clientName || meeting.client_name || '—'}
+                      {meeting.clientName || meeting.client_name || '-'}
                     </td>
                     <td className='px-3 sm:px-4 py-2 text-gray-700'>
-                      {meeting.advisor || meeting.otherTrainers || '—'}
+                      {meeting.advisor || meeting.otherTrainers || '-'}
                     </td>
                     <td className='px-3 sm:px-4 py-2'>
                       <Link

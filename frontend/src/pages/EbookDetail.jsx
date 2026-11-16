@@ -1,4 +1,5 @@
 import Breadcrumb from '@/components/Breadcrumb'
+import PageBackButton from '@/components/common/PageBackButton'
 import ProductGallery from '@/components/ProductGallery'
 import ProductInfo from '@/components/ProductInfo'
 import ProductTabs from '@/components/ProductTabs'
@@ -230,8 +231,13 @@ export default function EbookDetail() {
         </script>
       </Helmet>
       <div className='w-full'>
+        {/* Back Button */}
+        <div className='max-w-[1383px] mx-auto px-4 sm:px-6 pt-4'>
+          <PageBackButton fallbackUrl='/#products-section' label='Back to Ebooks' />
+        </div>
+
         {/* SHOP DETAILS HERO BANNER */}
-        <div className='w-full bg-[#FFFFFF] pt-6'>
+        <div className='w-full bg-[#FFFFFF] pt-4'>
           <div className='relative w-full max-w-[1383px] mx-auto py-16 md:py-[70px] bg-[#FFFBF0] flex flex-col items-center justify-center overflow-hidden rounded-[28px] shadow-sm mb-12'>
             {/* Topographic Background */}
             <div
@@ -243,7 +249,7 @@ export default function EbookDetail() {
               }}
             ></div>
             <div className='relative z-10 text-center flex flex-col items-center px-4 mt-2'>
-              <h1 className='text-4xl md:text-[50px] font-bold font-jakarta text-[#000023] mb-5 tracking-tight'>Shop Details</h1>
+              <h1 className='text-4xl md:text-[50px] font-bold font-jakarta text-[#000023] mb-5 tracking-tight uppercase'>Shop Details</h1>
               <div className='flex items-center text-[15px] font-semibold font-jakarta'>
                 <a href='/' className='text-[#161616] hover:text-[#F6B72D] transition-colors'>Home</a>
                 <span className='mx-3 text-[#161616] tracking-widest'>&gt;</span>
