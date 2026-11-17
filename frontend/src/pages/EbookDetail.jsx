@@ -7,7 +7,7 @@ import authService from '@/services/authService'
 import bgHeader from '@/assets/bgHeader.png'
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, Link } from 'react-router-dom'
 
 export default function EbookDetail() {
   const { id } = useParams()
@@ -98,6 +98,15 @@ export default function EbookDetail() {
         </div>
       </div>
     )
+  }
+
+  const truncateBreadcrumbTitle = (title, maxLen = 42) => {
+    if (!title) return ''
+    if (title.length <= maxLen) return title
+    const trimmed = title.slice(0, maxLen)
+    const lastSpace = trimmed.lastIndexOf(' ')
+    const clean = lastSpace > 20 ? trimmed.slice(0, lastSpace) : trimmed
+    return `${clean.trim()}...`
   }
 
   const breadcrumbItems = [
@@ -248,14 +257,19 @@ export default function EbookDetail() {
                 backgroundPosition: 'center',
               }}
             ></div>
-            <div className='relative z-10 text-center flex flex-col items-center px-4 mt-2'>
+            <div className='relative z-10 text-center flex flex-col items-center px-4 mt-2 w-full'>
               <h1 className='text-4xl md:text-[50px] font-bold font-jakarta text-[#000023] mb-5 tracking-tight uppercase'>Shop Details</h1>
-              <div className='flex items-center text-[15px] font-semibold font-jakarta'>
-                <a href='/' className='text-[#161616] hover:text-[#F6B72D] transition-colors'>Home</a>
-                <span className='mx-3 text-[#161616] tracking-widest'>&gt;</span>
-                <a href='/#products-section' className='text-[#F6B72D] hover:text-[#e6a820] transition-colors'>Ebooks</a>
-                <span className='mx-3 text-[#161616] tracking-widest'>&gt;</span>
-                <span className='text-[#F6B72D]'>{ebookData.title}</span>
+              <div className='flex items-center justify-center text-[14px] sm:text-[15px] font-semibold font-jakarta max-w-full px-2'>
+                <Link to='/' className='text-[#161616] hover:text-[#F6B72D] transition-colors shrink-0'>Home</Link>
+                <span className='mx-2.5 sm:mx-3 text-[#161616] tracking-widest shrink-0'>&gt;</span>
+                <a href='/#products-section' className='text-[#F6B72D] hover:text-[#e6a820] transition-colors shrink-0'>Ebooks</a>
+                <span className='mx-2.5 sm:mx-3 text-[#161616] tracking-widest shrink-0'>&gt;</span>
+                <span
+                  className='text-[#F6B72D] truncate max-w-[260px] sm:max-w-[400px] md:max-w-[540px]'
+                  title={ebookData.title}
+                >
+                  {truncateBreadcrumbTitle(ebookData.title, 42)}
+                </span>
               </div>
             </div>
           </div>
