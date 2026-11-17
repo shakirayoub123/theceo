@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { ArrowRight } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import { allCaseStudies } from '@/data/caseStudiesData'
 
@@ -103,11 +104,11 @@ function CaseStudyCard({ cs, index }) {
   const displayId = String(index + 1).padStart(2, '0')
 
   return (
-    <div className='bg-[#FFFFFF] rounded-[24px] lg:rounded-[28px] overflow-hidden flex flex-col shadow-sm border border-[#CACACA] group-hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] group-hover:-translate-y-1.5 transition-all duration-300 h-full min-h-[410px] lg:min-h-[430px] max-h-[480px] relative'>
+    <div className='bg-[#FFFFFF] rounded-[24px] lg:rounded-[28px] overflow-hidden flex flex-col shadow-sm border border-[#CACACA] group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] group-hover:-translate-y-1 transition-all duration-300 h-full min-h-[490px] lg:min-h-[510px] relative'>
       {/* Top Graphic Border */}
       <div className='h-[6px] w-full bg-[#F6B72D] absolute top-0 left-0 right-0 group-hover:bg-[#e6b82a] transition-colors'></div>
 
-      <div className='p-5 lg:p-6 flex flex-col flex-1 mt-1 min-h-0'>
+      <div className='p-5 sm:p-6 lg:p-7 flex flex-col flex-1 mt-1 min-h-0'>
         {/* Identifier Badge */}
         <div className='mb-2 lg:mb-3'>
           <span className='bg-[#0B132B] text-white text-[9px] sm:text-[10px] font-bold px-3 py-1.5 rounded-[4px] tracking-wider uppercase inline-block'>
@@ -124,36 +125,53 @@ function CaseStudyCard({ cs, index }) {
         </div>
 
         {/* Title */}
-        <h3 title={cs.title} className='text-[20px] lg:text-[22px] font-bold text-[#000000] mb-2 lg:mb-3 leading-snug font-jakarta line-clamp-2 min-h-[3.5rem] lg:min-h-[3.9rem]'>
+        <h3 title={cs.title} className='text-[19px] lg:text-[21px] font-bold text-[#000000] mb-2 lg:mb-3 leading-snug font-jakarta line-clamp-2 min-h-[3.2rem] lg:min-h-[3.6rem] group-hover:text-[#A87500] transition-colors'>
           {cs.title}
         </h3>
 
         {/* Excerpt */}
-        <p title={cs.excerpt} className='text-[#4B5563] text-[14px] leading-relaxed font-medium flex-1 min-h-0 mb-3 lg:mb-4 line-clamp-4 font-jakarta'>
-          {cs.excerpt}
-        </p>
+        <div className='mb-3 lg:mb-4 flex-1 flex flex-col'>
+          <p className='text-[#B77900] text-[10px] font-bold uppercase tracking-wider mb-1'>
+            OVERVIEW
+          </p>
+          <p title={cs.excerpt} className='text-[#4B5563] text-[13px] lg:text-[13.5px] leading-relaxed font-normal line-clamp-3 lg:line-clamp-4 font-jakarta'>
+            {cs.excerpt}
+          </p>
+        </div>
 
         {/* Key Result Box */}
-        <div className='bg-[#0B132B] rounded-[14px] p-4 mb-3 lg:mb-4 border-l-[3px] border-l-[#F6B72D] w-full group-hover:bg-[#161f3d] transition-colors shrink-0'>
+        <div className='bg-[#0B132B] rounded-[14px] p-3.5 lg:p-4 mb-3 lg:mb-4 border-l-[3px] border-l-[#F6B72D] w-full group-hover:bg-[#161f3d] transition-colors shrink-0 shadow-sm'>
           <p className='text-[#F6B72D] text-[9px] font-bold uppercase tracking-widest mb-1'>
             KEY RESULT
           </p>
-          <p title={cs.keyResult} className='text-white font-bold text-[13px] lg:text-[14px] leading-snug line-clamp-2'>
+          <p title={cs.keyResult} className='text-white font-semibold text-[12.5px] lg:text-[13.5px] leading-snug line-clamp-2'>
             {cs.keyResult}
           </p>
         </div>
 
-        {/* Footer Tags */}
-        <div className='flex flex-nowrap gap-2 mt-auto h-[26px] overflow-hidden shrink-0'>
-          {cs.tags.slice(0, 3).map((tag, idx) => (
-            <span
-              key={idx}
-              title={tag}
-              className='min-w-0 truncate text-[9px] font-bold text-[#797979] bg-[#F8F8F8] border border-[#E5E7EB] px-2.5 py-1 rounded-full uppercase tracking-wider whitespace-nowrap'
-            >
-              {tag}
+        {/* Footer Tags & Interactive Action */}
+        <div className='mt-auto pt-3 border-t border-gray-100 flex flex-col gap-2.5 shrink-0'>
+          <div className='flex flex-nowrap gap-1.5 overflow-hidden'>
+            {cs.tags.slice(0, 3).map((tag, idx) => (
+              <span
+                key={idx}
+                title={tag}
+                className='min-w-0 truncate text-[8.5px] lg:text-[9px] font-bold text-[#4B5563] bg-[#F8F9FA] border border-[#E5E7EB] px-2.5 py-1 rounded-full uppercase tracking-wider whitespace-nowrap shrink-0'
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          <div className='flex items-center justify-between pt-0.5'>
+            <span className='inline-flex items-center gap-1.5 text-[12px] lg:text-[13px] font-bold text-[#000023] group-hover:text-[#D99A1A] transition-colors'>
+              Read Full Case Study
+              <ArrowRight className='w-3.5 h-3.5 text-[#F6B72D] group-hover:translate-x-1.5 transition-transform' />
             </span>
-          ))}
+            <span className='text-[10px] font-bold uppercase tracking-wider text-gray-400 group-hover:text-gray-600 transition-colors'>
+              Explore →
+            </span>
+          </div>
         </div>
       </div>
     </div>

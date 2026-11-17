@@ -1,9 +1,7 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import ReactMarkdown from 'react-markdown'
 import { allCaseStudies } from '@/data/caseStudiesData'
 import mapBg2 from '@/assets/map bg 2.png'
-import caseStudyThreeMarkdown from '../../case-study-3.md?raw'
 import { useState } from 'react'
 
 export default function ClientCaseStudiesSection() {
@@ -57,7 +55,7 @@ export default function ClientCaseStudiesSection() {
         </div>
 
         {/* 3 Grid Layout */}
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-stretch gap-4 lg:gap-5 mb-5 lg:mb-6'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-stretch gap-5 lg:gap-6 mb-6 lg:mb-8'>
           {displayStudies.map((cs, idx) => (
             <Link
               key={cs.id}
@@ -65,7 +63,7 @@ export default function ClientCaseStudiesSection() {
               state={{ from: '/#case-studies-section' }}
               onClick={() => sessionStorage.setItem('tci_last_home_section', 'case-studies-section')}
               aria-label={`Read case study ${cs.id}: ${cs.title}`}
-              className='block h-full cursor-pointer rounded-[24px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6B72D]'
+              className='group block h-full cursor-pointer rounded-[24px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F6B72D]'
             >
               <CaseStudyCard cs={cs} index={cs.id - 1} />
             </Link>
@@ -119,195 +117,84 @@ export default function ClientCaseStudiesSection() {
 function CaseStudyCard({ cs, index }) {
   // Format to standard 2-digit number for visual consistency
   const displayId = String(index + 1).padStart(2, '0')
+  const overviewText = cs.excerpt || cs.executiveSummary || cs.caseSummary || ''
 
   return (
-    <article className='bg-white rounded-[20px] lg:rounded-[24px] overflow-hidden flex flex-col shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 h-[430px] lg:h-[460px] relative'>
+    <article className='bg-white rounded-[22px] lg:rounded-[26px] overflow-hidden flex flex-col shadow-sm border border-gray-200/90 group-hover:shadow-[0_12px_32px_rgba(15,23,42,0.08)] group-hover:-translate-y-1 transition-all duration-300 h-full min-h-[490px] lg:min-h-[510px] relative'>
 
-      {/* Top Graphic Border */}
-      <div className='h-1 w-full bg-[#F6B72D] absolute top-0 left-0 right-0'></div>
+      {/* Top Graphic Border Accent */}
+      <div className='h-[5px] w-full bg-[#F6B72D] absolute top-0 left-0 right-0 group-hover:bg-[#e6b82a] transition-colors'></div>
 
-      <div className='p-5 lg:p-6 flex flex-col flex-1 mt-0.5'>
+      <div className='p-5 sm:p-6 lg:p-7 flex flex-col flex-1 mt-1'>
 
         {/* Identifier Badge */}
-        <div className='mb-2'>
-          <span className='bg-[#0B132B] text-white text-[9px] font-bold px-2.5 py-1 rounded-sm tracking-wider uppercase inline-block'>
+        <div className='mb-2.5'>
+          <span className='bg-[#000023] text-white text-[9px] sm:text-[10px] font-bold px-3 py-1 rounded-[4px] tracking-wider uppercase inline-block'>
             CASE STUDY {displayId}
           </span>
         </div>
 
         {/* Subtitle Line */}
-        <div className='flex h-5 items-center gap-1.5 mb-2.5'>
-          <span className='text-[#F6B72D] text-xs lg:text-sm leading-none'>•</span>
-          <span className='text-[#F6B72D] text-[9px] font-bold uppercase tracking-widest truncate line-clamp-1'>
+        <div className='flex min-w-0 items-center gap-1.5 mb-2'>
+          <span className='text-[#F6B72D] text-xs lg:text-sm leading-none shrink-0'>•</span>
+          <span className='text-[#F6B72D] text-[9.5px] lg:text-[10px] font-bold uppercase tracking-widest truncate'>
             {cs.subtitle}
           </span>
         </div>
 
         {/* Title */}
-        <h3 className='h-[2.6rem] lg:h-[2.8rem] text-[17px] lg:text-[18px] font-semibold text-black mb-2 lg:mb-2.5 leading-tight line-clamp-2'>
+        <h3 className='text-[18px] lg:text-[20px] font-bold text-[#000023] mb-3 leading-snug font-jakarta line-clamp-2 min-h-[3rem] lg:min-h-[3.4rem] group-hover:text-[#A87500] transition-colors'>
           {cs.title}
         </h3>
 
-        {/* Excerpt */}
-        <CaseStudyCardDetails cs={cs} />
+        {/* Overview Label & Text */}
+        <div className='mb-4 flex-1 flex flex-col'>
+          <p className='text-[#B77900] text-[10px] font-bold uppercase tracking-wider mb-1.5'>
+            OVERVIEW
+          </p>
+          <p className='text-[#4B5563] text-[13px] lg:text-[13.5px] leading-relaxed font-normal line-clamp-3 lg:line-clamp-4'>
+            {overviewText}
+          </p>
+        </div>
 
         {/* Key Result Box */}
-        <div className='min-h-[82px] bg-[#0B132B] rounded-[12px] p-3.5 lg:p-4 mt-auto mb-3 lg:mb-4 border-l-[3px] border-l-[#F6B72D] w-full flex flex-col justify-center'>
-          <p className='text-[#F6B72D] text-[8px] font-semibold uppercase tracking-widest mb-1'>
+        <div className='bg-[#000023] rounded-[14px] p-3.5 lg:p-4 mb-4 border-l-[3px] border-l-[#F6B72D] w-full shrink-0 group-hover:bg-[#070730] transition-colors shadow-sm'>
+          <p className='text-[#F6B72D] text-[8.5px] lg:text-[9px] font-bold uppercase tracking-widest mb-1'>
             KEY RESULT
           </p>
-          <p className='text-white font-semibold text-[12px] lg:text-[13px] leading-snug line-clamp-2'>
+          <p className='text-white font-semibold text-[12.5px] lg:text-[13.5px] leading-snug line-clamp-2'>
             {cs.keyResult}
           </p>
         </div>
 
-        {/* Footer Tags */}
-        <div className='flex h-[52px] flex-wrap content-start gap-1.5 overflow-hidden'>
-          {cs.tags.slice(0, 3).map((tag, idx) => (
-            <span
-              key={idx}
-              className='text-[8px] lg:text-[9px] font-bold text-gray-600 bg-gray-50 border border-gray-200 px-2.5 py-1 rounded-full uppercase tracking-wide whitespace-nowrap'
-            >
-              {tag}
+        {/* Bottom Part: Tags & Action */}
+        <div className='mt-auto pt-3 border-t border-gray-100 flex flex-col gap-3 shrink-0'>
+          {/* Tags */}
+          <div className='flex items-center gap-1.5 flex-nowrap overflow-hidden'>
+            {cs.tags.slice(0, 3).map((tag, idx) => (
+              <span
+                key={idx}
+                title={tag}
+                className='text-[8.5px] lg:text-[9px] font-bold text-[#4B5563] bg-[#F8F9FA] border border-[#E5E7EB] px-2.5 py-1 rounded-full uppercase tracking-wide whitespace-nowrap truncate shrink-0'
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          {/* Interactive CTA */}
+          <div className='flex items-center justify-between pt-0.5'>
+            <span className='inline-flex items-center gap-1.5 text-[12px] lg:text-[13px] font-bold text-[#000023] group-hover:text-[#D99A1A] transition-colors'>
+              Read Full Case Study
+              <ArrowRight className='w-3.5 h-3.5 text-[#F6B72D] group-hover:translate-x-1.5 transition-transform' />
             </span>
-          ))}
+            <span className='text-[10px] font-bold uppercase tracking-wider text-gray-400 group-hover:text-gray-600 transition-colors'>
+              Explore →
+            </span>
+          </div>
         </div>
 
       </div>
     </article>
   )
-}
-
-const cardDetailExclusions = new Set([
-  'id',
-  'title',
-  'subtitle',
-  'tags',
-  'keyResult',
-  'pdfUrl',
-  'caseStudyMarkdown',
-  'excerpt',
-  'executiveSummary',
-  'caseSummary',
-])
-
-function CaseStudyCardDetails({ cs }) {
-  const overview = cs.executiveSummary || cs.caseSummary || cs.excerpt
-  const detailEntries = Object.entries(cs).filter(
-    ([key, value]) => !cardDetailExclusions.has(key) && value != null,
-  )
-  const fullMarkdown =
-    cs.caseStudyMarkdown === 'case-study-3' ? caseStudyThreeMarkdown : null
-
-  return (
-    <div
-      className='case-study-description-scroll h-[150px] shrink-0 overflow-y-auto overscroll-contain pr-2 mb-3 lg:mb-4 text-[11px] font-normal leading-relaxed [&_strong]:font-semibold [&_strong]:text-[#374151]'
-      role='region'
-      aria-label={`Scrollable full details for ${cs.title}`}
-    >
-      <h4 className='text-[#B77900] text-[10px] font-bold uppercase tracking-wider mb-1'>
-        Overview
-      </h4>
-      {fullMarkdown ? (
-        <ReactMarkdown
-          components={{
-            h1: ({ children }) => <p className='text-[11px] text-[#4B5563] leading-relaxed font-semibold mb-2'>{children}</p>,
-            h2: ({ children }) => <p className='text-[11px] text-[#4B5563] leading-relaxed font-semibold mb-2'>{children}</p>,
-            h3: ({ children }) => <p className='text-[11px] text-[#4B5563] leading-relaxed font-semibold mb-2'>{children}</p>,
-            p: ({ children }) => <p className='text-[11px] text-[#4B5563] leading-relaxed font-normal mb-2'>{children}</p>,
-            ul: ({ children }) => <ul className='list-disc pl-4 space-y-1 mb-2 text-[11px] text-[#4B5563]'>{children}</ul>,
-            ol: ({ children }) => <ol className='list-decimal pl-4 space-y-1 mb-2 text-[11px] text-[#4B5563]'>{children}</ol>,
-            li: ({ children }) => <li className='leading-relaxed'>{children}</li>,
-            strong: ({ children }) => <strong className='font-semibold text-[#374151]'>{children}</strong>,
-            blockquote: ({ children }) => <blockquote className='border-l-2 border-[#F6B72D] pl-2 my-2 text-[11px] text-[#4B5563] italic'>{children}</blockquote>,
-            table: ({ children }) => <div className='overflow-x-auto mb-2'><table className='w-full text-left text-[10px]'>{children}</table></div>,
-            th: ({ children }) => <th className='p-1 border-b border-gray-200 text-[#0B132B]'>{children}</th>,
-            td: ({ children }) => <td className='p-1 border-b border-gray-100 text-[#4B5563]'>{children}</td>,
-            a: ({ children }) => <span className='underline'>{children}</span>,
-          }}
-        >
-          {caseStudyThreeMarkdown}
-        </ReactMarkdown>
-      ) : (
-        <div className='space-y-3'>
-          {overview && (
-            <p className='text-[#4B5563] text-[11px] leading-relaxed font-normal'>
-              {overview}
-            </p>
-          )}
-          {detailEntries.map(([key, value]) => (
-            <DetailSection key={key} title={formatDetailLabel(key)} value={value} />
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
-function DetailSection({ title, value }) {
-  return (
-    <section>
-      <h4 className='text-[10px] font-semibold uppercase tracking-wider text-[#B77900] mb-1'>
-        {title}
-      </h4>
-      <CaseStudyDetailValue value={value} />
-    </section>
-  )
-}
-
-function CaseStudyDetailValue({ value }) {
-  if (typeof value === 'string' || typeof value === 'number') {
-    return <p className='text-[#4B5563] text-[11px] font-normal leading-relaxed'>{value}</p>
-  }
-
-  if (Array.isArray(value)) {
-    return (
-      <div className='space-y-2'>
-        {value.map((item, index) => (
-          <div key={index} className='border-l-2 border-gray-200 pl-2'>
-            {Array.isArray(item) && item.length === 2 ? (
-              <>
-                <p className='text-[11px] font-medium text-[#374151]'>
-                  {item[0]}
-                </p>
-                <CaseStudyDetailValue value={item[1]} />
-              </>
-            ) : (
-              <CaseStudyDetailValue value={item} />
-            )}
-          </div>
-        ))}
-      </div>
-    )
-  }
-
-  if (value && typeof value === 'object') {
-    const heading = value.heading || value.title || value.label || value.window
-    const entries = Object.entries(value).filter(
-      ([key]) => !['heading', 'title', 'label', 'window'].includes(key),
-    )
-
-    return (
-      <div className='space-y-2'>
-        {heading && <p className='text-[11px] font-medium text-[#374151]'>{heading}</p>}
-        {entries.map(([key, childValue]) => (
-          <div key={key}>
-            <p className='text-[10px] font-medium text-[#4B5563]'>
-              {formatDetailLabel(key)}
-            </p>
-            <CaseStudyDetailValue value={childValue} />
-          </div>
-        ))}
-      </div>
-    )
-  }
-
-  return null
-}
-
-function formatDetailLabel(value) {
-  return value
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-    .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
-    .replace(/^./, (character) => character.toUpperCase())
 }
