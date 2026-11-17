@@ -143,6 +143,9 @@ class ClientSerializer(serializers.ModelSerializer):
     programStatus = serializers.CharField(source="program_status")
     contractStatus = serializers.CharField(source="contract_status")
     salesInfluencer = serializers.CharField(source="assigned_sales", read_only=True)
+    programOfInterest = serializers.CharField(
+        source="program_of_interest", read_only=True, allow_null=True
+    )
 
     class Meta:
         model = Client
@@ -153,6 +156,7 @@ class ClientSerializer(serializers.ModelSerializer):
             "programStatus",
             "contractStatus",
             "salesInfluencer",
+            "programOfInterest",
         ]
 
 
@@ -172,6 +176,7 @@ class SalesCreateClientSerializer(serializers.Serializer):
     job_title = serializers.CharField(max_length=255, required=False, allow_blank=True)
     position = serializers.CharField(max_length=255, required=False, allow_blank=True)
     industry = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    program_of_interest = serializers.CharField(max_length=255, required=False, allow_blank=True)
 
     def validate_email(self, value):
         return value.strip().lower()
@@ -185,6 +190,9 @@ class ClientDetailSerializer(serializers.ModelSerializer):
     meetingStatus = serializers.CharField(source="meeting_status")
     programStatus = serializers.CharField(source="program_status")
     contractStatus = serializers.CharField(source="contract_status")
+    programOfInterest = serializers.CharField(
+        source="program_of_interest", read_only=True, allow_null=True
+    )
     createdAt = serializers.DateTimeField(source="created_at")
 
     class Meta:
@@ -197,6 +205,7 @@ class ClientDetailSerializer(serializers.ModelSerializer):
             "meetingStatus",
             "programStatus",
             "contractStatus",
+            "programOfInterest",
             "createdAt",
         ]
 

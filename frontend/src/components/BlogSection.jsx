@@ -2,19 +2,57 @@
 import { getAssetUrl, formatDate } from '@/lib/utils'
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import mapBg3 from '@/assets/map bg 3.png'
 
 export default function BlogSection({ blogs = [], loading = false }) {
+  const { t } = useTranslation()
   // Helper to get category badge color according to topic:
   // 1. business need to know -> green
   // 2. business hot topic -> yellow
   // 3. business critical -> red
   const getTopicColor = (topic) => {
-    const t = topic?.toLowerCase() || ''
-    if (t.includes('critical')) return 'bg-[#DC2626]' // Red
-    if (t.includes('hot')) return 'bg-[#F59E0B]' // Yellow
-    if (t.includes('know')) return 'bg-[#16A34A]' // Green
+    const tStr = topic?.toLowerCase() || ''
+    if (tStr.includes('critical')) return 'bg-[#DC2626]' // Red
+    if (tStr.includes('hot')) return 'bg-[#F59E0B]' // Yellow
+    if (tStr.includes('know')) return 'bg-[#16A34A]' // Green
     return 'bg-[#16A34A]'
+  }
+
+  const getTopicCategoryKey = (topic) => {
+    const tStr = (topic || '').toLowerCase()
+    if (tStr.includes('critical')) return 'critical'
+    if (tStr.includes('know')) return 'needToKnow'
+    return 'hot'
+  }
+
+  const formatCategoryBadge = (rawCategory, topic) => {
+    const catKey = getTopicCategoryKey(topic || rawCategory)
+    return t(`blog.categories.${catKey}`, rawCategory || 'BUSINESS-HOT')
+  }
+
+  const getTranslatedPost = (post) => {
+    if (!post) return post
+    const slugKey = post.slug ? post.slug.replace(/[^a-zA-Z0-9]/g, '_') : ''
+    const postPrefix = `blog.posts.${slugKey}`
+
+    const hasTranslatedTitle = slugKey && t(`${postPrefix}.title`, { defaultValue: '' })
+    const title = hasTranslatedTitle ? t(`${postPrefix}.title`) : post.title
+
+    const hasTranslatedSubtitle = slugKey && t(`${postPrefix}.subtitle`, { defaultValue: '' })
+    const subtitle = hasTranslatedSubtitle ? t(`${postPrefix}.subtitle`) : post.subtitle
+
+    const hasTranslatedDate = slugKey && t(`${postPrefix}.publishedAt`, { defaultValue: '' })
+    const publishedAt = hasTranslatedDate ? t(`${postPrefix}.publishedAt`) : post.publishedAt
+
+    return {
+      ...post,
+      category: formatCategoryBadge(post.category, post.slug || post.category),
+      title,
+      subtitle,
+      publishedAt,
+      author: t('blog.author', post.author || 'The CEO Influencers'),
+    }
   }
 
   // Preserve API ordering for the side list; an explicitly featured blog leads.
@@ -60,7 +98,8 @@ export default function BlogSection({ blogs = [], loading = false }) {
     },
   ]
 
-  const displayPosts = blogPosts.length > 0 ? blogPosts : fallbackPosts
+  const rawPosts = blogPosts.length > 0 ? blogPosts : fallbackPosts
+  const displayPosts = rawPosts.map(getTranslatedPost)
   const featuredPost =
     displayPosts.find((post) => post.isFeatured) || displayPosts[0]
   const listPosts = displayPosts
@@ -93,15 +132,15 @@ export default function BlogSection({ blogs = [], loading = false }) {
         <div className='flex flex-col items-center text-center justify-center mb-6 md:mb-8'>
           <div className='inline-flex items-center justify-center border border-gray-400 rounded-full px-5 py-1 mb-3 bg-white/80 mx-auto'>
             <span className='text-[#111827] font-semibold tracking-widest text-[9px] uppercase'>
-              OUR BLOGS
+              {t('blog.badge', 'OUR BLOGS')}
             </span>
           </div>
           <h2 className='text-[30px] lg:text-[40px] font-bold leading-[1.1] tracking-[-1.01px] text-[#111827] mb-2 uppercase font-jakarta text-center'>
-            <span className='text-[#111827]'>Our </span>
-            <span className='text-[#F6B72D]'>Blogs</span>
+            <span className='text-[#111827]'>{t('blog.titlePrefix', 'Our ')}</span>
+            <span className='text-[#F6B72D]'>{t('blog.titleHighlight', 'Blogs')}</span>
           </h2>
           <p className='text-[13px] lg:text-[15px] leading-[24px] font-normal text-[#4B5563] max-w-2xl mx-auto mb-4 text-center [text-wrap:balance]'>
-            Explore our curated blogs packed with case studies, expert insights, and actionable frameworks to elevate executive performance and organizational effectiveness.
+            {t('blog.subtitle', 'Explore our curated blogs packed with case studies, expert insights, and actionable frameworks to elevate executive performance and organizational effectiveness.')}
           </p>
           <Link
             to='/articles'
@@ -109,7 +148,7 @@ export default function BlogSection({ blogs = [], loading = false }) {
             onClick={() => sessionStorage.setItem('tci_last_home_section', 'blog')}
             className='group inline-flex items-center gap-2 border border-gray-300 bg-white/90 px-4 py-1.5 rounded-full hover:bg-[#F6B72D] hover:border-[#F6B72D] transition-all duration-300 shadow-sm mx-auto'
           >
-            <span className='text-[#111827] font-bold text-[11px] sm:text-[12px] uppercase tracking-wider'>Explore all publications</span>
+            <span className='text-[#111827] font-bold text-[11px] sm:text-[12px] uppercase tracking-wider'>{t('blog.exploreAll', 'Explore all publications')}</span>
             <div className='w-5 h-5 rounded-full bg-[#F6B72D] group-hover:bg-black/10 flex items-center justify-center group-hover:translate-x-0.5 transition-transform'>
               <ArrowRight className='w-3 h-3 text-[#000023]' />
             </div>
@@ -146,7 +185,7 @@ export default function BlogSection({ blogs = [], loading = false }) {
                       {featuredPost.author || 'The CEO Influencers'}
                     </span>
                     <span aria-hidden='true'>•</span>
-                    <span>{featuredPost.timeToRead} min read</span>
+                    <span>{featuredPost.timeToRead} {t('blog.minRead', 'min read')}</span>
                     <span aria-hidden='true'>•</span>
                     <span>{featuredPost.publishedAt}</span>
                   </p>
@@ -160,7 +199,7 @@ export default function BlogSection({ blogs = [], loading = false }) {
                   </p>
 
                   <div className='flex items-center text-[#111827] font-bold text-[11px] sm:text-[12px] gap-1.5 mt-auto'>
-                    <span>Read Article</span>
+                    <span>{t('blog.readArticle', 'Read Article')}</span>
                     <ArrowRight className='w-3 h-3 group-hover:translate-x-1 transition-transform' />
                   </div>
                 </div>
@@ -199,7 +238,7 @@ export default function BlogSection({ blogs = [], loading = false }) {
                   </h4>
 
                   <p className='text-[#6B7280] text-[10px] sm:text-[11px] font-medium'>
-                    {post.publishedAt} • {post.timeToRead} min read
+                    {post.publishedAt} • {post.timeToRead} {t('blog.minRead', 'min read')}
                   </p>
                 </div>
               </Link>

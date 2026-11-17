@@ -19,31 +19,31 @@ export default function StatsSection() {
       icon: Globe,
       number: 7500,
       suffix: '+',
-      label: 'Clients Served Combined'
+      label: t('stats.stats.clientsServed', 'Clients Served Combined')
     },
     {
       icon: TrendingUp,
       number: 99,
       suffix: '%',
-      label: 'Client Satisfaction'
+      label: t('stats.stats.successRate', 'Client Satisfaction')
     },
     {
       icon: Building2,
       number: 186,
       suffix: '+',
-      label: 'Industries Served'
+      label: t('stats.stats.countries', 'Industries Served')
     },
     {
       icon: Star,
       number: 98,
       suffix: '%',
-      label: 'Strategic Partnerships'
+      label: t('stats.stats.yearsExperience', 'Strategic Partnerships')
     },
     {
       icon: Heart,
       number: 100,
       suffix: '%',
-      label: 'Leadership Performance'
+      label: t('stats.stats.partnerships', 'Leadership Performance')
     }
   ]
 
@@ -91,15 +91,15 @@ export default function StatsSection() {
         <div className='flex flex-col items-center text-center mb-10 md:mb-12'>
           <div className='inline-block border border-gray-400/60 rounded-full px-5 py-0.5 mb-4 bg-transparent'>
             <span className='text-[#4B5563] font-bold tracking-widest text-[11px] uppercase'>
-              WHY US
+              {t('stats.sectionHeader', 'WHY US')}
             </span>
           </div>
 
           <h2 className='text-[32px] md:text-[40px] font-bold text-[#111827] leading-[1.1] tracking-tight mb-1 uppercase'>
-            Real Numbers. Real Impact.
+            {t('stats.titleLine1', 'Real Numbers. Real Impact.')}
           </h2>
           <h2 className='text-[32px] md:text-[40px] font-bold text-[#F6B72D] leading-[1.1] tracking-tight uppercase'>
-            Real Transformation.
+            {t('stats.titleLine2', 'Real Transformation.')}
           </h2>
         </div>
 

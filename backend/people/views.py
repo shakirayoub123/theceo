@@ -3260,6 +3260,7 @@ class SalesNewClientsView(APIView):
                     "meetingStatus": client.meeting_status,
                     "serviceStatus": client.program_status,
                     "contractStatus": client.contract_status,
+                    "programOfInterest": getattr(client, "program_of_interest", None) or "",
                     "assessmentsAssigned": is_assigned,
                     "assessmentsAssignedAt": assigned_at,
                     "completedAssessmentsCount": completed_count,
@@ -3550,6 +3551,7 @@ class SalesCreateClientView(APIView):
             client.job_title = data.get("job_title") or client.job_title
             client.position = data.get("position") or client.position
             client.industry = data.get("industry") or client.industry
+            client.program_of_interest = data.get("program_of_interest") or client.program_of_interest
             client.assigned_sales = request.user
             client.save()
 

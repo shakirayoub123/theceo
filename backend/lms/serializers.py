@@ -2575,6 +2575,12 @@ class ScheduleAppointmentSerializer(serializers.ModelSerializer):
     referredBy = serializers.CharField(
         source="referred_by", required=False, allow_blank=True
     )
+    program_of_interest = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True
+    )
+    programOfInterest = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True
+    )
     date = serializers.DateField(
         source="preferred_date",
         input_formats=["%Y-%m-%d"],
@@ -2598,11 +2604,16 @@ class ScheduleAppointmentSerializer(serializers.ModelSerializer):
             "industry",
             "country",
             "referredBy",
+            "program_of_interest",
+            "programOfInterest",
             "date",
             "time",
         ]
 
     def create(self, validated_data):
+        program_val = validated_data.pop("programOfInterest", None)
+        if program_val and not validated_data.get("program_of_interest"):
+            validated_data["program_of_interest"] = program_val
         for field in (
             "address",
             "job_title",

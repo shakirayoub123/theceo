@@ -3,6 +3,7 @@ import { MetricCard } from '@/components/MetricCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import ScheduleMeetingModal from '@/components/ScheduleMeetingModal'
+import { PROGRAMS_OF_INTEREST } from '@/components/AppointmentModal'
 import { CreatePaymentLinkModal } from '@/components/CreatePaymentLinkModal'
 import authService from '@/services/authService'
 import { Plus, Search, X } from 'lucide-react'
@@ -31,6 +32,7 @@ export default function PotentialLeads() {
     job_title: '',
     position: '',
     industry: '',
+    program_of_interest: '',
   })
   const router = useNavigate()
 
@@ -164,6 +166,7 @@ export default function PotentialLeads() {
     leadsData?.map((client) => ({
       id: client.uuid,
       clientName: client.clientName,
+      programOfInterest: client.programOfInterest || client.raw?.programOfInterest || '',
       meetingStatus: client.meetingStatus || 'pending',
       programStatus: client.programStatus || 'unpaid',
       contractStatus: client.contractStatus || 'not_sent',
@@ -208,6 +211,21 @@ export default function PotentialLeads() {
           data={clients}
           columns={[
             { key: 'clientName', label: 'Client Name' },
+            {
+              key: 'programOfInterest',
+              label: 'Program of Interest',
+              render: (row) => (
+                <span className='text-xs font-semibold text-slate-800' title={row.programOfInterest}>
+                  {row.programOfInterest ? (
+                    row.programOfInterest.length > 28
+                      ? `${row.programOfInterest.slice(0, 28)}...`
+                      : row.programOfInterest
+                  ) : (
+                    <span className='text-gray-400 font-normal'>-</span>
+                  )}
+                </span>
+              ),
+            },
             {
               key: 'meetingStatus',
               label: 'Meeting Status',
@@ -386,6 +404,23 @@ export default function PotentialLeads() {
                   }
                   className='font-exo'
                 />
+                <select
+                  value={newClientData.program_of_interest}
+                  onChange={(e) =>
+                    handleInputChange('program_of_interest', e.target.value)
+                  }
+                  className='w-full h-10 px-3 py-2 border border-input rounded-md text-sm font-exo bg-background'
+                >
+                  <option value=''>Select Program of Interest (Optional)</option>
+                  {PROGRAMS_OF_INTEREST.map((prog) => {
+                    const label = `Program ${prog.number}: ${prog.shortName || prog.name}`
+                    return (
+                      <option key={prog.id} value={label}>
+                        {label}
+                      </option>
+                    )
+                  })}
+                </select>
               </div>
               <div className='flex justify-end gap-2'>
                 <Button

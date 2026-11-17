@@ -85,7 +85,7 @@ export default function Footer() {
             {/* Contact Us */}
             <div>
               <p className='text-[#D1D5DB] font-bold text-[12px] uppercase tracking-wider mb-2'>
-                CONTACT US:
+                {t('footer.contactUs', 'CONTACT US:')}
               </p>
               <p className='text-[#9CA3AF] text-[13px] md:text-[14px]'>
                 Email: <a href="mailto:info@theceoinfluencers.com" className='text-[#F6B72D] hover:underline font-semibold'>info@theceoinfluencers.com</a>
@@ -96,7 +96,7 @@ export default function Footer() {
           {/* Column 2: Company */}
           <div className='lg:col-span-2 flex flex-col'>
             <h4 className='text-[#F6B72D] text-[12px] md:text-[13px] mb-5 tracking-widest font-bold uppercase'>
-              COMPANY
+              {t('footer.company', 'COMPANY')}
             </h4>
             <ul className='space-y-4'>
               <li>
@@ -116,7 +116,7 @@ export default function Footer() {
                   onClick={() => sessionStorage.setItem('tci_last_home_section', 'footer')}
                   className={linkStyle}
                 >
-                  <span className='mr-2 font-bold'>&rsaquo;</span> Terms and Conditions
+                  <span className='mr-2 font-bold'>&rsaquo;</span> {t('footer.terms', 'Terms and Conditions')}
                 </Link>
               </li>
             </ul>
@@ -125,27 +125,27 @@ export default function Footer() {
           {/* Column 3: Links */}
           <div className='lg:col-span-2 flex flex-col'>
             <h4 className='text-[#F6B72D] text-[12px] md:text-[13px] mb-5 tracking-widest font-bold uppercase'>
-              LINKS
+              {t('footer.links', 'LINKS')}
             </h4>
             <ul className='space-y-4'>
               <li>
                 <a href='/#our-team' className={linkStyle}>
-                  <span className='mr-2 font-bold'>&rsaquo;</span> About Us
+                  <span className='mr-2 font-bold'>&rsaquo;</span> {t('footer.aboutUs', 'About Us')}
                 </a>
               </li>
               <li>
                 <a href='/#blog' className={linkStyle}>
-                  <span className='mr-2 font-bold'>&rsaquo;</span> Blog
+                  <span className='mr-2 font-bold'>&rsaquo;</span> {t('footer.blog', 'Blog')}
                 </a>
               </li>
               <li>
                 <Link to='/case-studies' className={linkStyle}>
-                  <span className='mr-2 font-bold'>&rsaquo;</span> Case Studies
+                  <span className='mr-2 font-bold'>&rsaquo;</span> {t('footer.caseStudies', 'Case Studies')}
                 </Link>
               </li>
               <li>
                 <Link to='/sitemap' className={linkStyle}>
-                  <span className='mr-2 font-bold'>&rsaquo;</span> Sitemap
+                  <span className='mr-2 font-bold'>&rsaquo;</span> {t('footer.sitemap', 'Sitemap')}
                 </Link>
               </li>
             </ul>
@@ -154,13 +154,13 @@ export default function Footer() {
           {/* Column 4: Newsletter & Socials */}
           <div className='lg:col-span-4 flex flex-col'>
             <h4 className='text-[#F6B72D] text-[12px] md:text-[13px] mb-5 tracking-widest font-bold uppercase'>
-              NEWSLETTER
+              {t('footer.newsletter', 'NEWSLETTER')}
             </h4>
             <form onSubmit={handleNewsletterSubmit} className='mb-8 relative flex w-full max-w-sm gap-3'>
               <div className='flex-1 relative'>
                 <Input
                   type='email'
-                  placeholder='Email'
+                  placeholder={t('footer.emailPlaceholder', 'Email')}
                   value={newsletterEmail}
                   onChange={(e) => setNewsletterEmail(e.target.value)}
                   className='w-full bg-[#070707] border border-[#F6B72D] text-white rounded-full text-sm py-5 px-5 placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-[#F6B72D] shadow-inner'
@@ -172,7 +172,7 @@ export default function Footer() {
                 disabled={isSubmitting}
                 className='bg-[#F6B72D] hover:bg-[#e6a820] text-black font-bold px-6 py-2 rounded-full text-sm disabled:opacity-50 transition-colors flex items-center justify-center shrink-0 uppercase tracking-widest'
               >
-                JOIN <ArrowRight className='h-4 w-4 ml-1.5' strokeWidth={3} />
+                {t('footer.join', 'JOIN')} <ArrowRight className='h-4 w-4 ml-1.5' strokeWidth={3} />
               </button>
             </form>
             {submitMessage && (
@@ -180,7 +180,7 @@ export default function Footer() {
             )}
 
             <h4 className='text-white text-[12px] md:text-[13px] mb-4 tracking-widest font-bold uppercase'>
-              FOLLOW US
+              {t('footer.followUs', 'FOLLOW US')}
             </h4>
             <div className='flex items-center gap-3'>
               <a

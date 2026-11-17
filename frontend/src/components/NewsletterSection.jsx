@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { ArrowRight, CloudDownload, Maximize2, Printer, Bookmark } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import authService from '../services/authService'
 import { getAssetUrl } from '../lib/utils'
 import PdfFlipbook from './PdfFlipbook'
 import groupBg from '@/assets/Group.png'
 export default function NewsletterSection() {
+  const { t } = useTranslation()
   const [newsletters, setNewsletters] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -253,15 +255,15 @@ export default function NewsletterSection() {
         <div className='flex flex-col items-center text-center justify-center mb-6 md:mb-7 max-w-4xl mx-auto'>
           <div className='inline-block border border-white/30 rounded-full px-4 py-[3px] mb-2'>
             <span className='text-white font-bold tracking-widest text-[9px] uppercase'>
-              WHAT WE PROVIDE
+              {t('newsletter.badge', 'WHAT WE PROVIDE')}
             </span>
           </div>
           <h2 className='text-[28px] md:text-[38px] font-bold leading-none mb-3 tracking-tight'>
-            <span className='text-white'>OUR </span>
-            <span className='text-[#F6B72D] font-sans text-[32px] md:text-[42px]'>QUARTERLY NEWSLETTERS</span>
+            <span className='text-white'>{t('newsletter.titlePrefix', 'OUR ')}</span>
+            <span className='text-[#F6B72D] font-sans text-[32px] md:text-[42px]'>{t('newsletter.titleHighlight', 'QUARTERLY NEWSLETTERS')}</span>
           </h2>
           <p className='text-[#CBD5E1] text-[12px] md:text-[14px] leading-[19px] md:leading-[22px] font-medium mx-auto max-w-4xl'>
-            Unlock a decisive competitive edge with our quarterly strategic briefing, where we deconstruct business-critical shifts across global continents and local markets, distilling high-stakes industry trends and corporate maneuvers into actionable leadership blueprints tailored for today's complex economic landscape.
+            {t('newsletter.subtitle', "Unlock a decisive competitive edge with our quarterly strategic briefing, where we deconstruct business-critical shifts across global continents and local markets, distilling high-stakes industry trends and corporate maneuvers into actionable leadership blueprints tailored for today's complex economic landscape.")}
           </p>
         </div>
 

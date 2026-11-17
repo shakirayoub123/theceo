@@ -68,14 +68,14 @@ export default function TeamSection() {
         <div className='mb-5 md:mb-6 text-center'>
           <div className='inline-block border border-gray-400 rounded-full px-5 py-0.5 mb-3'>
             <span className='text-[#111827] font-semibold tracking-widest text-[9px] uppercase'>
-              Who We Are
+              {t('team.sectionHeader', 'Who We Are')}
             </span>
           </div>
           <h2 className='text-[28px] lg:text-[34px] leading-[1.1] tracking-[-1.01px] font-bold text-[#111827] mb-2 uppercase'>
-            Our <span className='text-[#F6B72D]'>Influencers</span>
+            {t('team.titlePrefix', 'Our ')}<span className='text-[#F6B72D]'>{t('team.titleHighlight', 'Influencers')}</span>
           </h2>
           <p className='text-[13px] lg:text-[15px] leading-[24px] font-normal text-[#4B5563] max-w-2xl mx-auto'>
-            Our expert coaching advisors provide cutting edge, personalized 2-on-1 coaching.
+            {t('team.sectionDescription', 'Our expert coaching advisors provide cutting edge, personalized 2-on-1 coaching.')}
           </p>
         </div>
 
@@ -127,7 +127,7 @@ export default function TeamSection() {
                       {member.stats.clients}
                     </span>
                     <span className='text-[7px] md:text-[8px] uppercase tracking-[0.1em] text-gray-400 font-bold mt-1'>
-                      Clients Advised
+                      {t('team.clientsAdvised', 'Clients Advised')}
                     </span>
                   </div>
                   <div className='w-px h-8 bg-gray-200'></div>
@@ -136,7 +136,7 @@ export default function TeamSection() {
                       {member.stats.years}
                     </span>
                     <span className='text-[7px] md:text-[8px] uppercase tracking-[0.1em] text-gray-400 font-bold mt-1'>
-                      Years Experience
+                      {t('team.yearsExperience', 'Years Experience')}
                     </span>
                   </div>
                 </div>
@@ -150,7 +150,7 @@ export default function TeamSection() {
                       event.stopPropagation()
                       setActiveVideo({
                         url: member.biographyVideo,
-                        label: 'Biography',
+                        label: t('team.biography', 'Biography'),
                         memberName: member.name,
                       })
                     }}
@@ -159,7 +159,7 @@ export default function TeamSection() {
                     <span className='flex h-8 w-8 items-center justify-center rounded-full bg-[#F6B72D]'>
                       <ArrowRight className='h-4 w-4 text-white' />
                     </span>
-                    Biography
+                    {t('team.biography', 'Biography')}
                   </button>
                   <button
                     type='button'
@@ -168,7 +168,7 @@ export default function TeamSection() {
                       event.stopPropagation()
                       setActiveVideo({
                         url: member.philosophyVideo,
-                        label: 'Philosophy',
+                        label: t('team.philosophy', 'Philosophy'),
                         memberName: member.name,
                       })
                     }}
@@ -177,7 +177,7 @@ export default function TeamSection() {
                     <span className='flex h-8 w-8 items-center justify-center rounded-full bg-[#F6B72D]'>
                       <ArrowRight className='h-4 w-4 text-white' />
                     </span>
-                    Philosophy
+                    {t('team.philosophy', 'Philosophy')}
                   </button>
                 </div>
               </div>
@@ -200,7 +200,7 @@ export default function TeamSection() {
               <div className='text-[28px] md:text-[36px] font-extrabold text-[#F6B72D] font-jakarta tracking-tight leading-none mb-1 md:mb-[6px]'>
                 <CountUp end={7500} suffix={''} />+
               </div>
-              <div className='text-[#111827] text-[9.5px] md:text-[10px] font-bold tracking-[0.15em] uppercase'>Total Clients Served</div>
+              <div className='text-[#111827] text-[9.5px] md:text-[10px] font-bold tracking-[0.15em] uppercase'>{t('team.totalClientsServed', 'Total Clients Served')}</div>
             </div>
 
             {/* Divider */}
@@ -214,7 +214,7 @@ export default function TeamSection() {
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
               </div>
-              <div className='text-[#111827] text-[9.5px] md:text-[10px] font-bold tracking-[0.15em] uppercase'>Avg Rating</div>
+              <div className='text-[#111827] text-[9.5px] md:text-[10px] font-bold tracking-[0.15em] uppercase'>{t('team.avgRating', 'Avg Rating')}</div>
             </div>
 
             {/* Divider */}
@@ -225,7 +225,7 @@ export default function TeamSection() {
               <div className='text-[28px] md:text-[36px] font-extrabold text-[#F6B72D] font-jakarta tracking-tight leading-none mb-1 md:mb-[6px]'>
                 <CountUp end={20} />+
               </div>
-              <div className='text-[#111827] text-[9.5px] md:text-[10px] font-bold tracking-[0.15em] uppercase'>Years Experience Each</div>
+              <div className='text-[#111827] text-[9.5px] md:text-[10px] font-bold tracking-[0.15em] uppercase'>{t('team.yearsExperienceEach', 'Years Experience Each')}</div>
             </div>
           </div>
         </div>

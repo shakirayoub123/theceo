@@ -152,9 +152,16 @@ export default function ScheduleMeetingModal({ isOpen, onClose, client }) {
       <div className='bg-white rounded-[10px] border-2 border-[#F6B72D] w-full max-w-2xl mx-auto relative shadow-2xl overflow-auto max-h-[90vh]'>
         {/* Header */}
         <div className='flex items-center justify-between p-6 border-b border-gray-200'>
-          <h2 className='text-lg font-bold text-black font-gt'>
-            Schedule Meeting with {client.clientName}
-          </h2>
+          <div>
+            <h2 className='text-lg font-bold text-black font-gt'>
+              Schedule Meeting with {client.clientName}
+            </h2>
+            {(client.programOfInterest || client.raw?.programOfInterest) && (
+              <p className='text-xs text-amber-800 font-medium mt-1'>
+                Program of Interest: {client.programOfInterest || client.raw?.programOfInterest}
+              </p>
+            )}
+          </div>
           <button
             onClick={onClose}
             className='p-1 hover:bg-gray-100 rounded-full transition-colors'

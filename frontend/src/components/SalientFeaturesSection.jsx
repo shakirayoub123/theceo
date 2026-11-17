@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import AppointmentModal from './AppointmentModal'
 import {
   ArrowRight,
@@ -16,44 +17,45 @@ import groupBg from '@/assets/Group.png'
 import yellowBackground from '@/assets/bg yellow.png'
 
 export default function SalientFeaturesSection() {
+  const { t } = useTranslation()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const features = [
     {
-      title: 'Comprehensive Holistic 360° Leadership Development',
+      title: t('features.items.holisticLeadership.title', 'Comprehensive Holistic 360° Leadership Development'),
       icon: Lightbulb,
       slug: 'holistic-360-leadership-development',
-      description: 'Our Two-To-One Advantage™ brings two expert mentors together with APO-aligned optimization, the LLM-Linear Leadership Model™, a six-part data-driven assessment, and full-cycle support.'
+      description: t('features.items.holisticLeadership.description', 'Our Two-To-One Advantage™ brings two expert mentors together with APO-aligned optimization, the LLM-Linear Leadership Model™, a six-part data-driven assessment, and full-cycle support.')
     },
     {
-      title: 'Global Expertise, Local Impact',
+      title: t('features.items.globalExpertise.title', 'Global Expertise, Local Impact'),
       icon: Map,
       slug: 'global-expertise-local-impact',
-      description: 'The CEO Influencers proven expertise mentoring 7,500 senior executives in over 186 industries globally gives you the strategic edge.'
+      description: t('features.items.globalExpertise.description', 'The CEO Influencers proven expertise mentoring 7,500 senior executives in over 186 industries globally gives you the strategic edge.')
     },
     {
-      title: 'Long-Term Profitability',
+      title: t('features.items.profitability.title', 'Long-Term Profitability'),
       icon: Building,
       slug: 'long-term-profitability',
-      description: 'Empathetic, ethical leadership builds stakeholder trust, resilient cultures, brand loyalty, and sustainable long-term profitability.'
+      description: t('features.items.profitability.description', 'Empathetic, ethical leadership builds stakeholder trust, resilient cultures, brand loyalty, and sustainable long-term profitability.')
     },
     {
-      title: 'Empathy at the Core',
+      title: t('features.items.empathy.title', 'Empathy at the Core'),
       icon: Zap,
       slug: 'empathy-at-the-core',
-      description: 'Empathy strengthens inclusion, collaboration, and trust, helping leaders unlock engagement, innovation, resilience, and purposeful performance.'
+      description: t('features.items.empathy.description', 'Empathy strengthens inclusion, collaboration, and trust, helping leaders unlock engagement, innovation, resilience, and purposeful performance.')
     },
     {
-      title: 'Building 21st Century Strategic Partnerships and Alliances',
+      title: t('features.items.partnerships.title', 'Building 21st Century Strategic Partnerships and Alliances'),
       icon: Globe,
       slug: 'strategic-partnerships-alliances',
-      description: 'We help leaders build values-aligned alliances that expand capabilities, open markets, mitigate risk, and create sustainable win/win outcomes.'
+      description: t('features.items.partnerships.description', 'We help leaders build values-aligned alliances that expand capabilities, open markets, mitigate risk, and create sustainable win/win outcomes.')
     },
     {
-      title: 'Maximizing Comprehensive Technology Strategy',
+      title: t('features.items.aiTechnology.title', 'Maximizing Comprehensive Technology Strategy'),
       icon: BarChart3,
       slug: 'maximizing-ai-technology-strategy',
-      description: 'We help leaders use human and technology-driven insights to optimize decisions, strengthen governance, and build lasting competitive advantage.'
+      description: t('features.items.aiTechnology.description', 'We help leaders use human and technology-driven insights to optimize decisions, strengthen governance, and build lasting competitive advantage.')
     }
   ]
 
@@ -77,14 +79,14 @@ export default function SalientFeaturesSection() {
           <div className='text-center mb-7 lg:mb-8'>
             <div className='inline-block border border-white/40 rounded-full px-4 py-1 mb-3'>
               <span className='text-white tracking-widest text-[9px] uppercase'>
-                SALIENT FEATURES
+                {t('features.sectionHeader', 'SALIENT FEATURES')}
               </span>
             </div>
             <h2 className='text-[30px] md:text-[36px] font-bold text-white mb-3 tracking-tight uppercase leading-[1.1] [text-wrap:balance]'>
-              Salient <span className='text-[#F6B72D]'>Features</span>
+              {t('features.titlePrefix', 'Salient ')}<span className='text-[#F6B72D]'>{t('features.titleHighlight', 'Features')}</span>
             </h2>
             <p className='text-[12px] md:text-[13px] leading-[19px] md:leading-[21px] text-gray-300 max-w-[820px] mx-auto [text-wrap:pretty]'>
-              Claire and James bring more than 20 years of combined experience, having successfully served over 7,500 executive clients worldwide. Their shared philosophy is that exceptional leadership is defined not by power or position, but by the ability to develop people, inspire progress, and equip the next generation of leaders with the skills, values, and mindset to drive meaningful, sustainable business and societal impact.
+              {t('features.sectionDescription', 'Claire and James bring more than 20 years of combined experience, having successfully served over 7,500 executive clients worldwide. Their shared philosophy is that exceptional leadership is defined not by power or position, but by the ability to develop people, inspire progress, and equip the next generation of leaders with the skills, values, and mindset to drive meaningful, sustainable business and societal impact.')}
             </p>
           </div>
 
@@ -156,10 +158,10 @@ export default function SalientFeaturesSection() {
           {/* Left: text + buttons */}
           <div className='flex flex-col items-start'>
             <h2 className='text-[26px] md:text-[36px] lg:text-[40px] font-bold text-[#161616] leading-[1.15] tracking-tight mb-3'>
-              Ready To Transform ?
+              {t('features.ctaTitle', 'Ready To Transform ?')}
             </h2>
             <p className='text-[13px] md:text-[14px] text-[#1C1C1D]/75 font-medium mb-7 leading-[22px]'>
-              Strategic guidance. Executive insight. Measurable transformation.
+              {t('features.ctaSubtitle', 'Strategic guidance. Executive insight. Measurable transformation.')}
             </p>
             <div className='flex gap-4 flex-wrap'>
               <button
@@ -169,14 +171,14 @@ export default function SalientFeaturesSection() {
                 <div className='bg-white rounded-full p-2 mr-3'>
                   <ArrowRight className='w-3.5 h-3.5 text-[#1A2332]' />
                 </div>
-                Start Your Journey
+                {t('features.startJourney', 'Start Your Journey')}
               </button>
               <a href="#case-studies-section">
                 <button className='bg-[#F6B72D] text-[#161616] flex items-center pl-1.5 pr-5 py-1.5 rounded-full font-semibold text-[13px] hover:bg-[#e6ab29] transition-all duration-300 hover:scale-[1.03] shadow-md'>
                   <div className='bg-white rounded-full p-2 mr-3'>
                     <ArrowRight className='w-3.5 h-3.5 text-[#F6B72D]' />
                   </div>
-                  Client Case Studies
+                  {t('nav.caseStudies', 'Client Case Studies')}
                 </button>
               </a>
             </div>

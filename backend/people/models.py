@@ -35,6 +35,7 @@ class Lead(models.Model):
     job_title = models.CharField(max_length=255, blank=True, null=True)
     position = models.CharField(max_length=255, blank=True, null=True)
     industry = models.CharField(max_length=255, blank=True, null=True)
+    program_of_interest = models.CharField(max_length=255, blank=True, null=True)
 
     # Meeting scheduling
     requested_meeting_date = models.DateField()
@@ -271,6 +272,7 @@ class Client(models.Model):
     job_title = models.CharField(max_length=255, blank=True, null=True)
     position = models.CharField(max_length=255, blank=True, null=True)
     industry = models.CharField(max_length=255, blank=True, null=True)
+    program_of_interest = models.CharField(max_length=255, blank=True, null=True)
 
     meeting_status = models.CharField(
         max_length=20, choices=MEETING_STATUS_CHOICES, default="pending"

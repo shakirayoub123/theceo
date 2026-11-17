@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { X, Globe, Clock } from 'lucide-react'
+import { X, Globe, Clock, ChevronDown } from 'lucide-react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import PhoneInput from 'react-phone-number-input'
@@ -7,8 +7,81 @@ import 'react-phone-number-input/style.css'
 import { useTranslation } from 'react-i18next'
 import authService from '../services/authService'
 
-export default function AppointmentModal({ isOpen, onClose }) {
+export const PROGRAMS_OF_INTEREST = [
+  {
+    id: 1,
+    number: 1,
+    name: 'Live Executive Leadership & Organizational Development Performance Optimization Program',
+    shortName: 'Live Executive Leadership & Org Development',
+  },
+  {
+    id: 2,
+    number: 2,
+    name: 'Virtual Self-Learning Executive Leadership & Organizational Development Performance Optimization Program',
+    shortName: 'Virtual Self-Learning Executive Leadership',
+  },
+  {
+    id: 3,
+    number: 3,
+    name: 'The Next Generation Executive Leadership Team Accelerator: Strategic 1-Week Client Site Organizational Mastermind Seminars',
+    shortName: 'Next-Gen Executive Leadership Accelerator',
+  },
+  {
+    id: 4,
+    number: 4,
+    name: 'Business Mastermind Networking Group 1-Week Intensive Events',
+    shortName: 'Business Mastermind Networking Events',
+  },
+  {
+    id: 5,
+    number: 5,
+    name: 'Business Mastermind Classes: Series I-II-III',
+    shortName: 'Business Mastermind Classes: Series I-II-III',
+  },
+  {
+    id: 6,
+    number: 6,
+    name: 'TRAIN-THE-TRAINER: LEADERSHIP TEAM PERFORMANCE ACCELERATOR',
+    shortName: 'Train-the-Trainer: Leadership Accelerator',
+  },
+  {
+    id: 7,
+    number: 7,
+    name: 'DUAL KEYNOTE SPEAKING TEAM PROGRAMS',
+    shortName: 'Dual Keynote Speaking Team Programs',
+  },
+  {
+    id: 8,
+    number: 8,
+    name: 'BUSINESS TO BUSINESS CONSULTING SERVICES',
+    shortName: 'Business to Business Consulting Services',
+  },
+  {
+    id: 9,
+    number: 9,
+    name: 'THE EXECUTIVE ASCENT CAREER COACHING PROGRAM',
+    shortName: 'Executive Ascent Career Coaching Program',
+  },
+]
+
+export default function AppointmentModal({ isOpen, onClose, initialProgram = '' }) {
   const { t } = useTranslation()
+
+  const resolveInitialProgram = (input) => {
+    if (!input) return ''
+    const trimmed = String(input).trim().toLowerCase()
+    const found = PROGRAMS_OF_INTEREST.find(
+      (p) =>
+        trimmed.includes(p.name.toLowerCase()) ||
+        p.name.toLowerCase().includes(trimmed) ||
+        (p.shortName && trimmed.includes(p.shortName.toLowerCase())) ||
+        (p.shortName && p.shortName.toLowerCase().includes(trimmed)) ||
+        trimmed.includes(`program ${p.number}`) ||
+        trimmed === String(p.number)
+    )
+    return found ? `Program ${found.number}: ${found.shortName || found.name}` : input
+  }
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -19,6 +92,7 @@ export default function AppointmentModal({ isOpen, onClose }) {
     industry: '',
     country: '',
     referredBy: '',
+    programOfInterest: '',
     date: '',
     time: '',
   })
@@ -59,13 +133,14 @@ export default function AppointmentModal({ isOpen, onClose }) {
         industry: '',
         country: '',
         referredBy: '',
+        programOfInterest: resolveInitialProgram(initialProgram),
         date: '',
         time: '',
       })
       setSubmitMessage(null)
       setSubmitError(null)
     }
-  }, [isOpen])
+  }, [isOpen, initialProgram])
 
   // Close modal on Escape key
   useEffect(() => {
@@ -108,6 +183,8 @@ export default function AppointmentModal({ isOpen, onClose }) {
         industry: formData.industry,
         country: formData.country,
         referredBy: formData.referredBy,
+        program_of_interest: formData.programOfInterest,
+        programOfInterest: formData.programOfInterest,
         date: formData.date,
         time: formData.time,
       })
@@ -120,6 +197,7 @@ export default function AppointmentModal({ isOpen, onClose }) {
         title: 'Appointment Scheduled!',
         message: `Your appointment has been scheduled for ${response.scheduled_for}. Check your email for login and meeting-join instructions.`,
         appointmentId: response.appointment_id,
+        programOfInterest: response.program_of_interest || formData.programOfInterest,
         meetingUrl: response.meeting_url,
         directMeetingUrl: response.direct_meeting_url,
         loginUrl: response.login_url,
@@ -279,7 +357,7 @@ export default function AppointmentModal({ isOpen, onClose }) {
             {/* COUNTRY */}
             <div>
               <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
-                Country <span className='text-[#F6B72D]'>*</span>
+                {t('appointment.country', 'Country')} <span className='text-[#F6B72D]'>*</span>
               </label>
               <div className='relative'>
                 <Input
@@ -288,7 +366,7 @@ export default function AppointmentModal({ isOpen, onClose }) {
                   onChange={(e) => handleInputChange('country', e.target.value)}
                   required
                   className='w-full h-[38px] border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-[13px] px-3 pr-10 placeholder:text-gray-400'
-                  placeholder='Country'
+                  placeholder={t('appointment.countryPlaceholder', 'Country')}
                 />
                 <Globe className='absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none' />
               </div>
@@ -297,71 +375,99 @@ export default function AppointmentModal({ isOpen, onClose }) {
             {/* ADDRESS */}
             <div>
               <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
-                Address
+                {t('appointment.address', 'Address')}
               </label>
               <Input
                 type='text'
                 value={formData.address}
                 onChange={(e) => handleInputChange('address', e.target.value)}
                 className='w-full h-[38px] border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-[13px] px-3 placeholder:text-gray-400'
-                placeholder='Address'
+                placeholder={t('appointment.address', 'Address')}
               />
             </div>
 
             {/* JOB TITLE */}
             <div>
               <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
-                Job Title
+                {t('appointment.jobTitle', 'Job Title')}
               </label>
               <Input
                 type='text'
                 value={formData.jobTitle}
                 onChange={(e) => handleInputChange('jobTitle', e.target.value)}
                 className='w-full h-[38px] border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-[13px] px-3 placeholder:text-gray-400'
-                placeholder='Job title'
+                placeholder={t('appointment.jobTitle', 'Job title')}
               />
             </div>
 
             {/* COMPANY NAME */}
             <div>
               <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
-                Company Name
+                {t('appointment.companyName', 'Company Name')}
               </label>
               <Input
                 type='text'
                 value={formData.position}
                 onChange={(e) => handleInputChange('position', e.target.value)}
                 className='w-full h-[38px] border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-[13px] px-3 placeholder:text-gray-400'
-                placeholder='Company name'
+                placeholder={t('appointment.companyName', 'Company name')}
               />
             </div>
 
             {/* INDUSTRY */}
             <div>
               <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
-                Industry
+                {t('appointment.industry', 'Industry')}
               </label>
               <Input
                 type='text'
                 value={formData.industry}
                 onChange={(e) => handleInputChange('industry', e.target.value)}
                 className='w-full h-[38px] border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-[13px] px-3 placeholder:text-gray-400'
-                placeholder='Industry'
+                placeholder={t('appointment.industry', 'Industry')}
               />
             </div>
 
             {/* REFERRED BY */}
-            <div className='col-span-1 border-b border-white pb-1 sm:pb-0'>
+            <div>
               <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
-                Referred By
+                {t('appointment.referredBy', 'Referred By')}
               </label>
               <Input
                 type='text'
                 value={formData.referredBy}
                 onChange={(e) => handleInputChange('referredBy', e.target.value)}
                 className='w-full h-[38px] border-gray-200 focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] rounded-lg font-jakarta text-[13px] px-3 placeholder:text-gray-400'
-                placeholder='Referral source'
+                placeholder={t('appointment.referredByPlaceholder', 'Referral source')}
               />
+            </div>
+
+            {/* PROGRAM OF INTEREST */}
+            <div>
+              <label className='block text-[10px] font-bold text-[#111827] uppercase tracking-wide mb-1 font-jakarta'>
+                {t('appointment.programOfInterest', 'Program of Interest')} <span className='text-[#F6B72D]'>*</span>
+              </label>
+              <div className='relative'>
+                <select
+                  value={formData.programOfInterest}
+                  onChange={(e) => handleInputChange('programOfInterest', e.target.value)}
+                  required
+                  className='w-full h-[38px] px-3 py-1.5 border border-gray-200 rounded-lg focus:border-[#F6B72D] focus:ring-1 focus:ring-[#F6B72D] focus:outline-none font-jakarta text-[13px] appearance-none bg-white text-[#111827] pr-9 text-ellipsis overflow-hidden'
+                >
+                  <option value='' disabled hidden>
+                    {t('appointment.selectProgram', 'Select a program')}
+                  </option>
+                  {PROGRAMS_OF_INTEREST.map((prog) => {
+                    const label = `Program ${prog.number}: ${prog.shortName || prog.name}`
+                    return (
+                      <option key={prog.id} value={label}>
+                        {label}
+                      </option>
+                    )
+                  })}
+                </select>
+                <ChevronDown className='absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none' />
+              </div>
             </div>
           </div>
 
@@ -459,6 +565,14 @@ export default function AppointmentModal({ isOpen, onClose }) {
                 </div>
                 <div className='mt-2 text-sm text-green-700'>
                   <p>{submitMessage.message}</p>
+                  {submitMessage.programOfInterest && (
+                    <p className='mt-2 text-xs font-semibold text-green-900'>
+                      Program of Interest:{' '}
+                      <span className='text-green-800 font-medium'>
+                        {submitMessage.programOfInterest}
+                      </span>
+                    </p>
+                  )}
                   {submitMessage.userCreated && (
                     <div className='mt-3 p-3 bg-green-100 rounded-md'>
                       <p className='font-medium text-green-800 mb-2'>

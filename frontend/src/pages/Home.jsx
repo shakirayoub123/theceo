@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
+import { useTranslation } from 'react-i18next'
 import BlogSection from '@/components/BlogSection'
 import HeroSection from '@/components/HeroSection'
 import NewsletterSection from '@/components/NewsletterSection'
@@ -15,6 +16,7 @@ import ClientCaseStudiesSection from '@/components/ClientCaseStudiesSection'
 import authService from '@/services/authService'
 
 const Home = () => {
+  const { t } = useTranslation()
   const [featuredData, setFeaturedData] = useState({
     blogs: [],
     ebooks: [],
@@ -95,6 +97,10 @@ const Home = () => {
   }, [loading, location.hash, location.pathname])
 
   const buildTickerItems = () => {
+    const rawTicker = t('hero.tickerItems', { returnObjects: true })
+    if (Array.isArray(rawTicker) && rawTicker.length > 0) {
+      return rawTicker
+    }
     return [
       'Microsoft', 'IBM', 'Apple', 'Google', 'U.S./UK Government Agencies',
       'U.S. Congress', 'Northrop Grumman', 'Ball Aerospace', 'ExxonMobil',

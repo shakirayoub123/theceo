@@ -1941,6 +1941,16 @@ class ScheduleAppointmentView(APIView):
             normalized_email = serializer.validated_data["email"].strip().lower()
             submitted_full_name = serializer.validated_data["full_name"].strip()
             submitted_phone = serializer.validated_data["phone"]
+            program_of_interest = (
+                serializer.validated_data.get("program_of_interest")
+                or serializer.validated_data.get("programOfInterest")
+                or request.data.get("program_of_interest")
+                or request.data.get("programOfInterest")
+                or ""
+            )
+            if isinstance(program_of_interest, str):
+                program_of_interest = program_of_interest.strip()
+
             profile_details = {
                 "address": serializer.validated_data.get("address", ""),
                 "job_title": serializer.validated_data.get("job_title", ""),
@@ -1948,6 +1958,7 @@ class ScheduleAppointmentView(APIView):
                 "industry": serializer.validated_data.get("industry", ""),
                 "country": serializer.validated_data.get("country", ""),
                 "referred_by": serializer.validated_data.get("referred_by", ""),
+                "program_of_interest": program_of_interest,
             }
             first_name, last_name = self._split_full_name(submitted_full_name)
             scheduled_datetime = timezone.datetime.combine(
@@ -2155,6 +2166,9 @@ class ScheduleAppointmentView(APIView):
                     )
 
                 appointment = serializer.save(user=user, status="confirmed")
+                if program_of_interest and not getattr(appointment, "program_of_interest", None):
+                    appointment.program_of_interest = program_of_interest
+                    appointment.save(update_fields=["program_of_interest"])
 
                 client_update_fields = [
                     "first_name",
@@ -2193,13 +2207,17 @@ class ScheduleAppointmentView(APIView):
 
                 client.save(update_fields=list(dict.fromkeys(client_update_fields)))
 
+                meeting_notes = f"Discovery call appointment booked by {user.get_full_name()}"
+                if program_of_interest:
+                    meeting_notes += f". Program of Interest: {program_of_interest}"
+
                 meeting = Meeting.objects.create(
                     title=f"Discovery Call with {user.get_full_name()}",
                     meeting_type=meeting_type,
                     scheduled_by=assigned_sales or user,
                     scheduled_at=scheduled_datetime,
                     duration=meeting_duration,
-                    notes=f"Discovery call appointment booked by {user.get_full_name()}",
+                    notes=meeting_notes,
                     status="scheduled",
                 )
 
@@ -2216,6 +2234,7 @@ class ScheduleAppointmentView(APIView):
                 subject="Appointment Booked",
                 message=(
                     f"User: {user.email}\n"
+                    f"Program of Interest: {program_of_interest or '-'}\n"
                     f"Industry: {client.industry or '-'}\n"
                     f"Company: {client.position or '-'}\n"
                     f"Job title: {client.job_title or '-'}\n"
@@ -2255,6 +2274,7 @@ class ScheduleAppointmentView(APIView):
                     f"A new discovery call has been booked and assigned to you.\n\n"
                     f"Client: {user.get_full_name() or user.username} ({user.email})\n"
                     f"Phone: {submitted_phone or '-'}\n"
+                    f"Program of Interest: {program_of_interest or '-'}\n"
                     f"Industry: {client.industry or '-'}\n"
                     f"Company/Position: {client.position or '-'}\n"
                     f"Job Title: {client.job_title or '-'}\n"
@@ -2281,6 +2301,7 @@ class ScheduleAppointmentView(APIView):
                     "appointment_id": str(appointment.id),
                     "meeting_id": str(meeting.id),
                     "status": appointment.status,
+                    "program_of_interest": program_of_interest,
                     "scheduled_for": f"{appointment.preferred_date} at {appointment.preferred_time}",
                     "user_created": user_created,
                     "assigned_salesperson": {

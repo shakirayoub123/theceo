@@ -123,6 +123,7 @@ export default function NewClients() {
       meetingStatus: client.meetingStatus,
       serviceStatus: client.serviceStatus,
       contractStatus: client.contractStatus,
+      programOfInterest: client.programOfInterest || client.raw?.programOfInterest || '',
       assessmentsAssigned: Boolean(client.assessmentsAssigned),
       assessmentsAssignedAt: client.assessmentsAssignedAt,
       completedAssessmentsCount: client.completedAssessmentsCount || 0,
@@ -159,6 +160,21 @@ export default function NewClients() {
           data={clients}
           columns={[
             { key: 'client', label: 'Client' },
+            {
+              key: 'programOfInterest',
+              label: 'Program of Interest',
+              render: (row) => (
+                <span className='text-xs font-semibold text-slate-800' title={row.programOfInterest}>
+                  {row.programOfInterest ? (
+                    row.programOfInterest.length > 32
+                      ? `${row.programOfInterest.slice(0, 32)}...`
+                      : row.programOfInterest
+                  ) : (
+                    <span className='text-gray-400 font-normal'>-</span>
+                  )}
+                </span>
+              ),
+            },
             {
               key: 'meetingStatus',
               label: 'Meeting Status',

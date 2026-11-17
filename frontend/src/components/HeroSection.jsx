@@ -11,8 +11,18 @@ export default function HeroSection({ tickerItems = [] }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isVideoOpen, setIsVideoOpen] = useState(false)
 
-  const fallbackTicker = ['Microsoft', 'IBM', 'Apple', 'Google', 'U.S./UK Government Agencies', 'U.S. Congress', 'Northrop Grumman', 'ExxonMobil', 'JPMorgan Chase & Co.']
-  const focusItems = tickerItems.length > 0 ? tickerItems : fallbackTicker
+  const fallbackTicker = [
+    'Microsoft', 'IBM', 'Apple', 'Google', 'U.S./UK Government Agencies',
+    'U.S. Congress', 'Northrop Grumman', 'Ball Aerospace', 'ExxonMobil',
+    'Dow Inc.', 'United Airlines', 'Boeing', 'UnitedHealthcare',
+    'Merrill Lynch', 'Goldman Sachs', 'Citicorp', 'JPMorgan Chase & Co.',
+    'FINRA', 'Visa', 'Ford', 'BMW', 'Toyota', 'Wyndham Hotels & Resorts Inc.',
+    'Higher Education', 'and other leading global organizations.'
+  ]
+  const translatedTicker = t('hero.tickerItems', { returnObjects: true })
+  const focusItems = tickerItems.length > 0
+    ? tickerItems
+    : (Array.isArray(translatedTicker) && translatedTicker.length > 0 ? translatedTicker : fallbackTicker)
 
   return (
     <section className='relative w-full pt-5 pb-4 bg-white'>

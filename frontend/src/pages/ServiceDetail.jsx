@@ -302,6 +302,7 @@ export default function ServiceDetail() {
       <AppointmentModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        initialProgram={service?.title || ''}
       />
     </div>
   )
