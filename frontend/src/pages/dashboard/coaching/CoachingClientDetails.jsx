@@ -3,7 +3,7 @@ import { ClientDetails } from '@/components/Details'
 import { FormAnswersCard } from '@/components/FormAnswersCard'
 import { Meetings } from '@/components/Meetings'
 import { ProgramCard } from '@/components/ProgramCard'
-import { PrivateNotes } from '@/components/PrivateNotes'
+import ClientNotesPanel from '@/components/ClientNotesPanel'
 import { StudentProgress } from '@/components/StudentProgress'
 import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
@@ -142,9 +142,12 @@ const CoachingClientDetails = () => {
     }
   }, [id, loadExistingChat])
 
+  // Load once per client id. The loaders are recreated on every render, so
+  // listing them as dependencies would refetch on each render.
   useEffect(() => {
     fetchClientDetails()
     checkExistingChat()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
   const fetchClientDetails = async () => {
@@ -330,7 +333,7 @@ const CoachingClientDetails = () => {
     return (
       <div>
         <h2 className='text-xl font-semibold uppercase text-gray-900 mb-8 tracking-wide'>
-          Client Details
+          Client Workspace
         </h2>
         <div className='flex justify-center items-center h-64'>
           <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[#F6B72D]'></div>
@@ -342,7 +345,7 @@ const CoachingClientDetails = () => {
   return (
     <div>
       <h2 className='text-xl font-semibold uppercase text-gray-900 mb-8 tracking-wide'>
-        Client Details - ID: {id}
+        Client Workspace{clientData?.client?.name ? `: ${clientData.client.name}` : ''}
       </h2>
 
       <div className='grid grid-cols-12 gap-6 max-w-7xl mx-auto'>
@@ -378,7 +381,12 @@ const CoachingClientDetails = () => {
         </div>
 
         <div className='col-span-12 lg:col-span-6 lg:row-span-2'>
-          <PrivateNotes title={'Private Notes'} />
+          <ClientNotesPanel
+            clientUserId={id}
+            clientName={clientData?.client?.name}
+            viewer='staff'
+            className='h-full'
+          />
         </div>
 
         {/* Row 4: Student Progress (full width bottom) */}

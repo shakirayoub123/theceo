@@ -1,6 +1,8 @@
 import { MetricCard } from '@/components/MetricCard'
 import clientAPIService from '@/services/clientAPIService'
 import authService from '@/services/authService'
+import LearningMaterialsRail from '@/components/LearningMaterialsRail'
+import ClientNotesPanel from '@/components/ClientNotesPanel'
 import { getAssetUrl } from '@/lib/utils'
 import { Link } from 'react-router-dom'
 import { useEffect, useMemo, useState, useCallback } from 'react'
@@ -32,6 +34,10 @@ import GlobalIndustryAssessmentModal from '../coaching/GlobalIndustryAssessmentM
 import BigFiveAssessmentModal from '../coaching/BigFiveAssessmentModal'
 
 const PAGE_SIZE = 8
+// Preset names shown in the top "Program 1" box (client request).
+const PRESET_SALES_INFLUENCER = 'Pete Gates'
+const PRESET_COACHING_INFLUENCERS = 'James Armstrong & Dr. Claire Keogh'
+
 const HERO_TAGLINE_OUTLINE = {
   WebkitTextStroke: '1px rgba(0, 0, 0, 0.75)',
   paintOrder: 'stroke fill',
@@ -41,33 +47,6 @@ const normalizeText = (value) =>
   String(value || '')
     .trim()
     .toLowerCase()
-
-const uniqueNames = (values) =>
-  values
-    .map((value) => String(value || '').trim())
-    .filter(Boolean)
-    .filter((value, idx, arr) => arr.indexOf(value) === idx)
-
-const extractPersonNames = (value) => {
-  if (!value) return []
-  if (Array.isArray(value)) {
-    return value.flatMap((item) => extractPersonNames(item))
-  }
-  if (typeof value === 'string') {
-    return value
-      .split(',')
-      .map((part) => part.trim())
-      .filter(Boolean)
-  }
-  if (typeof value === 'object') {
-    const directName = value.name || value.full_name || value.fullName
-    if (directName) return [String(directName).trim()]
-    const joinedName = `${value.first_name || ''} ${value.last_name || ''}`.trim()
-    if (joinedName) return [joinedName]
-    if (value.username) return [String(value.username).trim()]
-  }
-  return []
-}
 
 const formatDate = (dateString) => {
   if (!dateString) return 'TBD'
@@ -222,10 +201,6 @@ export default function ClientDashboard() {
   const [enrolledPrograms, setEnrolledPrograms] = useState([])
   const [allPrograms, setAllPrograms] = useState([])
   const [activeProgramId, setActiveProgramId] = useState(null)
-  const [notes, setNotes] = useState('')
-  const [notesSavedAt, setNotesSavedAt] = useState(null)
-  const [activeProgramModules, setActiveProgramModules] = useState([])
-  const [activeProgramDetails, setActiveProgramDetails] = useState(null)
   const [isIntroModalOpen, setIsIntroModalOpen] = useState(false)
   const [introModalTitle, setIntroModalTitle] = useState('')
   const [introModalVideoUrl, setIntroModalVideoUrl] = useState(null)
@@ -341,44 +316,6 @@ export default function ClientDashboard() {
     overviewData?.clientProgramStatus ||
     storedUser?.clientProgramStatus ||
     'unpaid'
-
-  const downloadFile = useCallback(async (file) => {
-    const fileUrl = getAssetUrl(file?.fileUrl || file?.url)
-    if (!fileUrl) return
-
-    try {
-      const response = await fetch(fileUrl)
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`)
-      }
-
-      const blob = await response.blob()
-      const objectUrl = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = objectUrl
-      link.download =
-        file?.title || file?.name || fileUrl.split('/').pop() || 'download'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(objectUrl)
-    } catch (error) {
-      console.error('Failed to download file directly:', error)
-      window.open(fileUrl, '_blank', 'noopener,noreferrer')
-    }
-  }, [])
-
-  const handleModuleDownload = useCallback(
-    async (module) => {
-      const moduleFiles = Array.isArray(module?.files) ? module.files : []
-      if (!moduleFiles.length) return
-
-      for (const file of moduleFiles) {
-        await downloadFile(file)
-      }
-    },
-    [downloadFile],
-  )
 
   const mergeCalendarMonths = (...calendarResponses) => {
     return calendarResponses.reduce((merged, response) => {
@@ -590,70 +527,6 @@ export default function ClientDashboard() {
     }
   }, [activeProgramId, selectablePrograms])
 
-  // --- Notes persistence (localStorage per program) ---
-  const loadNotes = (program) => {
-    try {
-      const raw = localStorage.getItem('client_notes_v1')
-      const parsed = raw ? JSON.parse(raw) : {}
-      const key = `notes-${program?.id || 'global'}`
-      return parsed[key] || ''
-    } catch (err) {
-      console.warn('Unable to read notes from storage', err)
-      return ''
-    }
-  }
-
-  const saveNotes = (program, value) => {
-    try {
-      const raw = localStorage.getItem('client_notes_v1')
-      const parsed = raw ? JSON.parse(raw) : {}
-      const key = `notes-${program?.id || 'global'}`
-      parsed[key] = value
-      localStorage.setItem('client_notes_v1', JSON.stringify(parsed))
-      setNotesSavedAt(new Date())
-    } catch (err) {
-      console.warn('Unable to save notes to storage', err)
-    }
-  }
-
-  useEffect(() => {
-    setNotes(loadNotes(activeProgram))
-  }, [activeProgram])
-
-  useEffect(() => {
-    const fetchModules = async () => {
-      if (
-        !hasFullDashboardAccess ||
-        !activeProgram?.id ||
-        String(activeProgram.id).startsWith('name-')
-      ) {
-        setActiveProgramModules([])
-        setActiveProgramDetails(null)
-        return
-      }
-      try {
-        const details = await clientAPIService.getServiceDetails(
-          activeProgram.id,
-        )
-        setActiveProgramDetails(details || null)
-        const modules =
-          details?.modules ||
-          details?.chapters ||
-          details?.lessons ||
-          details?.sections ||
-          details?.program_chapters ||
-          []
-        setActiveProgramModules(Array.isArray(modules) ? modules : [])
-      } catch (error) {
-        console.error('Failed to fetch program details:', error)
-        setActiveProgramDetails(null)
-        setActiveProgramModules([])
-      }
-    }
-
-    fetchModules()
-  }, [activeProgram?.id, hasFullDashboardAccess])
-
   const sessionsForActiveProgram = useMemo(() => {
     if (!upcomingMeetings.length) return []
     if (!activeProgram) return upcomingMeetings
@@ -745,56 +618,6 @@ export default function ClientDashboard() {
     return ''
   }
 
-  const coachingInfluencersDisplay = useMemo(() => {
-    const merged = [
-      ...extractPersonNames(activeProgramDetails?.trainer),
-      ...extractPersonNames(activeProgramDetails?.assignedAdvisors),
-      ...extractPersonNames(activeProgramDetails?.coachingInfluencers),
-      ...extractPersonNames(activeProgram?.coachingInfluencers),
-      ...extractPersonNames(activeProgram?.assignedAdvisors),
-      ...extractPersonNames(overviewData?.coachingInfluencers),
-      ...extractPersonNames(overviewData?.coaching_influencers),
-      ...extractPersonNames(overviewData?.coaches),
-      ...extractPersonNames(overviewData?.advisors),
-      ...sessionsForActiveProgram.flatMap((meeting) => {
-        const advisorNames = extractPersonNames(
-          meeting?.advisor || meeting?.otherTrainers,
-        )
-        const salesNames = extractPersonNames(
-          meeting?.salesAdvisor ||
-          meeting?.salesInfluencer ||
-          meeting?.sales_advisor ||
-          meeting?.sales_influencer,
-        )
-        return advisorNames.filter((name) => !salesNames.includes(name))
-      }),
-    ]
-    const normalized = uniqueNames(merged)
-    return normalized.length ? normalized.join(' & ') : '-'
-  }, [activeProgram, activeProgramDetails, overviewData, sessionsForActiveProgram])
-
-  const salesInfluencerDisplay = useMemo(() => {
-    const merged = [
-      ...extractPersonNames(activeProgramDetails?.salesInfluencer),
-      ...extractPersonNames(activeProgramDetails?.sales_influencer),
-      ...extractPersonNames(activeProgramDetails?.salesAdvisor),
-      ...extractPersonNames(activeProgramDetails?.sales_advisor),
-      ...extractPersonNames(activeProgramDetails?.assignedSalesInfluencers),
-      ...extractPersonNames(activeProgram?.salesInfluencer),
-      ...extractPersonNames(activeProgram?.sales_influencer),
-      ...extractPersonNames(activeProgram?.salesAdvisor),
-      ...extractPersonNames(activeProgram?.sales_advisor),
-      ...extractPersonNames(activeProgram?.assignedSalesInfluencers),
-      ...extractPersonNames(overviewData?.salesInfluencer),
-      ...extractPersonNames(overviewData?.sales_influencer),
-      ...extractPersonNames(overviewData?.salesAdvisor),
-      ...extractPersonNames(overviewData?.sales_advisor),
-      ...extractPersonNames(overviewData?.salesInfluencers),
-    ]
-    const normalized = uniqueNames(merged)
-    return normalized[0] || '-'
-  }, [activeProgram, activeProgramDetails, overviewData])
-
   const clientNameText =
     overviewData?.clientName ||
     overviewData?.name ||
@@ -814,67 +637,6 @@ export default function ClientDashboard() {
     ''
   const clientNameDisplay = clientNameText || '-'
   const clientIdDisplay = clientIdText || '-'
-
-  const activeProgramContent = useMemo(() => {
-    if (activeProgramModules.length) {
-      return activeProgramModules.slice(0, 12).map((module, idx) => ({
-        type: 'module',
-        files: Array.isArray(module?.files) ? module.files : [],
-        title:
-          module?.title ||
-          module?.name ||
-          module?.chapter_title ||
-          module?.subtitle ||
-          `Module ${idx + 1}`,
-        subtitle:
-          module?.shortDescription ||
-          module?.short_description ||
-          module?.description ||
-          module?.content ||
-          null,
-      }))
-    }
-
-    const details = [
-      { label: 'Program', value: activeProgram?.name || activeProgram?.title },
-      { label: 'Status', value: activeProgram?.status },
-      {
-        label: 'Enrollment',
-        value: formatDate(activeProgram?.enrolledOn || activeProgram?.enrolled_on),
-      },
-      { label: 'Sales Influencer', value: salesInfluencerDisplay },
-      { label: 'Coaching Influencers', value: coachingInfluencersDisplay },
-      {
-        label: 'Description',
-        value:
-          activeProgramDetails?.description ||
-          activeProgram?.description ||
-          activeProgram?.shortDesc ||
-          activeProgram?.short_description,
-      },
-    ]
-
-    return details
-      .filter(
-        (item) =>
-          item.value !== undefined &&
-          item.value !== null &&
-          `${item.value}` !== '' &&
-          `${item.value}` !== 'TBD',
-      )
-      .slice(0, 12)
-      .map((item) => ({
-        type: 'detail',
-        title: item.label,
-        subtitle: String(item.value),
-      }))
-  }, [
-    activeProgram,
-    activeProgramDetails,
-    activeProgramModules,
-    coachingInfluencersDisplay,
-    salesInfluencerDisplay,
-  ])
 
   const getProgramWorkspaceLink = (program) => {
     if (!hasFullDashboardAccess) return '#'
@@ -947,20 +709,14 @@ export default function ClientDashboard() {
                 {activeProgram?.name ||
                   'Live 2:1 Executive Leadership Coaching Program'}
               </p>
-              {hasFullDashboardAccess ? (
+              <p className='text-xs sm:text-sm text-white/85'>
+                Sales Influencer: {PRESET_SALES_INFLUENCER}
+              </p>
+              <p className='text-xs sm:text-sm text-white/80'>
+                Coaching Influencers: {PRESET_COACHING_INFLUENCERS}
+              </p>
+              {!hasFullDashboardAccess && (
                 <>
-                  <p className='text-xs sm:text-sm text-white/85'>
-                    Sales Influencer: {salesInfluencerDisplay}
-                  </p>
-                  <p className='text-xs sm:text-sm text-white/80'>
-                    Coaching Influencers: {coachingInfluencersDisplay}
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className='text-xs sm:text-sm text-white/85'>
-                    Sales Influencer: {salesInfluencerDisplay}
-                  </p>
                   <p className='text-xs sm:text-sm text-white/85'>
                     Access: {dashboardAccessLevel === 'full' ? 'Full Dashboard' : 'Overview Only'}
                   </p>
@@ -1007,83 +763,13 @@ export default function ClientDashboard() {
 
       {hasFullDashboardAccess ? (
         <div className='grid grid-cols-1 lg:grid-cols-6 xl:grid-cols-12 gap-6'>
-          {/* Learning sessions rail */}
-          <div className='col-span-12 lg:col-span-6 xl:col-span-3 space-y-3 min-w-[260px] self-start'>
-            <div className='bg-white border-2 border-[#F6B72D] rounded-xl shadow-sm h-[744px] max-h-[744px] flex flex-col overflow-hidden'>
-              <div className='px-4 py-3 border-b border-black/10 bg-[#F6B72D]'>
-                <div className='flex items-center justify-between'>
-                  <span className='text-sm font-extrabold uppercase tracking-wide text-black'>
-                    Learning Modules
-                  </span>
-                  <span className='text-[10px] px-2 py-1 bg-black/10 rounded-full text-black'>
-                    {activeProgramContent.length}
-                  </span>
-                </div>
-              </div>
-              <div className='flex-1 min-h-0 h-full overflow-y-auto divide-y divide-gray-100'>
-                {activeProgramContent.length ? (
-                  activeProgramContent.map((item, idx) => {
-                    const content = (
-                      <>
-                        <p className='text-xs text-gray-500 uppercase'>
-                          {item.type === 'module'
-                            ? `Module ${idx + 1}`
-                            : 'Program Detail'}
-                        </p>
-                        <p className='text-sm font-semibold text-gray-900 truncate'>
-                          {item.title}
-                        </p>
-                        {item.subtitle && (
-                          <p className='text-xs text-gray-500 truncate mt-1'>
-                            {item.subtitle}
-                          </p>
-                        )}
-                      </>
-                    )
-
-                    if (item.type === 'module') {
-                      return (
-                        <button
-                          key={`${item.title}-${idx}`}
-                          type='button'
-                          className={`block w-full px-4 py-3 text-left hover:bg-gray-50 ${item.files?.length ? '' : 'cursor-default'
-                            }`}
-                          onClick={() => handleModuleDownload(item)}
-                        >
-                          {content}
-                        </button>
-                      )
-                    }
-
-                    if (canAccessActiveProgramWorkspace) {
-                      return (
-                        <Link
-                          key={`${item.title}-${idx}`}
-                          to={activeProgramWorkspaceLink}
-                          className='block px-4 py-3 hover:bg-gray-50'
-                        >
-                          {content}
-                        </Link>
-                      )
-                    }
-
-                    return (
-                      <div
-                        key={`${item.title}-${idx}`}
-                        className='block px-4 py-3 cursor-not-allowed opacity-80'
-                        title='Program details are available after enrollment.'
-                      >
-                        {content}
-                      </div>
-                    )
-                  })
-                ) : (
-                  <div className='px-4 py-6 text-sm text-gray-500'>
-                    No modules available yet.
-                  </div>
-                )}
-              </div>
-            </div>
+          {/* Learning sessions rail: sessions + toolkits of the selected program */}
+          <div className='col-span-12 lg:col-span-6 xl:col-span-3 min-w-[260px] self-start'>
+            <LearningMaterialsRail
+              programId={activeProgram?.id}
+              programName={activeProgram?.name || activeProgram?.title}
+              className='h-[744px] max-h-[744px]'
+            />
           </div>
 
           {/* Main content */}
@@ -1139,57 +825,12 @@ export default function ClientDashboard() {
               </div>
             </div>
 
-            <div className='bg-white border-2 border-[#F6B72D] rounded-xl p-4 shadow-sm flex flex-col flex-1'>
-              <div className='flex items-center gap-2 mb-3'>
-                <NotebookText className='w-5 h-5 text-[#1a2332]' />
-                <h3 className='text-base sm:text-lg font-extrabold uppercase tracking-wide text-gray-800'>
-                  Notes
-                </h3>
-              </div>
-              <p className='text-sm text-gray-600 leading-relaxed mb-3'>
-                One place for all your thoughts, prep, and follow-ups. Saved
-                locally per program.
-              </p>
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                className='w-full min-h-[160px] rounded-lg border border-gray-200 p-3 text-sm text-gray-800 focus:border-[#F6B72D] focus:ring-2 focus:ring-[#F6B72D]/30 outline-none'
-                placeholder='Type notes...'
-              />
-              <div className='mt-3 flex items-center justify-between text-xs text-gray-500'>
-                <span>
-                  {activeProgram
-                    ? `Program: ${activeProgram.name}`
-                    : 'No program selected'}
-                </span>
-                <span>
-                  {notesSavedAt
-                    ? `Saved ${notesSavedAt.toLocaleTimeString()}`
-                    : 'Not saved yet'}
-                </span>
-              </div>
-              <div className='mt-3 flex gap-3'>
-                <button
-                  onClick={() => saveNotes(activeProgram, notes)}
-                  className='inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[#F6B72D] text-black text-sm font-semibold hover:bg-[#e6b82a]'
-                >
-                  <Save className='w-4 h-4' /> Save notes
-                </button>
-                {activeProgram &&
-                  (canAccessActiveProgramWorkspace ? (
-                    <Link
-                      to={activeProgramWorkspaceLink}
-                      className='text-sm text-[#1a2332] font-semibold hover:text-[#F6B72D]'
-                    >
-                      Open workspace →
-                    </Link>
-                  ) : (
-                    <span className='text-sm text-gray-400 cursor-not-allowed font-semibold'>
-                      Open workspace →
-                    </span>
-                  ))}
-              </div>
-            </div>
+            {/* Server-saved notes: the client's own notes */}
+            <ClientNotesPanel
+              clientUserId={overviewData?.clientId || storedUser?.id}
+              viewer='client'
+              className='flex-1'
+            />
           </div>
 
           {/* Program quick access rail */}
@@ -1266,15 +907,15 @@ export default function ClientDashboard() {
       ) : (
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch'>
           <div className='flex flex-col'>
-            <div className='bg-white border-2 border-[#F6B72D] rounded-xl p-6 sm:p-7 shadow-sm space-y-6 h-full flex flex-col justify-between'>
-              <div className='space-y-3.5'>
-                <p className='text-xs sm:text-sm uppercase tracking-[0.2em] text-[#d99f1b] font-bold'>
+            <div className='bg-white border-2 border-[#F6B72D] rounded-xl p-6 sm:p-7 shadow-sm h-full flex flex-col gap-5'>
+              <div className='space-y-3'>
+                <p className='text-sm sm:text-base uppercase tracking-[0.2em] text-[#d99f1b] font-bold'>
                   Dashboard Access
                 </p>
-                <h2 className='text-2xl sm:text-3xl lg:text-3xl font-extrabold text-gray-900 leading-snug'>
+                <h2 className='text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight'>
                   Full program materials unlock after payment confirmation
                 </h2>
-                <p className='text-base sm:text-lg text-gray-700 font-exo leading-relaxed'>
+                <p className='text-lg sm:text-xl text-gray-700 font-exo leading-relaxed'>
                   You can review demo videos here while your account remains in
                   overview-only mode. Scheduling, workspace files, products, and
                   chat unlock after payment and confirmation are complete.
@@ -1283,14 +924,14 @@ export default function ClientDashboard() {
 
               <div className='rounded-2xl border-2 border-[#F6B72D] bg-[#0f172a] text-white p-6 shadow-lg space-y-4'>
                 <div>
-                  <p className='text-xs sm:text-sm uppercase tracking-[0.2em] text-[#F6B72D] font-bold'>
+                  <p className='text-sm sm:text-base uppercase tracking-[0.2em] text-[#F6B72D] font-bold'>
                     Selected Demo
                   </p>
                   <h3 className='text-2xl sm:text-3xl font-black mt-2'>
                     {activeProgram?.name || activeProgram?.title || 'Program demo'}
                   </h3>
                   <p
-                    className='text-sm sm:text-base text-white/80 mt-2 leading-relaxed'
+                    className='text-base sm:text-lg text-white/85 mt-2 leading-relaxed'
                     dangerouslySetInnerHTML={{
                       __html:
                         activeProgram?.shortDescription ||
@@ -1319,15 +960,15 @@ export default function ClientDashboard() {
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='rounded-xl border-2 border-[#d99f1b] p-5 bg-[#F6B72D] shadow-md text-gray-950 flex flex-col justify-between'>
                   <div>
-                    <p className='text-xs uppercase tracking-wider font-extrabold text-black/75'>
+                    <p className='text-sm uppercase tracking-wider font-extrabold text-black/75'>
                       Current Status
                     </p>
-                    <p className='text-xl sm:text-2xl font-black text-gray-950 mt-2'>
+                    <p className='text-2xl sm:text-3xl font-black text-gray-950 mt-2 leading-tight'>
                       {clientProgramStatus === 'paid'
                         ? 'Paid'
                         : 'Awaiting Payment Confirmation'}
                     </p>
-                    <p className='text-sm sm:text-base font-medium text-black/85 mt-2 leading-relaxed'>
+                    <p className='text-base sm:text-lg font-medium text-black/85 mt-2 leading-relaxed'>
                       Your account can review overview content only until payment
                       confirmation is complete.
                     </p>
@@ -1335,13 +976,13 @@ export default function ClientDashboard() {
                 </div>
                 <div className='rounded-xl border-2 border-[#d99f1b] p-5 bg-[#F6B72D] shadow-md text-gray-950 flex flex-col justify-between'>
                   <div>
-                    <p className='text-xs uppercase tracking-wider font-extrabold text-black/75'>
+                    <p className='text-sm uppercase tracking-wider font-extrabold text-black/75'>
                       Next Step
                     </p>
-                    <p className='text-xl sm:text-2xl font-black text-gray-950 mt-2'>
+                    <p className='text-2xl sm:text-3xl font-black text-gray-950 mt-2 leading-tight'>
                       Complete payment and watch for confirmation
                     </p>
-                    <p className='text-sm sm:text-base font-medium text-black/85 mt-2 leading-relaxed'>
+                    <p className='text-base sm:text-lg font-medium text-black/85 mt-2 leading-relaxed'>
                       Once payment is confirmed, the full client workspace and
                       schedule tools will unlock automatically.
                     </p>
@@ -1351,7 +992,9 @@ export default function ClientDashboard() {
             </div>
           </div>
 
-          <div className='flex flex-col gap-6 self-stretch min-h-0'>
+          {/* Right column matches the left box height; its program list scrolls. */}
+          <div className='relative min-h-0'>
+          <div className='flex flex-col gap-6 lg:absolute lg:inset-0 min-h-0'>
             <div className='bg-white border-2 border-[#F6B72D] rounded-xl p-5 shadow-sm'>
               <div className='flex items-start justify-between gap-3'>
                 <div>
@@ -1445,6 +1088,7 @@ export default function ClientDashboard() {
                 )}
               </div>
             </div>
+          </div>
           </div>
         </div>
       )}

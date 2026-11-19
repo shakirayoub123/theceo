@@ -8,25 +8,6 @@ import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 
-const clients = [
-  {
-    id: 1,
-    client: 'John Riley (ID 0001)',
-    program: 'Leadership Coaching 12-week Program',
-    status: 'COMPLETED',
-    enrolled: 12,
-    advisors: 'Dr. Claire, James',
-  },
-  {
-    id: 2,
-    client: 'John Riley (ID 0001)',
-    program: 'Leadership Coaching 12-week Program',
-    status: 'ACTIVE',
-    enrolled: 12,
-    advisors: 'Dr. Claire, James',
-  },
-]
-
 export default function CoachingClients() {
   const [search, setSearch] = useState('')
   const [clientsData, setClientsData] = useState(null)
@@ -43,13 +24,11 @@ export default function CoachingClients() {
       const response = await authService.getCoachingClients()
 
       // Transform API data to match DataTable format
-      const transformedClients = response.clients.map((client, index) => ({
+      const transformedClients = (response.clients || []).map((client, index) => ({
         id: index + 1,
+        clientID: client.clientID,
         client: `${client.clientName} (ID ${client.clientID})`,
-        program: 'Leadership Coaching 12-week Program', // Default value since not in API
-        status: client.status.toUpperCase(),
-        enrolled: 12, // Default value since not in API
-        advisors: 'Dr. Claire, James', // Default value since not in API
+        status: String(client.status || '').toUpperCase(),
       }))
 
       setClientsData({
@@ -65,9 +44,8 @@ export default function CoachingClients() {
     }
   }
 
-  // Use API data if available, otherwise fallback to defaults
-  const clientsAssigned = clientsData?.clientsAssigned ?? 24
-  const clientsToDisplay = clientsData?.clients ?? clients
+  const clientsToDisplay = clientsData?.clients ?? []
+  const clientsAssigned = clientsData?.clientsAssigned ?? clientsToDisplay.length
 
   // Define table columns
   const tableColumns = [
@@ -138,11 +116,10 @@ export default function CoachingClients() {
   // Define table actions
   const tableActions = [
     {
-      label: 'View',
+      label: 'Open Client Workspace',
       onClick: (row) => {
-        // Extract clientID from the client string or use row.id
-        const clientID = row.client.match(/ID (\d+)/)?.[1] || row.id
-        navigate(URLS.coaching.clientDetails.replace(':id', clientID))
+        if (!row.clientID) return
+        navigate(URLS.coaching.clientDetails.replace(':id', row.clientID))
       },
     },
   ]
@@ -155,7 +132,7 @@ export default function CoachingClients() {
     return (
       <div>
         <h2 className='text-xl font-semibold uppercase text-gray-900 mb-6 tracking-wide'>
-          Clients
+          My Assigned Clients
         </h2>
         <div className='flex justify-center items-center h-64'>
           <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-[#F6B72D]'></div>
@@ -167,7 +144,7 @@ export default function CoachingClients() {
   return (
     <div>
       <h2 className='text-xl font-semibold uppercase text-gray-900 mb-6 tracking-wide'>
-        Clients
+        My Assigned Clients
       </h2>
 
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 mb-8'>

@@ -359,9 +359,11 @@ class Meeting(models.Model):
 
         return None
 
-    def send_invitation_emails(self):
-        """Send email invitations to all attendees"""
+    def send_invitation_emails(self, exclude_user_ids=None):
+        """Send email invitations to all attendees (except any in exclude_user_ids)."""
         attendees = self.attendees.all()
+        if exclude_user_ids:
+            attendees = attendees.exclude(user_id__in=exclude_user_ids)
         attendee_emails = [attendee.user.email for attendee in attendees]
 
         print(

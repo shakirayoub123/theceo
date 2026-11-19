@@ -613,3 +613,66 @@ class ScheduleAppointmentEmailTests(TestCase):
         self.assertIn("Temporary password:", email_body)
         self.assertIn(response.data["meeting_url"], email_body)
         mock_send_ops_email.assert_called_once()
+
+
+import tempfile
+import shutil
+
+
+class SalesProgramsLearningSessionsTests(TestCase):
+    """Sales dashboard: selecting a program shows its Learning Sessions with PDFs."""
+
+    def setUp(self):
+        self.media_dir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.media_dir, ignore_errors=True)
+        media_override = override_settings(MEDIA_ROOT=self.media_dir)
+        media_override.enable()
+        self.addCleanup(media_override.disable)
+
+        from .models import Chapter, ChapterFile, Service
+
+        self.sales_user = User.objects.create_user(
+            username="sessions-sales", email="sessions-sales@example.com",
+            password="StrongPass123!", role="sales", is_active=True,
+        )
+        trainer = User.objects.create_user(
+            username="sessions-coach", email="sessions-coach@example.com",
+            password="StrongPass123!", role="trainer", is_active=True, is_approved=True,
+        )
+        self.program_a = Service.objects.create(
+            title="Program A", description="A", price=100, trainer=trainer, order=1
+        )
+        self.program_b = Service.objects.create(
+            title="Program B", description="B", price=100, trainer=trainer, order=2
+        )
+        # Created out of order on purpose: sessions must come back in session order.
+        s2 = Chapter.objects.create(service=self.program_a, title="Session Two", content="x", order=2)
+        s1 = Chapter.objects.create(service=self.program_a, title="Session One", content="x", order=1)
+        ChapterFile.objects.create(
+            chapter=s1, title="Session One PDF",
+            file=SimpleUploadedFile("session-1.pdf", b"%PDF-1.4 test", content_type="application/pdf"),
+        )
+        ChapterFile.objects.create(
+            chapter=s2, title="Session Two PDF",
+            file=SimpleUploadedFile("session-2.pdf", b"%PDF-1.4 test", content_type="application/pdf"),
+        )
+        Chapter.objects.create(service=self.program_b, title="B Session", content="x", order=1)
+
+        self.api = APIClient()
+        self.api.force_authenticate(user=self.sales_user)
+
+    def test_each_program_returns_only_its_own_sessions_in_order_with_pdfs(self):
+        response = self.api.get("/api/lms/sales/programs/")
+        self.assertEqual(response.status_code, 200, response.content)
+        programs = {p["title"]: p for p in response.json()["programs"]}
+
+        a_sessions = programs["Program A"]["modules"]
+        self.assertEqual([m["title"] for m in a_sessions], ["Session One", "Session Two"])
+        for session in a_sessions:
+            self.assertEqual(len(session["files"]), 1)
+            self.assertEqual(session["files"][0]["fileExtension"], "pdf")
+            self.assertTrue(session["files"][0]["fileUrl"].endswith(".pdf"))
+
+        b_sessions = programs["Program B"]["modules"]
+        self.assertEqual([m["title"] for m in b_sessions], ["B Session"])
+        self.assertEqual(b_sessions[0]["files"], [])

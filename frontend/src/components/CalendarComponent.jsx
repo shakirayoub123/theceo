@@ -373,6 +373,7 @@ export function CalendarComponent({
                 meeting.title ||
                 'Meeting'
               const client = meeting.clientName || meeting.client_name || ''
+              const callType = meeting.callType || meeting.call_type || roleInfo.label
               const time = meeting.time || meeting.time_display || ''
 
               return (
@@ -382,7 +383,7 @@ export function CalendarComponent({
                   onMouseEnter={(e) => handleMeetingMouseEnter(meeting, e)}
                   onMouseLeave={handleMeetingMouseLeave}
                   onClick={(e) => handleMeetingClick(meeting, e)}
-                  title={`${roleInfo.label}: ${meetingType}${client ? ` - ${client}` : ''}`}
+                  title={`${callType}: ${meetingType}${client ? ` - ${client}` : ''}`}
                 >
                   <div className='flex items-center gap-1 min-w-0 flex-1 truncate'>
                     <span
@@ -617,14 +618,18 @@ export function CalendarComponent({
               hoveredMeeting.meeting_type ||
               hoveredMeeting.title ||
               'Meeting'
+            const callType =
+              hoveredMeeting.callType ||
+              hoveredMeeting.call_type ||
+              `${roleInfo.label} Call`
             const clientName =
               hoveredMeeting.clientName ||
               hoveredMeeting.client_name ||
-              'Prospective Client'
+              'No client attached'
             const program =
               hoveredMeeting.program ||
               hoveredMeeting.program_name ||
-              'CEO Influencers Program'
+              'Not selected yet'
             const time =
               hoveredMeeting.time ||
               hoveredMeeting.time_display ||
@@ -661,6 +666,20 @@ export function CalendarComponent({
 
                 {/* Key Details requested by user: Meeting Type, Client Name, Program */}
                 <div className='space-y-1.5 text-xs'>
+                  {/* Call Type: Discovery / Sales / Coaching / Admin */}
+                  <div className='flex items-start justify-between gap-2 py-0.5 border-b border-gray-50'>
+                    <span className='text-gray-500 font-medium shrink-0 flex items-center gap-1'>
+                      <Tag className='w-3 h-3 text-gray-400' />
+                      Call Type:
+                    </span>
+                    <span
+                      className='font-bold text-right truncate'
+                      style={{ color: roleInfo.colorHex }}
+                    >
+                      {callType}
+                    </span>
+                  </div>
+
                   {/* Meeting Type */}
                   <div className='flex items-start justify-between gap-2 py-0.5 border-b border-gray-50'>
                     <span className='text-gray-500 font-medium shrink-0 flex items-center gap-1'>
@@ -738,14 +757,18 @@ export function CalendarComponent({
                 selectedMeeting.meeting_type ||
                 selectedMeeting.title ||
                 'Meeting'
+              const callType =
+                selectedMeeting.callType ||
+                selectedMeeting.call_type ||
+                `${roleInfo.label} Call`
               const clientName =
                 selectedMeeting.clientName ||
                 selectedMeeting.client_name ||
-                'Prospective Client'
+                'No client attached'
               const program =
                 selectedMeeting.program ||
                 selectedMeeting.program_name ||
-                'CEO Influencers Program'
+                'Not selected yet'
               const time =
                 selectedMeeting.time ||
                 selectedMeeting.time_display ||
@@ -779,6 +802,12 @@ export function CalendarComponent({
                   </h4>
 
                   <div className='space-y-2 text-xs text-gray-700 mb-4 bg-gray-50/80 p-3 rounded-lg border border-gray-100'>
+                    <div className='flex justify-between gap-2'>
+                      <span className='font-semibold text-gray-500'>Call Type:</span>
+                      <span className='font-bold' style={{ color: roleInfo.colorHex }}>
+                        {callType}
+                      </span>
+                    </div>
                     <div className='flex justify-between gap-2'>
                       <span className='font-semibold text-gray-500'>Meeting Type:</span>
                       <span className='font-bold text-gray-900'>{meetingType}</span>

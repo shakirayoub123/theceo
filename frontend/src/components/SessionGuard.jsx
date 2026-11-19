@@ -183,18 +183,23 @@ export default function SessionGuard() {
 
   return (
     <div
-      title="Session time remaining"
-      className={`fixed top-3.5 md:top-4 left-1/2 -translate-x-1/2 z-[9999] flex items-center justify-center gap-2.5 px-5 py-2 md:px-6 md:py-2.5 rounded-full transition-all border select-none ${
+      aria-label='Session time left'
+      className={`fixed top-4 md:top-5 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-1.5 px-3 py-1 rounded-full border select-none leading-none ${
         isWarning
-          ? 'bg-red-500 text-white border-red-600 animate-pulse shadow-lg'
-          : 'bg-[#000023] text-white border-[#F6B72D] shadow-[0_4px_16px_rgba(246,183,45,0.25)] lg:bg-white lg:text-[#000023] lg:border-gray-300 lg:shadow-lg hover:shadow-xl'
+          ? 'bg-red-600 text-white border-red-700 animate-pulse shadow-md'
+          : 'bg-[#000023] text-white border-[#F6B72D] shadow-md'
       }`}
     >
       <Clock
-        className={`w-5 h-5 md:w-6 md:h-6 shrink-0 ${isWarning ? 'text-white' : 'text-[#F6B72D]'}`}
-        strokeWidth={2.25}
+        className={`w-4 h-4 shrink-0 ${isWarning ? 'text-white' : 'text-[#F6B72D]'}`}
+        strokeWidth={2.5}
       />
-      <span className='font-mono font-bold text-base md:text-lg tracking-wider leading-none'>
+      <span
+        className={`hidden sm:inline text-[10px] font-semibold uppercase tracking-wide ${isWarning ? 'text-white/90' : 'text-[#F6B72D]'}`}
+      >
+        Session
+      </span>
+      <span className='font-mono font-bold text-sm md:text-base tracking-wide'>
         {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
       </span>
     </div>

@@ -1,5 +1,6 @@
 import { MetricCard } from '@/components/MetricCard'
 import { URLS } from '@/config/urls'
+import { getAssetUrl } from '@/lib/utils'
 import authService from '@/services/authService'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -54,22 +55,6 @@ const formatTrendMonth = (monthValue) => {
   })
 }
 
-const getShortPreview = (value, maxWords = 10) => {
-  const plainText = String(value || '')
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/&amp;/gi, '&')
-    .replace(/&quot;/gi, '"')
-    .replace(/&#39;/gi, "'")
-    .replace(/\s+/g, ' ')
-    .trim()
-
-  if (!plainText) return ''
-  const words = plainText.split(' ')
-  if (words.length <= maxWords) return plainText
-  return `${words.slice(0, maxWords).join(' ')}...`
-}
-
 const extractAdvisorNames = (advisors) => {
   if (!Array.isArray(advisors)) return []
   return advisors
@@ -106,11 +91,19 @@ const extractUpcomingMeetings = (calendarData) => {
   if (!calendar || typeof calendar !== 'object') return []
 
   const flattened = Object.entries(calendar).flatMap(([date, meetings]) =>
-    (meetings || []).map((meeting) => ({
-      ...meeting,
-      date,
-      dateTime: toDateTime(date, meeting.time),
-    })),
+    (meetings || []).map((meeting) => {
+      // Prefer the exact ISO timestamp (UTC from the API); the date/time
+      // strings are UTC too and would be misread as local time.
+      const exact = meeting.scheduled_at ? new Date(meeting.scheduled_at) : null
+      return {
+        ...meeting,
+        date,
+        dateTime:
+          exact && !Number.isNaN(exact.getTime())
+            ? exact
+            : toDateTime(date, meeting.time),
+      }
+    }),
   )
 
   return flattened
@@ -296,21 +289,24 @@ export default function SalesDashboard() {
     return filtered.length ? filtered : upcomingMeetings
   }, [activeProgram, upcomingMeetings])
 
+  // Only meetings that are upcoming or still in progress can be joined;
+  // never fall back to a meeting that has already ended.
   const nextMeeting = useMemo(() => {
-    const now = new Date()
-    const sortedActive = [...sessionsForActiveProgram].sort(
-      (a, b) => a.dateTime - b.dateTime,
-    )
-    const nextFromActive = sortedActive.find(
-      (meeting) => meeting.dateTime >= now,
-    )
-    if (nextFromActive) return nextFromActive
-    if (sortedActive.length) return sortedActive[0]
+    const now = Date.now()
+    const isJoinable = (meeting) => {
+      const start = meeting.dateTime?.getTime?.()
+      if (!start) return false
+      const durationMs = (Number(meeting.duration_minutes) || 60) * 60000
+      return start + durationMs > now
+    }
+    const firstJoinable = (meetings) =>
+      [...meetings]
+        .filter(isJoinable)
+        .sort((a, b) => a.dateTime - b.dateTime)[0] || null
 
-    const sortedAll = [...upcomingMeetings].sort(
-      (a, b) => a.dateTime - b.dateTime,
+    return (
+      firstJoinable(sessionsForActiveProgram) || firstJoinable(upcomingMeetings)
     )
-    return sortedAll.find((meeting) => meeting.dateTime >= now) || sortedAll[0]
   }, [sessionsForActiveProgram, upcomingMeetings])
 
   const coachingInfluencersDisplay = useMemo(() => {
@@ -365,7 +361,8 @@ export default function SalesDashboard() {
 
     if (!Array.isArray(modules) || modules.length === 0) return []
 
-    return modules.slice(0, 12).map((module, idx) => ({
+    return modules.map((module, idx) => ({
+      files: Array.isArray(module?.files) ? module.files : [],
       title:
         module?.title ||
         module?.name ||
@@ -381,6 +378,29 @@ export default function SalesDashboard() {
         null,
     }))
   }, [activeProgram])
+
+  // A learning session's PDF (falls back to its first file). Opened in a new
+  // tab so the browser's PDF viewer prompts for the PDF's password.
+  const getSessionPdf = (session) => {
+    const files = session?.files || []
+    return (
+      files.find(
+        (file) =>
+          String(file?.fileExtension || '').toLowerCase() === 'pdf' ||
+          /\.pdf($|\?)/i.test(String(file?.fileUrl || file?.url || '')),
+      ) ||
+      files[0] ||
+      null
+    )
+  }
+
+  const openSessionPdf = (session) => {
+    const pdfUrl = getAssetUrl(
+      getSessionPdf(session)?.fileUrl || getSessionPdf(session)?.url,
+    )
+    if (!pdfUrl) return
+    window.open(pdfUrl, '_blank', 'noopener,noreferrer')
+  }
 
   const loadNotes = (program) => {
     try {
@@ -500,41 +520,55 @@ export default function SalesDashboard() {
             <div className='px-4 py-3 border-b border-black/10 bg-[#F6B72D]'>
               <div className='flex items-center justify-between'>
                 <span className='text-sm font-extrabold uppercase tracking-wide text-black'>
-                  Learning Modules
+                  Learning Sessions
                 </span>
                 <span className='text-[10px] px-2 py-1 bg-black/10 rounded-full text-black'>
                   {activeProgramContent.length}
                 </span>
               </div>
+              {activeProgram?.name && (
+                <p className='text-xs text-black/70 mt-1 truncate'>
+                  {activeProgram.name}
+                </p>
+              )}
             </div>
             <div className='max-h-[580px] overflow-y-auto divide-y divide-gray-100'>
               {activeProgramContent.length ? (
                 activeProgramContent.map((item, idx) => {
-                  const subtitlePreview = getShortPreview(item.subtitle, 10)
+                  const hasPdf = Boolean(getSessionPdf(item))
                   return (
                     <button
-                      key={`${item.title}-${idx}`}
+                      key={`${activeProgram?.id}-${item.title}-${idx}`}
                       type='button'
-                      onClick={(event) => event.preventDefault()}
-                      className='block w-full px-4 py-3 text-left hover:bg-gray-50 cursor-default'
+                      onClick={() => openSessionPdf(item)}
+                      disabled={!hasPdf}
+                      title={
+                        hasPdf
+                          ? 'Open Learning Session PDF (password protected)'
+                          : 'PDF not uploaded yet'
+                      }
+                      className={`block w-full px-4 py-3 text-left ${hasPdf
+                        ? 'hover:bg-[#F6B72D]/10 cursor-pointer'
+                        : 'cursor-not-allowed opacity-70'
+                        }`}
                     >
                       <p className='text-xs text-gray-500 uppercase'>
-                        Module {idx + 1}
+                        Learning Session {idx + 1}
                       </p>
                       <p className='text-sm font-semibold text-gray-900 truncate'>
                         {item.title}
                       </p>
-                      {subtitlePreview && (
-                        <p className='text-xs text-gray-500 truncate mt-1'>
-                          {subtitlePreview}
-                        </p>
-                      )}
+                      <p className='text-xs mt-1 text-gray-500'>
+                        {hasPdf ? 'Open PDF →' : 'PDF not available yet'}
+                      </p>
                     </button>
                   )
                 })
               ) : (
                 <div className='px-4 py-6 text-sm text-gray-500'>
-                  This program has no learning module.
+                  {activeProgram
+                    ? 'This program has no learning sessions yet.'
+                    : 'Select a program to view its learning sessions.'}
                 </div>
               )}
             </div>
@@ -559,7 +593,13 @@ export default function SalesDashboard() {
                 </h3>
                 <p className='text-sm text-white/70 mt-1'>
                   {nextMeeting
-                    ? `${formatDate(nextMeeting.date)} · ${nextMeeting.time || 'TBD'}`
+                    ? nextMeeting.dateTime.toLocaleString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                      })
                     : 'We will notify you when a session is added.'}
                 </p>
                 {nextMeeting?.clientName && (

@@ -1023,21 +1023,7 @@ class AdminNewsletterDetailView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class AdminReferralsView(APIView):
-    permission_classes = [IsAuthenticated, IsAdmin]
-
-    def get(self, request):
-        # Get referral statistics
-        total_users_via_referrals = Referral.objects.filter(is_converted=True).count()
-        referrals = Referral.objects.all().order_by("-created_at")
-
-        response_data = {
-            "totalUsersViaReferrals": total_users_via_referrals,
-            "referrals": referrals,
-        }
-
-        serializer = AdminReferralsResponseSerializer(response_data)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+# Admin referrals API lives in lms/referral_admin_views.py.
 
 
 class AdminEbookSeriesView(APIView):
@@ -2520,9 +2506,13 @@ class SalesScheduleMeetingView(APIView):
                 related_id=meeting.id,
             )
 
-            # Send invitation emails to all attendees (client and sales representative)
+            # Client gets a proper confirmation (Discovery Call for the initial
+            # sales appointment); staff attendees keep the standard invitation.
+            from scheduling.client_emails import send_sales_meeting_confirmation
+
+            send_sales_meeting_confirmation(meeting, client.user, request.user)
             try:
-                meeting.send_invitation_emails()
+                meeting.send_invitation_emails(exclude_user_ids=[client.user.id])
             except Exception as exc:
                 logger.warning(f"Failed to send sales meeting invitation emails for meeting {meeting.id}: {exc}")
 

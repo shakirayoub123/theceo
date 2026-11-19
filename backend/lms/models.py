@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
+from decimal import Decimal
 import uuid
 
 User = get_user_model()
@@ -596,6 +597,127 @@ class Referral(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+
+class ReferralPartner(models.Model):
+    """Someone who refers new clients and earns a referral fee on their paid programs."""
+
+    TYPE_TCI = "tci"
+    TYPE_BUSINESS = "business"
+    PARTNER_TYPE_CHOICES = (
+        (TYPE_TCI, "TCI Referral (10%)"),
+        (TYPE_BUSINESS, "Business Referral Partner (15%)"),
+    )
+    FEE_RATES = {
+        TYPE_TCI: Decimal("0.10"),
+        TYPE_BUSINESS: Decimal("0.15"),
+    }
+
+    name = models.CharField(max_length=255)
+    email = models.EmailField(blank=True, default="")
+    partner_type = models.CharField(
+        max_length=20, choices=PARTNER_TYPE_CHOICES, default=TYPE_TCI
+    )
+    referral_code = models.CharField(max_length=30, unique=True, blank=True)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="referral_partner_profiles",
+        help_text="Optional platform account for this partner",
+    )
+    is_active = models.BooleanField(default=True)
+    notes = models.TextField(blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return f"{self.name} ({self.get_partner_type_display()})"
+
+    @property
+    def fee_rate(self):
+        return self.FEE_RATES.get(self.partner_type, self.FEE_RATES[self.TYPE_TCI])
+
+    def save(self, *args, **kwargs):
+        if not self.referral_code:
+            self.referral_code = f"TCI-{uuid.uuid4().hex[:8].upper()}"
+        super().save(*args, **kwargs)
+
+
+class ClientReferral(models.Model):
+    """Links a referred client to the partner who referred them."""
+
+    SOURCE_CHOICES = (
+        ("auto", "Matched from 'Referred By'"),
+        ("manual", "Linked by admin"),
+    )
+
+    client_user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="client_referral"
+    )
+    partner = models.ForeignKey(
+        ReferralPartner, on_delete=models.PROTECT, related_name="client_referrals"
+    )
+    source = models.CharField(max_length=10, choices=SOURCE_CHOICES, default="manual")
+    referred_by_text = models.CharField(max_length=255, blank=True, default="")
+    created_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.client_user.email} referred by {self.partner.name}"
+
+
+class ReferralFee(models.Model):
+    """Fee owed to a partner for one paid program of a referred client."""
+
+    STATUS_CHOICES = (
+        ("pending", "Pending payout"),
+        ("paid", "Paid"),
+        ("void", "Void"),
+    )
+
+    referral = models.ForeignKey(
+        ClientReferral, on_delete=models.CASCADE, related_name="fees"
+    )
+    partner = models.ForeignKey(
+        ReferralPartner, on_delete=models.PROTECT, related_name="fees"
+    )
+    client_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="referral_fees_generated"
+    )
+    stripe_payment = models.OneToOneField(
+        "StripePayment", on_delete=models.PROTECT, related_name="referral_fee"
+    )
+    program = models.ForeignKey(
+        Service, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    program_title = models.CharField(max_length=255, blank=True, default="")
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=3, default="usd")
+    fee_rate = models.DecimalField(max_digits=5, decimal_places=4)
+    fee_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
+    paid_at = models.DateTimeField(null=True, blank=True)
+    paid_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    payout_note = models.CharField(max_length=255, blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.partner.name}: {self.fee_amount} {self.currency} ({self.status})"
 
 
 class Cart(models.Model):

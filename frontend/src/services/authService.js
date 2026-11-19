@@ -835,6 +835,89 @@ class AuthService {
     return this.handleResponse(response)
   }
 
+  // Learning Sessions + toolkits for one program. Clients get {locked: true}
+  // for programs they have not purchased.
+  async getProgramLearningMaterials(programId) {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/lms/programs/${programId}/learning-materials/`,
+      {
+        method: 'GET',
+        headers: this.getAuthHeaders(),
+      },
+    )
+    return this.handleResponse(response)
+  }
+
+  // Notes for one client (client user id). Coaches/staff get all notes;
+  // a client gets only their own notes.
+  async getClientNotes(clientUserId) {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/people/clients/${clientUserId}/notes/`,
+      { method: 'GET', headers: this.getAuthHeaders() },
+    )
+    return this.handleResponse(response)
+  }
+
+  async createClientNote(clientUserId, content) {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/people/clients/${clientUserId}/notes/`,
+      {
+        method: 'POST',
+        headers: { ...this.getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content }),
+      },
+    )
+    return this.handleResponse(response)
+  }
+
+  async createReferralPartner(payload) {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/lms/admin/referral-partners/`,
+      {
+        method: 'POST',
+        headers: { ...this.getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      },
+    )
+    return this.handleResponse(response)
+  }
+
+  async updateReferralPartner(partnerId, payload) {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/lms/admin/referral-partners/${partnerId}/`,
+      {
+        method: 'PATCH',
+        headers: { ...this.getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      },
+    )
+    return this.handleResponse(response)
+  }
+
+  async linkClientReferral(clientUserId, partnerId) {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/lms/admin/client-referrals/`,
+      {
+        method: 'POST',
+        headers: { ...this.getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientUserId, partnerId }),
+      },
+    )
+    return this.handleResponse(response)
+  }
+
+  async setReferralFeeStatus(feeId, status, note) {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/lms/admin/referral-fees/${feeId}/status/`,
+      {
+        method: 'POST',
+        headers: { ...this.getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(note === undefined ? { status } : { status, note }),
+      },
+    )
+    return this.handleResponse(response)
+  }
+
   // Get Referral Details (Admin)
   async getAdminReferralDetails(referralId) {
     const response = await this.fetchWithCredentials(

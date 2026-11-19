@@ -71,6 +71,34 @@ urlpatterns = [
     path('robots.txt', robots_txt),
 ]
 
+# Local development against the live database: uploaded files live on the
+# production server, so redirect media requests there (e.g. MEDIA_FALLBACK_URL=
+# https://theceoinfluencers.com/uploads/). Unset in production = no effect.
+_MEDIA_FALLBACK_URL = (getattr(settings, "MEDIA_FALLBACK_URL", "") or "").strip()
+_PROTECTED_MEDIA_DIRS = ("ebooks/", "newsletters/")
+_IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".avif")
+
+
+def _media_with_live_fallback(request, path=""):
+    import os
+
+    from django.http import HttpResponseRedirect
+    from django.views.static import serve
+
+    is_protected = path.startswith(_PROTECTED_MEDIA_DIRS)
+    is_image = path.lower().endswith(_IMAGE_EXTENSIONS)
+    if is_protected and not is_image:
+        return _block_direct_upload(request, path)
+
+    local_file = os.path.join(settings.MEDIA_ROOT, path)
+    if os.path.isfile(local_file):
+        return serve(request, path, document_root=settings.MEDIA_ROOT)
+    return HttpResponseRedirect(_MEDIA_FALLBACK_URL.rstrip("/") + "/" + path)
+
+
+if _MEDIA_FALLBACK_URL:
+    urlpatterns += [path("uploads/<path:path>", _media_with_live_fallback)]
+
 # Block direct access to protected upload directories.
 # These patterns must appear BEFORE the generic media-serving rule.
 urlpatterns += [

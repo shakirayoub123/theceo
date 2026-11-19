@@ -66,6 +66,74 @@ def determine_meeting_staff_role(meeting):
     return {"role": "coaching", "color": "#10B981", "label": "Coaching"}
 
 
+def determine_call_type(meeting, role_info, client_user=None):
+    """Human call type for the calendar hover: Discovery / Sales / Coaching / Admin."""
+    if role_info["role"] == "coaching":
+        return "Coaching Call"
+    if role_info["role"] == "admin":
+        return "Admin Meeting"
+
+    type_name = (meeting.meeting_type.name if meeting.meeting_type else "").lower()
+    text = f"{type_name} {(meeting.title or '').lower()}"
+    if "discovery" in text or "initial" in text:
+        return "Discovery Call"
+    if client_user is not None:
+        # The client's earliest (non-cancelled) sales meeting is their discovery call.
+        from .models import Meeting
+
+        has_earlier_sales_meeting = (
+            Meeting.objects.filter(attendees__user=client_user, scheduled_by__role="sales")
+            .exclude(id=meeting.id)
+            .exclude(status="cancelled")
+            .filter(
+                models.Q(scheduled_at__lt=meeting.scheduled_at)
+                | models.Q(scheduled_at=meeting.scheduled_at, id__lt=meeting.id)
+            )
+            .exists()
+        )
+        if not has_earlier_sales_meeting:
+            return "Discovery Call"
+    return "Sales Call"
+
+
+def determine_program_name(meeting, client_user=None):
+    """Program for the meeting: linked program, then enrollment, then program of interest."""
+    service = getattr(meeting, "service", None)
+    if service is not None:
+        return service.title
+
+    if client_user is None:
+        return None
+
+    from lms.models import Enrollment
+
+    enrolled = [
+        e.service.title
+        for e in Enrollment.objects.filter(user=client_user).select_related("service")[:3]
+        if e.service
+    ]
+    if enrolled:
+        return " & ".join(enrolled)
+
+    profile = getattr(client_user, "client_profile", None)
+    interest = (getattr(profile, "program_of_interest", None) or "").strip()
+    if interest:
+        return f"{interest} (interest)"
+
+    from lms.models import Appointment
+
+    appointment = (
+        Appointment.objects.filter(user=client_user)
+        .exclude(program_of_interest__isnull=True)
+        .exclude(program_of_interest="")
+        .order_by("-id")
+        .first()
+    )
+    if appointment:
+        return f"{appointment.program_of_interest} (interest)"
+    return None
+
+
 def format_meeting_for_calendar(meeting):
     """
     Format a Meeting instance for Master Calendar consumption with hover details.
@@ -79,21 +147,14 @@ def format_meeting_for_calendar(meeting):
         .first()
     )
 
-    client_name = "Prospective Client"
-    client_programs = []
-    if client_attendee and client_attendee.user:
-        name = f"{client_attendee.user.first_name} {client_attendee.user.last_name}".strip()
-        client_name = name or client_attendee.user.username or client_attendee.user.email
+    client_user = client_attendee.user if client_attendee and client_attendee.user else None
+    client_name = "No client attached"
+    if client_user:
+        name = f"{client_user.first_name} {client_user.last_name}".strip()
+        client_name = name or client_user.username or client_user.email
 
-        from lms.models import Enrollment
-        enrollments = Enrollment.objects.filter(user=client_attendee.user).select_related("service")[:3]
-        client_programs = [e.service.title for e in enrollments if e.service]
-
-    program_display = (
-        " & ".join(client_programs)
-        if client_programs
-        else "CEO Influencers Program"
-    )
+    program_display = determine_program_name(meeting, client_user) or "Not selected yet"
+    call_type = determine_call_type(meeting, role_info, client_user)
 
     # Advisor / Staff attendees
     staff_attendees = (
@@ -133,6 +194,8 @@ def format_meeting_for_calendar(meeting):
         "program_name": program_display,
         "meetingType": meeting_type_name,
         "meeting_type": meeting_type_name,
+        "callType": call_type,
+        "call_type": call_type,
         "clientName": client_name,
         "client_name": client_name,
         "time": meeting.scheduled_at.strftime("%I:%M %p"),

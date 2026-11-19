@@ -1355,6 +1355,7 @@ class ServiceCreateUpdateSerializer(serializers.ModelSerializer):
 
 class EbookSerializer(serializers.ModelSerializer):
     totalSold = serializers.SerializerMethodField()
+    seriesId = serializers.SerializerMethodField()
     seriesName = serializers.CharField(source="series.title", read_only=True)
     price = serializers.DecimalField(max_digits=10, decimal_places=2)
 
@@ -1365,6 +1366,7 @@ class EbookSerializer(serializers.ModelSerializer):
             "title",
             "status",
             "totalSold",
+            "seriesId",
             "seriesName",
             "created_at",
             "price",
@@ -1372,6 +1374,9 @@ class EbookSerializer(serializers.ModelSerializer):
 
     def get_totalSold(self, obj):
         return obj.total_sold
+
+    def get_seriesId(self, obj):
+        return str(obj.series_id) if obj.series_id else None
 
 
 class AdminEbooksResponseSerializer(serializers.Serializer):

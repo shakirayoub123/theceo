@@ -1,9 +1,10 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { MetricCard } from '@/components/MetricCard'
 import authService from '@/services/authService'
+import LearningMaterialsRail from '@/components/LearningMaterialsRail'
+import ClientNotesPanel from '@/components/ClientNotesPanel'
 import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
-import { getAssetUrl } from '@/lib/utils'
 import {
   CalendarDays,
   LogOut,
@@ -40,6 +41,10 @@ import { GLOBAL_INDUSTRY_DATA, getAllIndustryCategories } from '@/data/globalInd
 import { BIG_FIVE_ASSESSMENT_DATA } from '@/data/bigFiveAssessmentData'
 
 const PAGE_SIZE = 8
+// Preset names for the top "Program 1" box (same as the client dashboard).
+const PRESET_SALES_INFLUENCER = 'Pete Gates'
+const PRESET_COACHING_INFLUENCERS = 'James Armstrong & Dr. Claire Keogh'
+
 const HERO_TAGLINE_OUTLINE = {
   WebkitTextStroke: '1px rgba(0, 0, 0, 0.75)',
   paintOrder: 'stroke fill',
@@ -49,33 +54,6 @@ const normalizeText = (value) =>
   String(value || '')
     .trim()
     .toLowerCase()
-
-const uniqueNames = (values) =>
-  values
-    .map((value) => String(value || '').trim())
-    .filter(Boolean)
-    .filter((value, idx, arr) => arr.indexOf(value) === idx)
-
-const extractPersonNames = (value) => {
-  if (!value) return []
-  if (Array.isArray(value)) {
-    return value.flatMap((item) => extractPersonNames(item))
-  }
-  if (typeof value === 'string') {
-    return value
-      .split(',')
-      .map((part) => part.trim())
-      .filter(Boolean)
-  }
-  if (typeof value === 'object') {
-    const directName = value.name || value.full_name || value.fullName
-    if (directName) return [String(directName).trim()]
-    const joinedName = `${value.first_name || ''} ${value.last_name || ''}`.trim()
-    if (joinedName) return [joinedName]
-    if (value.username) return [String(value.username).trim()]
-  }
-  return []
-}
 
 const formatDate = (dateString) => {
   if (!dateString) return 'TBD'
@@ -167,9 +145,6 @@ export default function CoachingDashboard() {
   const [programs, setPrograms] = useState([])
   const [allPrograms, setAllPrograms] = useState([])
   const [activeProgramId, setActiveProgramId] = useState(null)
-  const [activeProgramModules, setActiveProgramModules] = useState([])
-  const [notes, setNotes] = useState('')
-  const [notesSavedAt, setNotesSavedAt] = useState(null)
   const [assignedClients, setAssignedClients] = useState([])
   const [selectedClientForAssessment, setSelectedClientForAssessment] = useState(null)
   const [clientAssessmentDetails, setClientAssessmentDetails] = useState(null)
@@ -179,44 +154,6 @@ export default function CoachingDashboard() {
   const [activeEditingAssessment, setActiveEditingAssessment] = useState(null)
   const [isSavingAssessment, setIsSavingAssessment] = useState(false)
   const [viewingSingleAssessment, setViewingSingleAssessment] = useState(null)
-
-  const downloadFile = useCallback(async (file) => {
-    const fileUrl = getAssetUrl(file?.fileUrl || file?.url || file?.file)
-    if (!fileUrl) return
-
-    try {
-      const response = await fetch(fileUrl)
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`)
-      }
-
-      const blob = await response.blob()
-      const objectUrl = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = objectUrl
-      link.download =
-        file?.title || file?.name || fileUrl.split('/').pop() || 'download'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(objectUrl)
-    } catch (error) {
-      console.error('Failed to download file directly:', error)
-      window.open(fileUrl, '_blank', 'noopener,noreferrer')
-    }
-  }, [])
-
-  const handleModuleDownload = useCallback(
-    async (module) => {
-      const moduleFiles = Array.isArray(module?.files) ? module.files : []
-      if (!moduleFiles.length) return
-
-      for (const file of moduleFiles) {
-        await downloadFile(file)
-      }
-    },
-    [downloadFile],
-  )
 
   const mergeCalendarMonths = (...calendarResponses) => {
     return calendarResponses.reduce((merged, response) => {
@@ -457,22 +394,6 @@ export default function CoachingDashboard() {
     }
   }, [activeProgramId, selectablePrograms])
 
-  const extractModulesFromProgram = (program) => {
-    if (!program) return []
-    const modules =
-      program.modules ||
-      program.chapters ||
-      program.lessons ||
-      program.sections ||
-      program.program_chapters ||
-      []
-    return Array.isArray(modules) ? modules : []
-  }
-
-  useEffect(() => {
-    setActiveProgramModules(extractModulesFromProgram(activeProgram))
-  }, [activeProgram])
-
   const sessionsForActiveProgram = useMemo(() => {
     if (!upcomingMeetings.length) return []
     if (!activeProgram) return upcomingMeetings
@@ -502,121 +423,8 @@ export default function CoachingDashboard() {
     }
   }, [currentPage, totalPages])
 
-  const coachingInfluencersDisplay = useMemo(() => {
-    const merged = [
-      ...extractPersonNames(activeProgram?.assignedAdvisors),
-      ...extractPersonNames(activeProgram?.coachingInfluencers),
-      ...extractPersonNames(dashboardData?.coachingInfluencers),
-      ...extractPersonNames(dashboardData?.coaching_influencers),
-      ...extractPersonNames(dashboardData?.advisors),
-      ...sessionsForActiveProgram.flatMap((meeting) =>
-        extractPersonNames(meeting?.advisor || meeting?.otherTrainers),
-      ),
-    ]
-    const normalized = uniqueNames(merged)
-    return normalized.length ? normalized.join(' & ') : '-'
-  }, [activeProgram, dashboardData, sessionsForActiveProgram])
-
-  const salesInfluencerDisplay = useMemo(() => {
-    const merged = [
-      ...extractPersonNames(activeProgram?.salesInfluencer),
-      ...extractPersonNames(activeProgram?.sales_influencer),
-      ...extractPersonNames(activeProgram?.salesAdvisor),
-      ...extractPersonNames(activeProgram?.sales_advisor),
-      ...extractPersonNames(dashboardData?.salesInfluencer),
-      ...extractPersonNames(dashboardData?.sales_influencer),
-      ...extractPersonNames(dashboardData?.salesAdvisor),
-      ...extractPersonNames(dashboardData?.sales_advisor),
-      ...extractPersonNames(dashboardData?.salesInfluencers),
-    ]
-    const normalized = uniqueNames(merged)
-    return normalized[0] || '-'
-  }, [activeProgram, dashboardData])
-
-  const activeProgramContent = useMemo(() => {
-    if (activeProgramModules.length) {
-      return activeProgramModules.slice(0, 12).map((module, idx) => ({
-        type: 'module',
-        files: Array.isArray(module?.files) ? module.files : [],
-        title:
-          module?.title ||
-          module?.name ||
-          module?.chapter_title ||
-          module?.subtitle ||
-          `Module ${idx + 1}`,
-        subtitle:
-          module?.shortDescription ||
-          module?.short_description ||
-          module?.description ||
-          module?.content ||
-          null,
-      }))
-    }
-
-    const details = [
-      { label: 'Program', value: activeProgram?.name || activeProgram?.title },
-      { label: 'Client', value: activeProgram?.clientName || activeProgram?.client },
-      { label: 'Status', value: activeProgram?.status },
-      {
-        label: 'Enrollment',
-        value: formatDate(activeProgram?.enrolledOn || activeProgram?.enrolled_on),
-      },
-      { label: 'Sales Influencer', value: salesInfluencerDisplay },
-      { label: 'Coaching Influencers', value: coachingInfluencersDisplay },
-    ]
-
-    return details
-      .filter(
-        (item) =>
-          item.value !== undefined &&
-          item.value !== null &&
-          `${item.value}` !== '' &&
-          `${item.value}` !== 'TBD',
-      )
-      .slice(0, 12)
-      .map((item) => ({
-        type: 'detail',
-        title: item.label,
-        subtitle: String(item.value),
-      }))
-  }, [
-    activeProgram,
-    activeProgramModules,
-    coachingInfluencersDisplay,
-    salesInfluencerDisplay,
-  ])
-
-  const loadNotes = (program) => {
-    try {
-      const raw = localStorage.getItem('coaching_notes_v1')
-      const parsed = raw ? JSON.parse(raw) : {}
-      const key = `notes-${program?.id || 'global'}`
-      return parsed[key] || ''
-    } catch (err) {
-      console.warn('Unable to read coaching notes from storage', err)
-      return ''
-    }
-  }
-
-  const saveNotes = (program, value) => {
-    try {
-      const raw = localStorage.getItem('coaching_notes_v1')
-      const parsed = raw ? JSON.parse(raw) : {}
-      const key = `notes-${program?.id || 'global'}`
-      parsed[key] = value
-      localStorage.setItem('coaching_notes_v1', JSON.stringify(parsed))
-      setNotesSavedAt(new Date())
-    } catch (err) {
-      console.warn('Unable to save coaching notes', err)
-    }
-  }
-
-  useEffect(() => {
-    setNotes(loadNotes(activeProgram))
-  }, [activeProgram])
-
-  const clientsAssigned = dashboardData?.clientsAssigned ?? 24
-  const clientsMeetingToday = dashboardData?.clientsMeetingToday ?? 1
+  const clientsAssigned = dashboardData?.clientsAssigned ?? 0
+  const clientsMeetingToday = dashboardData?.clientsMeetingToday ?? 0
   const activeClientId =
     activeProgram?.clientId || activeProgram?.client_id || null
   const activeClientLink = activeClientId
@@ -731,7 +539,7 @@ export default function CoachingDashboard() {
     fetchAssessmentsForClient()
   }, [currentAssessmentClient?.clientID])
 
-  const handleOpenAssessmentModal = async (clientId, clientName) => {
+  const handleOpenAssessmentModal = async (clientId) => {
     setShowAssessmentModal(true)
     setLoadingAssessmentDetails(true)
     try {
@@ -837,16 +645,16 @@ export default function CoachingDashboard() {
     <div className='max-w-7xl mx-auto space-y-8'>
       <div className='bg-white border-2 border-[#F6B72D] rounded-xl p-6 shadow-sm space-y-4'>
         <div className='flex flex-wrap items-start justify-between gap-4'>
-          <div className='flex-1 min-w-[220px]'>
-            <p className='text-xs uppercase tracking-[0.2em] text-[#F6B72D] font-semibold'>
+          <div className='flex-1 min-w-[220px] self-center space-y-2'>
+            <p className='text-sm sm:text-base uppercase tracking-[0.2em] text-[#F6B72D] font-semibold'>
               <span style={HERO_TAGLINE_OUTLINE}>
                 The CEO Influencers • Building Better Leaders
               </span>
             </p>
-            <h1 className='text-2xl sm:text-3xl font-extrabold text-gray-900'>
+            <h1 className='text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight'>
               Coaching Dashboard
             </h1>
-            <p className='text-lg font-exo text-gray-600'>
+            <p className='text-xl sm:text-2xl font-exo text-gray-600 leading-snug'>
               Oversee programs, sessions, and client progress in one view.
             </p>
           </div>
@@ -857,21 +665,33 @@ export default function CoachingDashboard() {
                 {activeProgram?.name || activeProgram?.title || 'Learning Sessions'}
               </p>
               <p className='text-xs sm:text-sm text-white/85'>
-                Sales Influencer: {salesInfluencerDisplay}
+                Sales Influencer: {PRESET_SALES_INFLUENCER}
               </p>
               <p className='text-xs sm:text-sm text-white/85'>
-                Coaching Influencers: {coachingInfluencersDisplay}
+                Coaching Influencers: {PRESET_COACHING_INFLUENCERS}
               </p>
               <p className='text-xs sm:text-sm text-white/85'>
                 Client: {activeProgram?.clientName || '-'}
               </p>
-              {activeProgram && (
-                <Link
-                  to={activeClientLink}
-                  className='inline-flex text-xs sm:text-sm font-semibold text-[#F6B72D] hover:text-[#e6b82a]'
-                >
-                  View Client →
-                </Link>
+              {activeClientId ? (
+                <div className='flex flex-wrap gap-x-4 gap-y-1'>
+                  <Link
+                    to={activeClientLink}
+                    className='inline-flex text-xs sm:text-sm font-semibold text-[#F6B72D] hover:text-[#e6b82a]'
+                  >
+                    Open Client Workspace →
+                  </Link>
+                  <Link
+                    to={`${URLS.chat}?with=${activeClientId}`}
+                    className='inline-flex text-xs sm:text-sm font-semibold text-[#F6B72D] hover:text-[#e6b82a]'
+                  >
+                    Message Client →
+                  </Link>
+                </div>
+              ) : (
+                <p className='text-xs sm:text-sm text-white/60'>
+                  No client is assigned to you in this program yet.
+                </p>
               )}
             </div>
           </div>
@@ -1104,68 +924,13 @@ export default function CoachingDashboard() {
       </div>
 
       <div className='grid grid-cols-1 lg:grid-cols-6 xl:grid-cols-12 gap-6'>
-        {/* Learning sessions rail */}
-        <div className='col-span-12 lg:col-span-6 xl:col-span-3 space-y-3 min-w-[260px] self-start'>
-          <div className='bg-white border-2 border-[#F6B72D] rounded-xl shadow-sm h-[744px] max-h-[744px] flex flex-col overflow-hidden'>
-            <div className='px-4 py-3 border-b border-black/10 bg-[#F6B72D] flex items-center justify-between'>
-              <span className='text-sm font-extrabold uppercase tracking-wide text-black'>
-                Learning Modules
-              </span>
-              <span className='text-[10px] px-2 py-1 bg-black/10 rounded-full text-black'>
-                {activeProgramContent.length}
-              </span>
-            </div>
-            <div className='flex-1 min-h-0 h-full overflow-y-auto divide-y divide-gray-100'>
-              {activeProgramContent.length ? (
-                activeProgramContent.map((item, idx) => {
-                  const content = (
-                    <>
-                      <p className='text-xs text-gray-500 uppercase'>
-                        {item.type === 'module'
-                          ? `Module ${idx + 1}`
-                          : 'Program Detail'}
-                      </p>
-                      <p className='text-sm font-semibold text-gray-900 truncate'>
-                        {item.title}
-                      </p>
-                      {item.subtitle && (
-                        <p className='text-xs text-gray-500 truncate mt-1'>
-                          {item.subtitle}
-                        </p>
-                      )}
-                    </>
-                  )
-
-                  if (item.type === 'module') {
-                    return (
-                      <button
-                        key={`${item.title}-${idx}`}
-                        type='button'
-                        className={`block w-full px-4 py-3 text-left hover:bg-gray-50 ${item.files?.length ? '' : 'cursor-default'
-                          }`}
-                        onClick={() => handleModuleDownload(item)}
-                      >
-                        {content}
-                      </button>
-                    )
-                  }
-
-                  return (
-                    <div
-                      key={`${item.title}-${idx}`}
-                      className='block px-4 py-3 hover:bg-gray-50'
-                    >
-                      {content}
-                    </div>
-                  )
-                })
-              ) : (
-                <div className='px-4 py-6 text-sm text-gray-500'>
-                  No modules available yet.
-                </div>
-              )}
-            </div>
-          </div>
+        {/* Learning sessions rail: sessions + toolkits of the selected program */}
+        <div className='col-span-12 lg:col-span-6 xl:col-span-3 min-w-[260px] self-start'>
+          <LearningMaterialsRail
+            programId={activeProgram?.id}
+            programName={activeProgram?.name || activeProgram?.title}
+            className='h-[744px] max-h-[744px]'
+          />
         </div>
 
         {/* Main content */}
@@ -1210,60 +975,16 @@ export default function CoachingDashboard() {
                 <Play className='w-4 h-4 mr-2' />
                 {nextMeeting?.id ? 'Join Meeting' : 'Awaiting Schedule'}
               </Link>
-              <Link
-                to={activeClientLink}
-                className='text-sm text-white/80 hover:text-[#F6B72D]'
-              >
-                Open Client Workspace →
-              </Link>
             </div>
           </div>
 
-          <div className='bg-white border-2 border-[#F6B72D] rounded-xl p-4 shadow-sm flex flex-col flex-1'>
-            <div className='flex items-center gap-2 mb-3'>
-              <NotebookText className='w-5 h-5 text-[#1a2332]' />
-              <h3 className='text-base sm:text-lg font-extrabold uppercase tracking-wide text-gray-800'>
-                Notes
-              </h3>
-            </div>
-            <p className='text-sm text-gray-600 leading-relaxed mb-3'>
-              One place for coaching outcomes, prep, and follow-ups. Saved
-              locally per program.
-            </p>
-            <textarea
-              value={notes}
-              onChange={(event) => setNotes(event.target.value)}
-              className='w-full min-h-[160px] rounded-lg border border-gray-200 p-3 text-sm text-gray-800 focus:border-[#F6B72D] focus:ring-2 focus:ring-[#F6B72D]/30 outline-none'
-              placeholder='Type notes...'
-            />
-            <div className='mt-3 flex items-center justify-between text-xs text-gray-500'>
-              <span>
-                {activeProgram
-                  ? `Program: ${activeProgram.name || activeProgram.title}`
-                  : 'No program selected'}
-              </span>
-              <span>
-                {notesSavedAt
-                  ? `Saved ${notesSavedAt.toLocaleTimeString()}`
-                  : 'Not saved yet'}
-              </span>
-            </div>
-            <div className='mt-3 flex gap-3'>
-              <button
-                type='button'
-                onClick={() => saveNotes(activeProgram, notes)}
-                className='inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[#F6B72D] text-black text-sm font-semibold hover:bg-[#e6b82a]'
-              >
-                <Save className='w-4 h-4' /> Save notes
-              </button>
-              <Link
-                to={activeClientLink}
-                className='text-sm text-[#1a2332] font-semibold hover:text-[#F6B72D]'
-              >
-                Open client workspace →
-              </Link>
-            </div>
-          </div>
+          {/* Server-saved coaching + client notes for the selected client */}
+          <ClientNotesPanel
+            clientUserId={currentAssessmentClient?.clientID}
+            clientName={currentAssessmentClient?.clientName}
+            viewer='staff'
+            className='flex-1'
+          />
         </div>
 
         {/* Program quick access rail */}
@@ -1436,7 +1157,7 @@ export default function CoachingDashboard() {
               Clients
             </p>
             <p className='text-base font-semibold text-gray-900'>
-              Manage Assignments
+              My Assigned Clients
             </p>
           </div>
           <Users className='w-6 h-6 text-[#1a2332]' />

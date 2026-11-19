@@ -2,8 +2,10 @@ import { DataTable } from '@/components/DataTable'
 import { MetricCard } from '@/components/MetricCard'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { X, Search, Edit, Plus } from 'lucide-react'
+import { X, Search, Edit, Plus, ArrowLeft } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { URLS } from '@/config/urls'
 import toast, { Toaster } from 'react-hot-toast'
 import masterAPIService from '@/services/masterAPIService'
 
@@ -108,7 +110,11 @@ export default function Series() {
     {
       key: 'ebooks',
       label: 'Ebooks',
-      render: (row) => (Array.isArray(row.ebooks) ? row.ebooks.length : 0),
+      // The API returns a count (totalEbooksAssigned), not the eBook list.
+      render: (row) =>
+        Array.isArray(row.ebooks)
+          ? row.ebooks.length
+          : Number(row.totalEbooksAssigned || 0),
     },
     {
       key: 'createdOn',
@@ -151,8 +157,14 @@ export default function Series() {
 
   return (
     <div>
+      <Link
+        to={URLS.master.ebooks}
+        className='mb-3 inline-flex items-center gap-2 text-sm font-semibold text-[#1a2332] hover:text-[#F6B72D]'
+      >
+        <ArrowLeft className='h-4 w-4' /> Back to eBooks
+      </Link>
       <h2 className='text-xl font-semibold uppercase text-gray-900 mb-6 tracking-wide'>
-        Series
+        Manage Series
       </h2>
 
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 mb-8'>

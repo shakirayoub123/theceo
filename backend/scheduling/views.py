@@ -364,8 +364,12 @@ class ScheduleMeetingView(APIView):
                 related_id=meeting.id,
             )
 
-        # Send invitation emails
-        meeting.send_invitation_emails()
+        # Client gets a proper confirmation (Discovery Call for the initial
+        # sales appointment); organizer and trainers keep the standard invitation.
+        from .client_emails import send_sales_meeting_confirmation
+
+        send_sales_meeting_confirmation(meeting, client, request.user)
+        meeting.send_invitation_emails(exclude_user_ids=[client.id])
 
         # Ops notification
         send_ops_email(

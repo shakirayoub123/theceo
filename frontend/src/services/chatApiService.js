@@ -59,6 +59,28 @@ class ChatAPIService {
     return this.handleResponse(response)
   }
 
+  // Clients the logged-in coach/sales/admin can start a chat with.
+  async getChatContacts() {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/people/chats/contacts/`,
+      { method: 'GET', headers: this.getAuthHeaders() },
+    )
+    return this.handleResponse(response)
+  }
+
+  // Opens the existing conversation with this user, or creates one.
+  async startChat(userId) {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/people/chats/`,
+      {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify({ userId }),
+      },
+    )
+    return this.handleResponse(response)
+  }
+
   async sendChatMessage(chatId, payload) {
     const response = await this.fetchWithCredentials(
       `${this.baseURL}/people/chats/${chatId}/messages/`,

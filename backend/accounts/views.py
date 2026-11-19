@@ -258,7 +258,17 @@ class AdminDashboardView(APIView):
         )
 
         # Referrals
+        from django.db import DatabaseError, transaction
+
+        from lms.models import ClientReferral
+
         total_users_via_referrals = Referral.objects.filter(is_converted=True).count()
+        try:
+            # Tolerate databases where the referral migration isn't applied yet.
+            with transaction.atomic():
+                total_users_via_referrals += ClientReferral.objects.count()
+        except DatabaseError:
+            pass
 
         # Ebooks
         total_ebooks_sold = EbookPurchase.objects.count()
@@ -374,7 +384,7 @@ class ClientDetailView(APIView):
                     {"error": "Access denied"}, status=status.HTTP_403_FORBIDDEN
                 )
 
-        serializer = ClientDetailSerializer(user)
+        serializer = ClientDetailSerializer(user, context={"request": request})
         return Response(serializer.data)
 
 

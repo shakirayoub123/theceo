@@ -351,6 +351,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # Media files (User uploaded files)
 MEDIA_URL = "/uploads/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
+# Local development only: redirect missing uploads to the live server's media.
+MEDIA_FALLBACK_URL = os.getenv("MEDIA_FALLBACK_URL", "").strip()
 
 # File upload security settings
 FILE_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 100MB

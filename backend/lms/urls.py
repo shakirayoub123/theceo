@@ -5,6 +5,8 @@ from . import trainer_views
 from . import admin_views
 from . import client_views
 from . import people_views
+from . import referral_admin_views
+from . import learning_materials_views
 from . import meeting_views
 from . import media_control_views
 from . import trainer_meeting_views
@@ -136,7 +138,34 @@ urlpatterns = [
         name="admin-newsletter-detail",
     ),
     path(
-        "admin/referrals/", views.AdminReferralsView.as_view(), name="admin-referrals"
+        "programs/<int:service_id>/learning-materials/",
+        learning_materials_views.ProgramLearningMaterialsView.as_view(),
+        name="program-learning-materials",
+    ),
+    path(
+        "admin/referrals/",
+        referral_admin_views.AdminReferralsView.as_view(),
+        name="admin-referrals",
+    ),
+    path(
+        "admin/referral-partners/",
+        referral_admin_views.AdminReferralPartnersView.as_view(),
+        name="admin-referral-partners",
+    ),
+    path(
+        "admin/referral-partners/<int:partner_id>/",
+        referral_admin_views.AdminReferralPartnerDetailView.as_view(),
+        name="admin-referral-partner-detail",
+    ),
+    path(
+        "admin/client-referrals/",
+        referral_admin_views.AdminClientReferralsView.as_view(),
+        name="admin-client-referrals",
+    ),
+    path(
+        "admin/referral-fees/<int:fee_id>/status/",
+        referral_admin_views.AdminReferralFeeStatusView.as_view(),
+        name="admin-referral-fee-status",
     ),
     # Client-facing APIs
     path("ebooks/all/", views.EbooksListView.as_view(), name="ebooks-all"),

@@ -46,7 +46,11 @@ export function DashboardSidebar({
       >
         {items?.map((item) => {
           const Icon = item.icon
-          const isActive = location.pathname === item.href
+          const isActive =
+            location.pathname === item.href ||
+            (item.activePrefixes || []).some((prefix) =>
+              location.pathname.startsWith(prefix),
+            )
 
           return (
             <Button

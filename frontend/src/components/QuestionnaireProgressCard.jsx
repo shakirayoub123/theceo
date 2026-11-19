@@ -1,6 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 const getProgressForForm = (form) => {
+  // Sales receive progress counts only (no answers), so use them when present.
+  if (form?.totalQuestions != null) {
+    const total = Number(form.totalQuestions) || 0
+    const answered = Number(form.answeredQuestions) || 0
+    const percent = total > 0 ? Math.round((answered / total) * 100) : 0
+    return { total, answered, percent }
+  }
+
   if (!Array.isArray(form?.data)) {
     return { total: 0, answered: 0, percent: 0 }
   }

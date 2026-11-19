@@ -22,8 +22,17 @@ export const sidebarConfigs = {
     { label: 'Master Calendar', icon: Calendar, href: URLS.master.calendar },
     { label: 'Clients', icon: CircleUserRound, href: URLS.master.clients },
     { label: 'Services', icon: LaptopMinimal, href: URLS.master.services },
-    { label: 'Ebooks', icon: BookOpen, href: URLS.master.ebooks },
-    { label: 'Series', icon: BookOpen, href: URLS.master.series },
+    {
+      label: 'eBooks',
+      icon: BookOpen,
+      href: URLS.master.ebooks,
+      // Series are opened from the eBooks page; keep this item highlighted there.
+      activePrefixes: [
+        URLS.master.series,
+        URLS.master.addEbook,
+        URLS.master.editEbook.replace('/:id', ''),
+      ],
+    },
     { label: 'Blogs', icon: FilePenLine, href: URLS.master.blogs },
     { label: 'Newsletters', icon: Newspaper, href: URLS.master.newsletters },
     { label: 'Referrals', icon: Newspaper, href: URLS.master.referrals },

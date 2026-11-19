@@ -338,6 +338,32 @@ class ClientDetailSerializer(serializers.ModelSerializer):
             "-created_at"
         )
 
+        # Sales may track assessment progress but must not see the results
+        # (only coaches review results with the client).
+        request = self.context.get("request")
+        viewer_role = getattr(getattr(request, "user", None), "role", None)
+        if viewer_role == "sales":
+            progress = []
+            for answer in form_answers:
+                entries = answer.data if isinstance(answer.data, list) else []
+                answered = sum(
+                    1
+                    for entry in entries
+                    if isinstance(entry, dict)
+                    and entry.get("answer") is not None
+                    and str(entry.get("answer")).strip() != ""
+                )
+                progress.append(
+                    {
+                        "questionnaireTitle": answer.questionnaire_title,
+                        "totalQuestions": len(entries),
+                        "answeredQuestions": answered,
+                        "createdAt": answer.created_at,
+                        "updatedAt": answer.updated_at,
+                    }
+                )
+            return progress
+
         return [
             {
                 "questionnaireTitle": answer.questionnaire_title,

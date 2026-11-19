@@ -479,7 +479,8 @@ class ClientNoteSerializer(serializers.ModelSerializer):
     content = serializers.CharField(read_only=True)
     category = serializers.CharField(read_only=True)
     isPinned = serializers.BooleanField(source="is_pinned", read_only=True)
-    advisorName = serializers.CharField(source="advisor.get_full_name", read_only=True)
+    advisorName = serializers.SerializerMethodField()
+    authorRole = serializers.CharField(source="advisor.role", read_only=True)
     createdAt = serializers.DateTimeField(source="created_at", read_only=True)
     updatedAt = serializers.DateTimeField(source="updated_at", read_only=True)
     version = serializers.IntegerField(read_only=True)
@@ -493,10 +494,17 @@ class ClientNoteSerializer(serializers.ModelSerializer):
             "category",
             "isPinned",
             "advisorName",
+            "authorRole",
             "createdAt",
             "updatedAt",
             "version",
         ]
+
+    def get_advisorName(self, obj):
+        author = obj.advisor
+        if not author:
+            return ""
+        return (author.get_full_name() or "").strip() or author.email or author.username
 
 
 class ClientNoteCreateSerializer(serializers.ModelSerializer):
@@ -505,7 +513,7 @@ class ClientNoteCreateSerializer(serializers.ModelSerializer):
     title = serializers.CharField(max_length=200, required=True)
     content = serializers.CharField(required=True)
     category = serializers.CharField(max_length=50, required=False, allow_blank=True)
-    isPinned = serializers.BooleanField(default=False)
+    isPinned = serializers.BooleanField(default=False, source="is_pinned")
 
     class Meta:
         model = ClientNote
@@ -523,7 +531,7 @@ class ClientNoteUpdateSerializer(serializers.ModelSerializer):
     title = serializers.CharField(max_length=200, required=False)
     content = serializers.CharField(required=False)
     category = serializers.CharField(max_length=50, required=False, allow_blank=True)
-    isPinned = serializers.BooleanField(required=False)
+    isPinned = serializers.BooleanField(required=False, source="is_pinned")
 
     class Meta:
         model = ClientNote

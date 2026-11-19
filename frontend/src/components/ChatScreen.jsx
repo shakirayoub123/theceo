@@ -3,9 +3,10 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Search, Send } from 'lucide-react'
+import { MessageSquarePlus, Search, Send, X } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import chatApiService from '@/services/chatApiService'
+import { useSearchParams } from 'react-router-dom'
 
 const WS_BASE_FALLBACK = 'ws://localhost:8000'
 const MAX_RECONNECT_ATTEMPTS = 5
@@ -213,7 +214,7 @@ const mapMessage = (message, currentUser) => {
   }
 }
 
-export function ChatScreen({ onScheduleMeeting }) {
+export function ChatScreen() {
   const { user, isAuthenticated, loading: authLoading } = useAuth()
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -226,6 +227,14 @@ export function ChatScreen({ onScheduleMeeting }) {
   const [messagesLoading, setMessagesLoading] = useState(false)
   const [messagesError, setMessagesError] = useState('')
   const [connectionStatus, setConnectionStatus] = useState('idle')
+  const [showNewChat, setShowNewChat] = useState(false)
+  const [chatContacts, setChatContacts] = useState([])
+  const [chatContactsLoading, setChatContactsLoading] = useState(false)
+  const [newChatError, setNewChatError] = useState('')
+  const [startingChat, setStartingChat] = useState(false)
+  const [pendingChatId, setPendingChatId] = useState(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const canStartChats = ['trainer', 'sales', 'admin'].includes(user?.role)
 
   const wsRef = useRef(null)
   const reconnectAttemptsRef = useRef(0)
@@ -241,13 +250,10 @@ export function ChatScreen({ onScheduleMeeting }) {
   const filteredContacts = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
 
-    const contactsWithMessages = contacts.filter(
-      (contact) => contact.lastMessage && contact.lastMessage.trim() !== '',
-    )
+    // Show every conversation, including newly started ones with no messages yet.
+    if (!query) return contacts
 
-    if (!query) return contactsWithMessages
-
-    return contactsWithMessages.filter((contact) => {
+    return contacts.filter((contact) => {
       const name = contact.name?.toLowerCase() || ''
       const lastMessage = contact.lastMessage?.toLowerCase() || ''
       return name.includes(query) || lastMessage.includes(query)
@@ -353,11 +359,7 @@ export function ChatScreen({ onScheduleMeeting }) {
 
       setContacts(mapped)
 
-      const validChatIds = mapped
-        .filter(
-          (contact) => contact.lastMessage && contact.lastMessage.trim() !== '',
-        )
-        .map((contact) => contact.chatId)
+      const validChatIds = mapped.map((contact) => contact.chatId)
 
       if (selectedContactId && !validChatIds.includes(selectedContactId)) {
         setSelectedContactId(null)
@@ -372,11 +374,13 @@ export function ChatScreen({ onScheduleMeeting }) {
   }, [user?.id, selectedContactId])
 
   const fetchMessages = useCallback(
-    async (chatId) => {
+    async (chatId, { silent = false } = {}) => {
       if (!chatId) return
 
-      setMessagesLoading(true)
-      setMessagesError('')
+      if (!silent) {
+        setMessagesLoading(true)
+        setMessagesError('')
+      }
 
       try {
         const data = await chatApiService.getChatMessages(chatId)
@@ -386,12 +390,16 @@ export function ChatScreen({ onScheduleMeeting }) {
           ? data.map((message) => mapMessage(message, user, contactContext))
           : []
 
+        // Ignore late results for a chat that is no longer open.
+        if (activeChatIdRef.current && activeChatIdRef.current !== chatId) return
         setMessages(mapped)
       } catch (err) {
-        setMessages([])
-        setMessagesError(err.message || 'Failed to load messages.')
+        if (!silent) {
+          setMessages([])
+          setMessagesError(err.message || 'Failed to load messages.')
+        }
       } finally {
-        setMessagesLoading(false)
+        if (!silent) setMessagesLoading(false)
       }
     },
     [user, contacts],
@@ -557,12 +565,6 @@ export function ChatScreen({ onScheduleMeeting }) {
     [handleSendMessage],
   )
 
-  const handleScheduleMeeting = useCallback(() => {
-    if (onScheduleMeeting && selectedContact) {
-      onScheduleMeeting(selectedContact)
-    }
-  }, [onScheduleMeeting, selectedContact])
-
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
       fetchContacts()
@@ -591,6 +593,74 @@ export function ChatScreen({ onScheduleMeeting }) {
     }
   }, [])
 
+  // ---- Start a new chat (coaches, sales, admin) ----
+  const openNewChat = useCallback(async () => {
+    setShowNewChat(true)
+    setNewChatError('')
+    setChatContactsLoading(true)
+    try {
+      const data = await chatApiService.getChatContacts()
+      setChatContacts(Array.isArray(data?.contacts) ? data.contacts : [])
+    } catch (err) {
+      setNewChatError(err.message || 'Could not load your clients.')
+      setChatContacts([])
+    } finally {
+      setChatContactsLoading(false)
+    }
+  }, [])
+
+  const startChatWith = useCallback(
+    async (userId) => {
+      if (!userId) return
+      setStartingChat(true)
+      setNewChatError('')
+      try {
+        const data = await chatApiService.startChat(userId)
+        await fetchContacts()
+        setPendingChatId(String(data.chatId))
+        setShowNewChat(false)
+      } catch (err) {
+        setNewChatError(err.message || 'Could not start the chat.')
+        setShowNewChat(true)
+      } finally {
+        setStartingChat(false)
+      }
+    },
+    [fetchContacts],
+  )
+
+  // Once the started chat appears in the list, open it.
+  useEffect(() => {
+    if (!pendingChatId) return
+    if (contacts.some((contact) => String(contact.chatId) === pendingChatId)) {
+      handleContactSelect(pendingChatId)
+      setPendingChatId(null)
+    }
+  }, [contacts, handleContactSelect, pendingChatId])
+
+  // /chat?with=<clientUserId> opens (or starts) the chat with that client.
+  // Guarded so React's double-run of effects in development can't start it twice.
+  const handledWithRef = useRef(null)
+  useEffect(() => {
+    const withUserId = searchParams.get('with')
+    if (!withUserId || !user?.id || !canStartChats) return
+    if (handledWithRef.current === withUserId) return
+    handledWithRef.current = withUserId
+    setSearchParams({}, { replace: true })
+    startChatWith(withUserId)
+  }, [canStartChats, searchParams, setSearchParams, startChatWith, user?.id])
+
+  // Without a live connection, quietly refresh the open conversation and the
+  // chat list every few seconds so new messages still appear.
+  useEffect(() => {
+    if (connectionStatus === 'connected' || !selectedContactId) return undefined
+    const timer = setInterval(() => {
+      fetchMessages(selectedContactId, { silent: true })
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [connectionStatus, fetchMessages, selectedContactId])
+
+
   return (
     <Card className='border-2 border-[#F6B72D] bg-white h-[650px] font-exo'>
       <CardContent className='p-0 h-full flex'>
@@ -609,6 +679,60 @@ export function ChatScreen({ onScheduleMeeting }) {
               />
             </div>
           </div>
+
+          {canStartChats && (
+            <div className='px-4 pb-3'>
+              <Button
+                type='button'
+                onClick={() => (showNewChat ? setShowNewChat(false) : openNewChat())}
+                className='w-full bg-[#F6B72D] hover:bg-[#e6b82a] text-black font-semibold'
+              >
+                {showNewChat ? (
+                  <>
+                    <X className='w-4 h-4 mr-2' /> Cancel
+                  </>
+                ) : (
+                  <>
+                    <MessageSquarePlus className='w-4 h-4 mr-2' /> New Chat
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
+
+          {showNewChat && (
+            <div className='mx-4 mb-3 rounded-lg border border-[#F6B72D] bg-[#F6B72D]/5'>
+              <p className='px-3 pt-3 pb-1 text-xs font-semibold uppercase tracking-wide text-gray-600'>
+                Message a client
+              </p>
+              {chatContactsLoading ? (
+                <p className='px-3 pb-3 text-sm text-gray-500'>Loading your clients…</p>
+              ) : chatContacts.length === 0 ? (
+                <p className='px-3 pb-3 text-sm text-gray-500'>
+                  {newChatError || 'You have no clients to message yet.'}
+                </p>
+              ) : (
+                <ul className='max-h-56 overflow-y-auto divide-y divide-gray-100'>
+                  {chatContacts.map((contact) => (
+                    <li key={contact.userId}>
+                      <button
+                        type='button'
+                        disabled={startingChat}
+                        onClick={() => startChatWith(contact.userId)}
+                        className='w-full px-3 py-2 text-left hover:bg-white disabled:opacity-50'
+                      >
+                        <p className='text-sm font-semibold text-gray-900'>{contact.name}</p>
+                        <p className='text-xs text-gray-500'>{contact.email}</p>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {newChatError && chatContacts.length > 0 && (
+                <p className='px-3 pb-2 text-xs text-red-600'>{newChatError}</p>
+              )}
+            </div>
+          )}
 
           {/* Contacts List */}
           <div className='flex-1 overflow-y-auto'>
@@ -716,7 +840,13 @@ export function ChatScreen({ onScheduleMeeting }) {
                               : 'bg-gray-400'
                         }`}
                       ></div>
-                      <span className='capitalize'>{connectionStatus}</span>
+                      <span>
+                        {connectionStatus === 'connected'
+                          ? 'Live'
+                          : connectionStatus === 'connecting'
+                            ? 'Connecting…'
+                            : 'Auto-refreshing every few seconds'}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -803,22 +933,12 @@ export function ChatScreen({ onScheduleMeeting }) {
                       onKeyPress={handleKeyPress}
                       placeholder='Type a message'
                       className='pr-20 border-gray-300 rounded-md placeholder:text-gray-400'
-                      disabled={
-                        connectionStatus === 'reconnecting' ||
-                        connectionStatus === 'error' ||
-                        connectionStatus === 'disconnected'
-                      }
                     />
                     <Button
                       onClick={handleSendMessage}
                       size='sm'
                       className='absolute right-1 top-1/2 transform -translate-y-1/2 text-[#F6B72D] p-1 h-8 w-8'
-                      disabled={
-                        !newMessage.trim() ||
-                        connectionStatus === 'reconnecting' ||
-                        connectionStatus === 'error' ||
-                        connectionStatus === 'disconnected'
-                      }
+                      disabled={!newMessage.trim()}
                     >
                       <Send className='w-4 h-4' />
                     </Button>

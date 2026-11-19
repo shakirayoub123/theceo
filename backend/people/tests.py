@@ -423,4 +423,11 @@ class SalesPaymentJourneyTests(TestCase):
         self.assertIn("Tuesday, Wednesday, and Thursday", welcome_email.body)
         self.assertIn("Monday and Friday", welcome_email.body)
         self.assertIn("Please flag and keep this email", welcome_email.body)
+        # Coach names and direct contact info, in the sales sign-up email style.
+        self.assertIn("who will be your coaches and points of contact", welcome_email.body)
+        for coach in (self.trainer, self.advisor):
+            self.assertIn(
+                f"- {coach.get_full_name().strip() or coach.email}: {coach.email}",
+                welcome_email.body,
+            )
         mock_send_ops_email.assert_called_once()

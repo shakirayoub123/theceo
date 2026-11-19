@@ -129,6 +129,37 @@ def _service_coaching_team(service):
     return unique_team
 
 
+def _join_names(names):
+    names = [n for n in names if n]
+    if len(names) <= 2:
+        return " and ".join(names)
+    return f"{', '.join(names[:-1])} and {names[-1]}"
+
+
+def _coach_contact_block(coaching_team):
+    """Coach names and direct contact info, matching the sales sign-up email style."""
+    if not coaching_team:
+        return ""
+
+    if len(coaching_team) == 1:
+        coach = coaching_team[0]
+        name = _display_name(coach)
+        block = f"You have been assigned to {name} who will be your coach and point of contact."
+        if coach.email:
+            block += f" You can reach them at {coach.email}."
+        return block
+
+    names = _join_names([_display_name(c) for c in coaching_team])
+    lines = [
+        f"You have been assigned to {names} who will be your coaches and points of contact. "
+        "You can reach them directly at:"
+    ]
+    for coach in coaching_team:
+        name = _display_name(coach)
+        lines.append(f"- {name}: {coach.email}" if coach.email else f"- {name}")
+    return "\n".join(lines)
+
+
 def _service_from_metadata(metadata):
     program_id = (
         metadata.get("program_id")
@@ -370,15 +401,6 @@ def send_paid_client_welcome_email_once(
     client_name = (user.get_full_name() or "").strip() or (user.first_name or "").strip() or "there"
     coaching_team = _service_coaching_team(service)
 
-    # Contact line always leads with admin, followed by any assigned advisors.
-    contact_parts = [f"Administration <{CLIENT_SUPPORT_EMAIL}>"]
-    for staff_user in coaching_team:
-        name = _display_name(staff_user)
-        contact_parts.append(
-            f"{name} <{staff_user.email}>" if staff_user.email else name
-        )
-    coaching_team_contacts = ", ".join(contact_parts)
-
     # Advisory team intro paragraph uses the dynamically assigned advisor names.
     if coaching_team:
         team_names = " and ".join(_display_name(m) for m in coaching_team)
@@ -391,6 +413,12 @@ def send_paid_client_welcome_email_once(
             "Your new coaching influencer advisory team is ready to fully support "
             "your full cycle new client journey to success."
         )
+
+    # Coach contact block, in the same style as the sales "point of contact" line
+    # of the new client sign-up email: coach names plus their direct emails.
+    coach_contact_block = _coach_contact_block(coaching_team)
+    if coach_contact_block:
+        team_intro = f"{team_intro}\n\n{coach_contact_block}"
 
     dashboard_video_url = getattr(
         settings,
@@ -418,7 +446,7 @@ def send_paid_client_welcome_email_once(
         "- Then complete the 6 new client onboarding assessment questionnaires or assigned homework before each meeting.\n"
         "- Please keep your weekly one-hour coaching sessions calendar open for Tuesday, Wednesday, or Thursday to keep a consistent weekly meeting cadence.\n\n"
         "Advisory team contact and communication standards:\n"
-        f"- Coaching advisor team: {coaching_team_contacts}\n"
+        f"- Administration: {CLIENT_SUPPORT_EMAIL}\n"
         "- Advisor office hours are Monday and Friday for questions, follow-up, and weekly session planning.\n"
         "- Client coaching meetings are scheduled every Tuesday, Wednesday, and Thursday for a 1-hour coaching session.\n"
         "- For urgent client issues or platform challenges, email info@theceoinfluencers.com anytime.\n\n"
@@ -644,6 +672,20 @@ def finalize_successful_client_payment(
         currency,
         payment_intent_id,
     )
+
+    # Referral fee (10% TCI referral / 15% business partner) on the program price paid.
+    try:
+        from django.db import transaction as db_transaction
+
+        from lms.referrals import record_referral_fee
+
+        # Savepoint: a referral error must never abort the payment's transaction.
+        with db_transaction.atomic():
+            record_referral_fee(stripe_payment, user, service=service)
+    except Exception:
+        logger.exception(
+            "Failed to record referral fee for payment %s", payment_intent_id
+        )
 
     return service, enrollment
 
@@ -2516,30 +2558,48 @@ class ClientProgramsView(APIView):
         return Response({"programs": serializer.data}, status=status.HTTP_200_OK)
 
 
+def _client_notes_access(user, client):
+    """Who may use a client's notes.
+
+    Returns "staff" (admin, the client's salesperson, or a coach of a program the
+    client is enrolled in: sees all notes) or "client" (the client themself: sees
+    only their own notes). Raises PermissionDenied otherwise.
+    """
+    role = getattr(user, "role", "")
+    if role == "admin" or user.is_superuser:
+        return "staff"
+    if role == "sales" and client.assigned_sales_id == user.id:
+        return "staff"
+    if role == "trainer" and Enrollment.objects.filter(
+        models.Q(service__trainer=user) | models.Q(service__advisors=user), user=client.user
+    ).exists():
+        return "staff"
+    if role == "client" and client.user_id == user.id:
+        return "client"
+    raise PermissionDenied("You can only access notes of clients assigned to you.")
+
+
 class ClientNotesView(APIView):
     """GET/POST /clients/:clientId/notes - Client notes management"""
 
     permission_classes = [IsAuthenticated, IsClientOrAssignedAdvisor]
 
     def get_client(self, client_id, user):
-        """Get client with proper permissions"""
+        """Get client and the caller's access level ("staff" or "client")."""
         client = get_object_or_404(Client, user__id=client_id)
-
-        # Only trainers/sales can access notes
-        if user.role == "client":
-            raise PermissionDenied("Clients cannot access advisor notes.")
-        elif user.role in ["trainer", "sales"] and client.assigned_sales != user:
-            raise PermissionDenied(
-                "You can only access notes of clients assigned to you."
-            )
-
-        return client
+        return client, _client_notes_access(user, client)
 
     def get(self, request, clientId):
-        """Get client notes"""
-        client = self.get_client(clientId, request.user)
+        """Get client notes (clients only see their own notes)."""
+        client, access = self.get_client(clientId, request.user)
 
-        notes = ClientNote.objects.filter(client=client).order_by("-updated_at")
+        notes = (
+            ClientNote.objects.filter(client=client)
+            .select_related("advisor")
+            .order_by("-created_at")
+        )
+        if access == "client":
+            notes = notes.filter(advisor=request.user)
 
         # Filter by category if provided
         category = request.query_params.get("category")
@@ -2555,11 +2615,25 @@ class ClientNotesView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, clientId):
-        """Create a new client note"""
-        client = self.get_client(clientId, request.user)
+        """Create a new client note (coach/staff note, or the client's own note)."""
+        client, access = self.get_client(clientId, request.user)
+
+        data = {
+            "title": (request.data.get("title") or "").strip(),
+            "content": (request.data.get("content") or "").strip(),
+            "category": request.data.get("category") or "",
+            "isPinned": bool(request.data.get("isPinned", False)),
+        }
+        if not data["title"]:
+            data["title"] = (data["content"].splitlines() or ["Note"])[0][:80] or "Note"
+        if access == "client":
+            data["category"] = "client"
+            data["isPinned"] = False
+        elif not data["category"]:
+            data["category"] = "coaching" if request.user.role == "trainer" else request.user.role
 
         serializer = ClientNoteCreateSerializer(
-            data=request.data, context={"client": client, "request": request}
+            data=data, context={"client": client, "request": request}
         )
         if serializer.is_valid():
             note = serializer.save()
@@ -2576,16 +2650,11 @@ class ClientNoteDetailView(APIView):
     def get_client_and_note(self, client_id, note_id, user):
         """Get client and note with proper permissions"""
         client = get_object_or_404(Client, user__id=client_id)
-
-        # Only trainers/sales can access notes
-        if user.role == "client":
-            raise PermissionDenied("Clients cannot access advisor notes.")
-        elif user.role in ["trainer", "sales"] and client.assigned_sales != user:
-            raise PermissionDenied(
-                "You can only access notes of clients assigned to you."
-            )
+        access = _client_notes_access(user, client)
 
         note = get_object_or_404(ClientNote, id=note_id, client=client)
+        if access == "client" and note.advisor_id != user.id:
+            raise PermissionDenied("You can only access your own notes.")
         return client, note
 
     def get(self, request, clientId, noteId):
@@ -2801,6 +2870,43 @@ class ClientChatMessagesView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ChatContactsView(APIView):
+    """GET /chats/contacts/ - clients the logged-in staff user can start a chat with.
+
+    Coach: clients enrolled in programs they coach. Sales: their assigned
+    clients. Admin: all clients. Clients get an empty list (they reply to chats
+    their team starts).
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        role = getattr(user, "role", "")
+        clients = User.objects.filter(role="client", is_active=True)
+        if role == "admin" or user.is_superuser:
+            pass
+        elif role == "trainer":
+            clients = clients.filter(
+                models.Q(enrollments__service__trainer=user)
+                | models.Q(enrollments__service__advisors=user)
+            )
+        elif role == "sales":
+            clients = clients.filter(client_profile__assigned_sales=user)
+        else:
+            clients = clients.none()
+
+        data = [
+            {
+                "userId": str(c.id),
+                "name": (c.get_full_name() or "").strip() or c.email or c.username,
+                "email": c.email,
+            }
+            for c in clients.distinct().order_by("first_name", "last_name", "email")[:500]
+        ]
+        return Response({"contacts": data}, status=status.HTTP_200_OK)
+
+
 class InitiateChatSessionView(APIView):
     """POST /chats - Initiate a chat session"""
 
@@ -2808,7 +2914,8 @@ class InitiateChatSessionView(APIView):
 
     def post(self, request):
         user_id = request.data.get("userId")
-        initiator_id = request.data.get("initiatorId", str(request.user.id))
+        # The initiator is always the logged-in user (never trust a client-sent id).
+        initiator = request.user
 
         if not user_id:
             return Response(
@@ -2817,8 +2924,7 @@ class InitiateChatSessionView(APIView):
 
         try:
             target_user = User.objects.get(id=user_id)
-            initiator = User.objects.get(id=initiator_id)
-        except User.DoesNotExist:
+        except (User.DoesNotExist, ValueError):
             return Response(
                 {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
             )
@@ -2828,10 +2934,50 @@ class InitiateChatSessionView(APIView):
             return Response(
                 {"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN
             )
+        if target_user.id == initiator.id:
+            return Response(
+                {"error": "You cannot start a chat with yourself"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        # Create chat session
         from messaging.models import ChatSession, ChatMember
 
+        # Lock both users so two simultaneous requests can't create duplicates.
+        with transaction.atomic():
+            list(
+                User.objects.select_for_update()
+                .filter(id__in=[initiator.id, target_user.id])
+                .order_by("id")
+            )
+            return self._open_or_create(initiator, target_user, ChatSession, ChatMember)
+
+    def _open_or_create(self, initiator, target_user, ChatSession, ChatMember):
+        # Reuse the existing conversation between these two people, if any.
+        existing = (
+            ChatSession.objects.filter(
+                is_active=True,
+                messaging_members__user=initiator,
+                messaging_members__status="active",
+            )
+            .filter(messaging_members__user=target_user, messaging_members__status="active")
+            .order_by("-updated_at")
+            .first()
+        )
+        if existing is not None:
+            return Response(
+                {
+                    "chatId": str(existing.id),
+                    "sessionToken": str(uuid.uuid4()),
+                    "existing": True,
+                    "participants": [
+                        {"id": str(initiator.id), "name": initiator.get_full_name(), "role": "initiator"},
+                        {"id": str(target_user.id), "name": target_user.get_full_name(), "role": "participant"},
+                    ],
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        # Create chat session
         session = ChatSession.objects.create(
             title=f"Chat with {target_user.get_full_name()}",
             client=target_user,  # Set the client field
@@ -2889,8 +3035,9 @@ class SendChatMessageView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, chat_id):
-        text = request.data.get("text")
-        sender_id = request.data.get("senderId", str(request.user.id))
+        text = (request.data.get("text") or "").strip()
+        # The sender is always the logged-in user (never trust a client-sent id).
+        sender = request.user
 
         if not text:
             return Response(
@@ -2899,8 +3046,7 @@ class SendChatMessageView(APIView):
 
         try:
             session = ChatSession.objects.get(id=chat_id, is_active=True)
-            sender = User.objects.get(id=sender_id)
-        except (ChatSession.DoesNotExist, User.DoesNotExist):
+        except (ChatSession.DoesNotExist, ValueError):
             return Response(
                 {"error": "Chat session or user not found"},
                 status=status.HTTP_404_NOT_FOUND,
@@ -2919,21 +3065,28 @@ class SendChatMessageView(APIView):
         # Create message
         message = ChatMessage.objects.create(session=session, sender=sender, text=text)
 
-        # Broadcast the message via WebSocket
-        from channels.layers import get_channel_layer
-        from asgiref.sync import async_to_sync
-        
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            f"messaging_{chat_id}",
-            {
-                "type": "chat_message",
-                "message": message.text,
-                "sender": message.sender.username,
-                "sent_at": message.created_at.isoformat(),
-                "message_id": str(message.id),
-            },
-        )
+        # Broadcast the message live via WebSocket. Best-effort: the message is
+        # already saved, so a realtime/Redis outage must not fail the send.
+        try:
+            from channels.layers import get_channel_layer
+            from asgiref.sync import async_to_sync
+
+            channel_layer = get_channel_layer()
+            if channel_layer is not None:
+                async_to_sync(channel_layer.group_send)(
+                    f"messaging_{chat_id}",
+                    {
+                        "type": "chat_message",
+                        "message": message.text,
+                        "sender": message.sender.username,
+                        "sent_at": message.created_at.isoformat(),
+                        "message_id": str(message.id),
+                    },
+                )
+        except Exception:
+            logger.warning(
+                "Live chat broadcast failed for chat %s (message saved)", chat_id, exc_info=True
+            )
 
         return Response(
             {

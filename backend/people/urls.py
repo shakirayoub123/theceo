@@ -165,6 +165,7 @@ urlpatterns = [
         name="client-chat-messages",
     ),
     # New Chat and Meeting Management URLs
+    path("chats/contacts/", views.ChatContactsView.as_view(), name="chat-contacts"),
     path("chats/", views.InitiateChatSessionView.as_view(), name="initiate-chat"),
     path(
         "chats/<chat_id>/messages/",

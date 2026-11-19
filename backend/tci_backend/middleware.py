@@ -11,6 +11,7 @@ from .throttling import IPBanThrottle, apply_ip_ban
 # so they are denied regardless of whether nginx proxies to Django
 # or Django is serving media in DEBUG mode.
 PROTECTED_MEDIA_PREFIXES = ("/uploads/ebooks/", "/uploads/newsletters/")
+IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".avif")
 
 
 class ProtectedMediaMiddleware:
@@ -18,9 +19,14 @@ class ProtectedMediaMiddleware:
 
     def __init__(self, get_response):
         self.get_response = get_response
+        # Local development against the live DB only (unset in production):
+        # cover images are redirected to the live site, which serves them publicly.
+        self.allow_image_fallback = bool(getattr(settings, "MEDIA_FALLBACK_URL", ""))
 
     def __call__(self, request):
         path = request.path
+        if self.allow_image_fallback and path.lower().endswith(IMAGE_EXTENSIONS):
+            return self.get_response(request)
         for prefix in PROTECTED_MEDIA_PREFIXES:
             if path.startswith(prefix):
                 return JsonResponse(

@@ -559,6 +559,34 @@ class ReferralAdmin(admin.ModelAdmin):
         return super().get_queryset(request).select_related("referrer", "referred_user")
 
 
+from .models import ClientReferral, ReferralFee, ReferralPartner  # noqa: E402
+
+
+@admin.register(ReferralPartner)
+class ReferralPartnerAdmin(admin.ModelAdmin):
+    list_display = ("name", "email", "partner_type", "referral_code", "is_active", "created_at")
+    list_filter = ("partner_type", "is_active")
+    search_fields = ("name", "email", "referral_code")
+
+
+@admin.register(ClientReferral)
+class ClientReferralAdmin(admin.ModelAdmin):
+    list_display = ("client_user", "partner", "source", "referred_by_text", "created_at")
+    list_filter = ("source", "partner__partner_type")
+    search_fields = ("client_user__email", "partner__name", "referred_by_text")
+
+
+@admin.register(ReferralFee)
+class ReferralFeeAdmin(admin.ModelAdmin):
+    list_display = (
+        "partner", "client_user", "program_title", "amount_paid", "fee_rate",
+        "fee_amount", "status", "paid_at", "created_at",
+    )
+    list_filter = ("status", "partner__partner_type")
+    search_fields = ("partner__name", "client_user__email", "program_title")
+    readonly_fields = ("stripe_payment", "amount_paid", "fee_rate", "fee_amount", "created_at")
+
+
 class CartItemInline(admin.TabularInline):
     """Inline admin for cart items"""
 
