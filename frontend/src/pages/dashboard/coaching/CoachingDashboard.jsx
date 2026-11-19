@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { MetricCard } from '@/components/MetricCard'
 import authService from '@/services/authService'
 import LearningMaterialsRail from '@/components/LearningMaterialsRail'
+import ProgramManagerRail from '@/components/ProgramManagerRail'
 import ClientNotesPanel from '@/components/ClientNotesPanel'
 import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
@@ -349,11 +350,34 @@ export default function CoachingDashboard() {
   }
 
   const selectablePrograms = useMemo(() => {
-    const sourcePrograms = programs.length ? programs : allPrograms
+    const toEntry = (program, dedupeKey) => ({
+      ...program,
+      id: program?.id || program?.uuid || dedupeKey,
+      name: program?.name || program?.title || 'Program',
+    })
+
+    // All TCI programs in catalog order (Program 1, 2, ...), marked with the
+    // coach's client where they have one.
+    if (allPrograms.length) {
+      const coachById = new Map()
+      programs.forEach((program) => {
+        const id = program?.id || program?.uuid
+        if (id && !coachById.has(String(id))) coachById.set(String(id), program)
+      })
+      const catalog = [...allPrograms].sort((a, b) => {
+        const ao = Number.isFinite(a?.order) ? a.order : Number.MAX_SAFE_INTEGER
+        const bo = Number.isFinite(b?.order) ? b.order : Number.MAX_SAFE_INTEGER
+        return ao - bo || Number(a?.id) - Number(b?.id)
+      })
+      return catalog.map((program) => {
+        const mine = coachById.get(String(program.id))
+        return toEntry({ ...mine, ...program, clientName: mine?.clientName })
+      })
+    }
+
     const uniquePrograms = []
     const seen = new Set()
-
-    sourcePrograms.forEach((program) => {
+    programs.forEach((program) => {
       const programId = program?.id || program?.uuid
       const programName = program?.name || program?.title || 'Program'
       const dedupeKey = programId
@@ -361,15 +385,20 @@ export default function CoachingDashboard() {
         : `name-${normalizeText(programName)}`
       if (!dedupeKey || seen.has(dedupeKey)) return
       seen.add(dedupeKey)
-      uniquePrograms.push({
-        ...program,
-        id: programId || dedupeKey,
-        name: programName,
-      })
+      uniquePrograms.push(toEntry(program, dedupeKey))
     })
-
     return uniquePrograms
   }, [allPrograms, programs])
+
+  const reloadAllPrograms = async (selectId) => {
+    try {
+      const response = await authService.getAllPrograms()
+      setAllPrograms(response?.programs || response || [])
+      if (selectId) setActiveProgramId(selectId)
+    } catch (error) {
+      console.error('Failed to reload programs:', error)
+    }
+  }
 
   const activeProgram = useMemo(() => {
     if (!selectablePrograms.length) return null
@@ -930,6 +959,7 @@ export default function CoachingDashboard() {
             programId={activeProgram?.id}
             programName={activeProgram?.name || activeProgram?.title}
             className='h-[744px] max-h-[744px]'
+            editable
           />
         </div>
 
@@ -987,53 +1017,15 @@ export default function CoachingDashboard() {
           />
         </div>
 
-        {/* Program quick access rail */}
-        <div className='col-span-12 lg:col-span-6 xl:col-span-3 space-y-3 min-w-[260px]'>
-          <div className='bg-white border-2 border-[#F6B72D] rounded-xl shadow-sm h-full'>
-            <div className='px-4 py-3 border-b border-black/10 bg-[#F6B72D] flex items-center justify-between'>
-              <span className='text-sm font-extrabold uppercase tracking-wide text-black'>
-                Programs
-              </span>
-              <span className='text-[10px] px-2 py-1 bg-black/10 rounded-full text-black'>
-                {selectablePrograms.length}
-              </span>
-            </div>
-            <div className='divide-y divide-gray-100'>
-              {selectablePrograms.length ? (
-                selectablePrograms.slice(0, 9).map((program, idx) => {
-                  const isActive =
-                    String(activeProgram?.id) === String(program.id)
-                  return (
-                    <button
-                      type='button'
-                      key={program.id || `${program.name}-${idx}`}
-                      onClick={() => setActiveProgramId(program.id)}
-                      className={`block w-full text-left px-4 py-3 transition-colors ${isActive
-                        ? 'bg-[#F6B72D]/15 text-black border-l-4 border-[#F6B72D]'
-                        : 'hover:bg-[#F6B72D]/10'
-                        }`}
-                    >
-                      <p className='text-xs font-semibold uppercase tracking-wide text-gray-500'>
-                        Program {idx + 1}
-                      </p>
-                      <p className='text-sm font-semibold truncate'>
-                        {program.name || program.title || 'Program'}
-                      </p>
-                      <p className='text-xs text-gray-500'>
-                        {program.clientName
-                          ? `Client: ${program.clientName}`
-                          : 'Assigned Program'}
-                      </p>
-                    </button>
-                  )
-                })
-              ) : (
-                <div className='px-4 py-6 text-sm text-gray-500'>
-                  No programs available yet.
-                </div>
-              )}
-            </div>
-          </div>
+        {/* Programs rail: all TCI programs, with add / remove */}
+        <div className='col-span-12 lg:col-span-6 xl:col-span-3 min-w-[260px] self-start'>
+          <ProgramManagerRail
+            programs={selectablePrograms}
+            activeId={activeProgram?.id}
+            onSelect={setActiveProgramId}
+            onChanged={reloadAllPrograms}
+            className='h-[744px] max-h-[744px]'
+          />
         </div>
       </div>
 

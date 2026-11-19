@@ -615,6 +615,7 @@ class ReferralPartner(models.Model):
 
     name = models.CharField(max_length=255)
     email = models.EmailField(blank=True, default="")
+    phone = models.CharField(max_length=40, blank=True, default="")
     partner_type = models.CharField(
         max_length=20, choices=PARTNER_TYPE_CHOICES, default=TYPE_TCI
     )
@@ -654,11 +655,16 @@ class ClientReferral(models.Model):
     SOURCE_CHOICES = (
         ("auto", "Matched from 'Referred By'"),
         ("manual", "Linked by admin"),
+        ("staff", "Added by Sales/Coaching"),
     )
 
+    # Empty until the referred person has a TCI account; then matched by email.
     client_user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="client_referral"
+        User, on_delete=models.CASCADE, related_name="client_referral", null=True, blank=True
     )
+    client_name = models.CharField(max_length=255, blank=True, default="")
+    client_email = models.EmailField(blank=True, default="")
+    notes = models.TextField(blank=True, default="")
     partner = models.ForeignKey(
         ReferralPartner, on_delete=models.PROTECT, related_name="client_referrals"
     )
@@ -673,7 +679,8 @@ class ClientReferral(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.client_user.email} referred by {self.partner.name}"
+        who = self.client_user.email if self.client_user_id else self.client_email
+        return f"{who} referred by {self.partner.name}"
 
 
 class ReferralFee(models.Model):
@@ -705,6 +712,7 @@ class ReferralFee(models.Model):
     currency = models.CharField(max_length=3, default="usd")
     fee_rate = models.DecimalField(max_digits=5, decimal_places=4)
     fee_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    fee_label = models.CharField(max_length=120, blank=True, default="")
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
     paid_at = models.DateTimeField(null=True, blank=True)
     paid_by = models.ForeignKey(

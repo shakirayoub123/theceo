@@ -14,6 +14,9 @@ import {
   Users,
 } from 'lucide-react'
 
+// Placeholder shown under the real programs until Program 10 exists.
+const COMING_SOON_PROGRAM_NUMBER = 10
+
 const PAGE_SIZE = 8
 const HERO_TAGLINE_OUTLINE = {
   WebkitTextStroke: '1px rgba(0, 0, 0, 0.75)',
@@ -520,7 +523,7 @@ export default function SalesDashboard() {
             <div className='px-4 py-3 border-b border-black/10 bg-[#F6B72D]'>
               <div className='flex items-center justify-between'>
                 <span className='text-sm font-extrabold uppercase tracking-wide text-black'>
-                  Learning Sessions
+                  Program Content
                 </span>
                 <span className='text-[10px] px-2 py-1 bg-black/10 rounded-full text-black'>
                   {activeProgramContent.length}
@@ -716,6 +719,19 @@ export default function SalesDashboard() {
               ) : (
                 <div className='px-4 py-6 text-sm text-gray-500'>
                   No programs available yet.
+                </div>
+              )}
+              {programs.length < COMING_SOON_PROGRAM_NUMBER && (
+                <div
+                  className='px-4 py-3 bg-gray-50 cursor-default select-none'
+                  title='This program is not available yet'
+                >
+                  <p className='text-xs font-semibold uppercase tracking-wide text-gray-400'>
+                    Program {COMING_SOON_PROGRAM_NUMBER}
+                  </p>
+                  <p className='text-sm font-extrabold uppercase tracking-wide text-gray-500'>
+                    Coming Soon
+                  </p>
                 </div>
               )}
             </div>

@@ -848,6 +848,96 @@ class AuthService {
     return this.handleResponse(response)
   }
 
+  // ---- Client Referrals tab (sales / coaching / admin) ----
+  async getStaffClientReferrals() {
+    const response = await this.fetchWithCredentials(`${this.baseURL}/lms/staff/client-referrals/`, {
+      method: 'GET',
+      headers: this.getAuthHeaders(),
+    })
+    return this.handleResponse(response)
+  }
+
+  async addStaffClientReferral(data) {
+    const response = await this.fetchWithCredentials(`${this.baseURL}/lms/staff/client-referrals/`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(data),
+    })
+    return this.handleResponse(response)
+  }
+
+  async deleteStaffClientReferral(referralId) {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/lms/staff/client-referrals/${referralId}/`,
+      { method: 'DELETE', headers: this.getAuthHeaders() },
+    )
+    return this.handleResponse(response)
+  }
+
+  // ---- Coach/admin content management (programs + learning materials) ----
+  async coachContentRequest(path, { method = 'GET', json, form } = {}) {
+    const options = { method }
+    if (form) {
+      options.body = form
+      options.headers = this.getAuthHeadersForFormData()
+    } else {
+      options.headers = this.getAuthHeaders()
+      if (json !== undefined) options.body = JSON.stringify(json)
+    }
+    const response = await this.fetchWithCredentials(`${this.baseURL}/lms/coach/${path}`, options)
+    return this.handleResponse(response)
+  }
+
+  getCoachPrograms(status = 'active') {
+    return this.coachContentRequest(`programs/?status=${encodeURIComponent(status)}`)
+  }
+
+  createCoachProgram(data) {
+    return this.coachContentRequest('programs/', { method: 'POST', json: data })
+  }
+
+  archiveCoachProgram(programId) {
+    return this.coachContentRequest(`programs/${programId}/`, { method: 'DELETE' })
+  }
+
+  restoreCoachProgram(programId) {
+    return this.coachContentRequest(`programs/${programId}/restore/`, { method: 'POST' })
+  }
+
+  addLearningSession(programId, { title, summary, pdf }) {
+    const form = new FormData()
+    form.append('title', title)
+    if (summary) form.append('summary', summary)
+    if (pdf) form.append('pdf', pdf)
+    return this.coachContentRequest(`programs/${programId}/sessions/`, { method: 'POST', form })
+  }
+
+  deleteLearningSession(sessionId) {
+    return this.coachContentRequest(`sessions/${sessionId}/`, { method: 'DELETE' })
+  }
+
+  addSessionToolkitFile(sessionId, file, title = '') {
+    const form = new FormData()
+    form.append('file', file)
+    if (title) form.append('title', title)
+    return this.coachContentRequest(`sessions/${sessionId}/files/`, { method: 'POST', form })
+  }
+
+  deleteSessionFile(fileId) {
+    return this.coachContentRequest(`session-files/${fileId}/`, { method: 'DELETE' })
+  }
+
+  addProgramToolkitFile(programId, file, title = '') {
+    const form = new FormData()
+    form.append('file', file)
+    if (title) form.append('title', title)
+    return this.coachContentRequest(`programs/${programId}/files/`, { method: 'POST', form })
+  }
+
+  deleteProgramFile(fileId) {
+    return this.coachContentRequest(`program-files/${fileId}/`, { method: 'DELETE' })
+  }
+
   // Notes for one client (client user id). Coaches/staff get all notes;
   // a client gets only their own notes.
   async getClientNotes(clientUserId) {
@@ -915,13 +1005,16 @@ class AuthService {
     return this.handleResponse(response)
   }
 
-  async setReferralFeeStatus(feeId, status, note) {
+  async setReferralFeeStatus(feeId, status, note, feeAmount) {
+    const body = { status }
+    if (note !== undefined) body.note = note
+    if (feeAmount !== undefined) body.feeAmount = feeAmount
     const response = await this.fetchWithCredentials(
       `${this.baseURL}/lms/admin/referral-fees/${feeId}/status/`,
       {
         method: 'POST',
         headers: { ...this.getAuthHeaders(), 'Content-Type': 'application/json' },
-        body: JSON.stringify(note === undefined ? { status } : { status, note }),
+        body: JSON.stringify(body),
       },
     )
     return this.handleResponse(response)

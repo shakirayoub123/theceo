@@ -14,6 +14,7 @@ import {
   MessageCircle,
   FileText,
   Settings,
+  Gift,
 } from 'lucide-react'
 import { URLS } from './urls'
 export const sidebarConfigs = {
@@ -51,6 +52,7 @@ export const sidebarConfigs = {
     },
     { label: 'Potential Leads', icon: Search, href: URLS.sales.potentialLeads },
     { label: 'Calendar', icon: Calendar, href: URLS.sales.calendar },
+    { label: 'Client Referrals', icon: Gift, href: URLS.sales.clientReferrals },
     { label: 'Chat', icon: MessageCircle, href: URLS.chat },
     { label: 'Logout', icon: LogOut, href: URLS.logout },
   ],
@@ -58,6 +60,7 @@ export const sidebarConfigs = {
     { label: 'Overview', icon: Home, href: URLS.coaching.overview },
     { label: 'Clients', icon: CirclePlus, href: URLS.coaching.clients },
     { label: 'Calendar', icon: Calendar, href: URLS.coaching.calendar },
+    { label: 'Client Referrals', icon: Gift, href: URLS.coaching.clientReferrals },
     { label: 'Chat', icon: MessageCircle, href: URLS.chat },
     { label: 'Logout', icon: LogOut, href: URLS.logout },
   ],

@@ -22,7 +22,7 @@ PARTNER_TYPES = dict(ReferralPartner.PARTNER_TYPE_CHOICES)
 
 SETUP_MESSAGE = (
     "Referral fees are not set up in this database yet. "
-    "Run 'python manage.py migrate' (applies lms 0037) to enable them."
+    "Run 'python manage.py migrate' (applies lms 0037 and 0038) to enable them."
 )
 
 
@@ -74,6 +74,7 @@ def _fee_data(fee):
         "currency": fee.currency,
         "feePercent": float(fee.fee_rate * 100),
         "feeAmount": _money(fee.fee_amount),
+        "feeLabel": fee.fee_label or f"{float(fee.fee_rate * 100):g}% of program price",
         "status": fee.status,
         "paidAt": fee.paid_at.isoformat() if fee.paid_at else None,
         "payoutNote": fee.payout_note,
@@ -85,10 +86,13 @@ def _client_referral_data(referral):
     return {
         "id": referral.id,
         "clientUserId": referral.client_user_id,
-        "clientName": _name(referral.client_user),
-        "clientEmail": referral.client_user.email,
+        "clientName": _name(referral.client_user) if referral.client_user_id else referral.client_name,
+        "clientEmail": referral.client_user.email if referral.client_user_id else referral.client_email,
+        "hasAccount": bool(referral.client_user_id),
         "partnerId": referral.partner_id,
         "partnerName": referral.partner.name,
+        "partnerType": referral.partner.partner_type,
+        "addedBy": _name(referral.created_by),
         "source": referral.source,
         "referredByText": referral.referred_by_text,
         "createdAt": referral.created_at.isoformat(),
@@ -127,11 +131,11 @@ class AdminReferralsView(APIView):
             )
 
         partners = ReferralPartner.objects.all()
-        referrals = ClientReferral.objects.select_related("client_user", "partner")
+        referrals = ClientReferral.objects.select_related("client_user", "partner", "created_by")
         fees = ReferralFee.objects.select_related("partner", "client_user", "program")
         active_fees = fees.exclude(status="void")
 
-        linked_ids = set(referrals.values_list("client_user_id", flat=True))
+        linked_ids = set(referrals.exclude(client_user__isnull=True).values_list("client_user_id", flat=True))
         clients = (
             User.objects.filter(role="client")
             .select_related("client_profile")
@@ -311,5 +315,13 @@ class AdminReferralFeeStatusView(APIView):
             fee.paid_by = None
         if "note" in request.data:
             fee.payout_note = (request.data.get("note") or "")[:255]
+        if request.data.get("feeAmount") not in (None, ""):
+            try:
+                amount = Decimal(str(request.data.get("feeAmount"))).quantize(Decimal("0.01"))
+            except Exception:
+                return Response({"error": "feeAmount must be a number."}, status=status.HTTP_400_BAD_REQUEST)
+            if amount < 0:
+                return Response({"error": "feeAmount cannot be negative."}, status=status.HTTP_400_BAD_REQUEST)
+            fee.fee_amount = amount
         fee.save()
         return Response(_fee_data(fee), status=status.HTTP_200_OK)

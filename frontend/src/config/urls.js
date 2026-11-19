@@ -44,11 +44,13 @@ export const URLS = {
     clientDetails: '/sales-dashboard/clients/:id',
     potentialLeads: '/sales-dashboard/potential-leads',
     calendar: '/sales-dashboard/calendar',
+    clientReferrals: '/sales-dashboard/client-referrals',
   },
 
   coaching: {
     overview: '/coaching-dashboard',
     clients: '/coaching-dashboard/clients',
+    clientReferrals: '/coaching-dashboard/client-referrals',
     calendar: '/coaching-dashboard/calendar',
     meeting: '/coaching-dashboard/meeting',
     clientDetails: '/coaching-dashboard/clients/:id',

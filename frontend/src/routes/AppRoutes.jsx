@@ -41,6 +41,7 @@ import ExisitingClients from '@/pages/dashboard/sales/ExisitingClients'
 import NewClients from '@/pages/dashboard/sales/NewClients'
 import PotentialLeads from '@/pages/dashboard/sales/PotentialLeads'
 import SalesCalendar from '@/pages/dashboard/sales/SalesCalendar'
+import ClientReferrals from '@/pages/dashboard/shared/ClientReferrals'
 import SalesClientDetails from '@/pages/dashboard/sales/SalesClientDetails'
 import SalesDashboard from '@/pages/dashboard/sales/SalesDashboard'
 import { Route, Routes } from 'react-router-dom'
@@ -312,6 +313,14 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path={URLS.sales.clientReferrals}
+          element={
+            <ProtectedRoute allowedRoles={['sales']}>
+              <ClientReferrals />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Coaching Routes */}
         <Route
@@ -343,6 +352,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={['trainer']}>
               <CoachingCalendar />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={URLS.coaching.clientReferrals}
+          element={
+            <ProtectedRoute allowedRoles={['trainer']}>
+              <ClientReferrals />
             </ProtectedRoute>
           }
         />

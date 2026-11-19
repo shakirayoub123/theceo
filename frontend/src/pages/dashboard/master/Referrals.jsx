@@ -33,6 +33,8 @@ const TYPE_STYLES = {
   business: 'bg-[#0f172a] text-white border-[#0f172a]',
 }
 
+const TYPE_LABELS = { tci: 'TCI referral', business: 'Business partner' }
+
 const fieldClass =
   'w-full rounded-lg border-2 border-gray-200 px-3 py-2 text-sm font-exo focus:border-[#F6B72D] focus:outline-none bg-white'
 const primaryButton =
@@ -147,6 +149,23 @@ export default function Referrals() {
     )
   }
 
+  const setFeeAmount = (fee) => {
+    const entered = window.prompt(
+      `Set the referral fee for ${fee.clientName} (${fee.program || 'program'}) in USD:`,
+      fee.feeAmount,
+    )
+    if (entered === null) return
+    const amount = Number(entered)
+    if (!Number.isFinite(amount) || amount < 0) {
+      setNotice('Error: enter a valid amount.')
+      return
+    }
+    runAction(
+      () => authService.setReferralFeeStatus(fee.id, fee.status, undefined, amount.toFixed(2)),
+      `Fee for ${fee.clientName} set to ${money(amount, fee.currency)}.`,
+    )
+  }
+
   const togglePartnerActive = (partner) =>
     runAction(
       () => authService.updateReferralPartner(partner.id, { isActive: !partner.isActive }),
@@ -201,8 +220,9 @@ export default function Referrals() {
       <p className='text-sm text-gray-600 mb-6 font-exo max-w-3xl'>
         When a referred client&apos;s program payment is confirmed, the referrer earns a fee on
         the total price paid for that program: <strong>10% for TCI referrals</strong> and{' '}
-        <strong>15% for business referral partners</strong>. Mark each fee paid once the
-        partner has been paid.
+        <strong>15% for business referral partners</strong>. Sales and Coaching can also add
+        referrals from their <strong>Client Referrals</strong> tab (same percentages). Mark each fee
+        paid once the referrer has been paid.
       </p>
 
       {setupRequired && (
@@ -284,7 +304,7 @@ export default function Referrals() {
                       <span
                         className={`mt-1 inline-block rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase ${TYPE_STYLES[fee.partnerType] || ''}`}
                       >
-                        {fee.partnerType === 'business' ? 'Business partner' : 'TCI referral'}
+                        {TYPE_LABELS[fee.partnerType] || 'TCI referral'}
                       </span>
                     </td>
                     <td className={tdClass}>
@@ -293,7 +313,7 @@ export default function Referrals() {
                     </td>
                     <td className={tdClass}>{fee.program || '-'}</td>
                     <td className={tdClass}>{money(fee.amountPaid, fee.currency)}</td>
-                    <td className={tdClass}>{fee.feePercent}%</td>
+                    <td className={tdClass}>{fee.feeLabel || `${fee.feePercent}%`}</td>
                     <td className={`${tdClass} font-bold`}>{money(fee.feeAmount, fee.currency)}</td>
                     <td className={tdClass}>
                       <span
@@ -310,6 +330,16 @@ export default function Referrals() {
                     </td>
                     <td className={tdClass}>
                       <div className='flex flex-wrap gap-2'>
+                        {fee.status === 'pending' && (
+                          <button
+                            type='button'
+                            disabled={busy}
+                            onClick={() => setFeeAmount(fee)}
+                            className='rounded-md border border-gray-300 px-2.5 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50'
+                          >
+                            Set amount
+                          </button>
+                        )}
                         {fee.status !== 'paid' && (
                           <button
                             type='button'
@@ -553,7 +583,14 @@ export default function Referrals() {
                     </td>
                     <td className={tdClass}>{referral.partnerName}</td>
                     <td className={tdClass}>
-                      {referral.source === 'auto' ? 'Auto-matched' : 'By admin'}
+                      {referral.source === 'auto'
+                        ? 'Auto-matched'
+                        : referral.source === 'staff'
+                          ? `By ${referral.addedBy || 'staff'}`
+                          : 'By admin'}
+                      {referral.hasAccount === false && (
+                        <p className='text-xs text-amber-700'>No TCI account yet</p>
+                      )}
                       {referral.referredByText && (
                         <p className='text-xs text-gray-500'>
                           &quot;{referral.referredByText}&quot;

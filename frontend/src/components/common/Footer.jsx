@@ -77,11 +77,6 @@ export default function Footer() {
                 className='h-auto w-auto max-h-12'
               />
             </div>
-            {/* Address */}
-            <div className='text-[#9CA3AF] text-[13px] md:text-[14px] leading-relaxed mb-6 font-medium'>
-              <p>9107 West Russell Road, Suite 100</p>
-              <p>Las Vegas, Nevada 89148</p>
-            </div>
             {/* Contact Us */}
             <div>
               <p className='text-[#D1D5DB] font-bold text-[12px] uppercase tracking-wider mb-2'>

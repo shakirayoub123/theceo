@@ -211,10 +211,10 @@ export default function TestimonialsSection() {
                   type='button'
                   onClick={() => setActiveTestimonial((index) => Math.max(0, index - 1))}
                   disabled={activeTestimonial === 0}
-                  className='inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:border-[#F6B72D] hover:text-[#F6B72D] disabled:cursor-not-allowed disabled:opacity-40'
+                  className='inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#F6B72D] bg-[#F6B72D] text-black shadow-md transition-colors hover:bg-[#e5a825] hover:border-[#e5a825] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6B72D] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#F6B72D]'
                   aria-label='Previous testimonial'
                 >
-                  <ChevronLeft className='h-4 w-4' aria-hidden='true' />
+                  <ChevronLeft className='h-5 w-5' strokeWidth={2.75} aria-hidden='true' />
                 </button>
 
                 <div className='flex flex-col items-center gap-2' aria-label='Testimonial position'>
@@ -231,7 +231,7 @@ export default function TestimonialsSection() {
                         aria-current={activeTestimonial === idx ? 'true' : undefined}
                         className={`h-2.5 rounded-full transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6B72D] ${activeTestimonial === idx
                           ? 'w-8 bg-[#F6B72D]'
-                          : 'w-2.5 bg-white/45 hover:bg-white/75'
+                          : 'w-2.5 bg-[#F6B72D]/45 hover:bg-[#F6B72D]/80'
                           }`}
                       />
                     ))}
@@ -242,10 +242,10 @@ export default function TestimonialsSection() {
                   type='button'
                   onClick={() => setActiveTestimonial((index) => Math.min(currentGroup.items.length - 1, index + 1))}
                   disabled={activeTestimonial === currentGroup.items.length - 1}
-                  className='inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/30 text-white transition-colors hover:border-[#F6B72D] hover:text-[#F6B72D] disabled:cursor-not-allowed disabled:opacity-40'
+                  className='inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#F6B72D] bg-[#F6B72D] text-black shadow-md transition-colors hover:bg-[#e5a825] hover:border-[#e5a825] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F6B72D] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#F6B72D]'
                   aria-label='Next testimonial'
                 >
-                  <ChevronRight className='h-4 w-4' aria-hidden='true' />
+                  <ChevronRight className='h-5 w-5' strokeWidth={2.75} aria-hidden='true' />
                 </button>
               </div>
             )}

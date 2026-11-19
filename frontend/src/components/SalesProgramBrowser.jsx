@@ -46,6 +46,7 @@ export default function SalesProgramBrowser({ className = '' }) {
         <LearningMaterialsRail
           programId={active?.id}
           programName={active?.title}
+          title='Program Content'
           className='h-[520px]'
         />
       </div>
@@ -89,6 +90,12 @@ export default function SalesProgramBrowser({ className = '' }) {
                 </button>
               )
             })
+          )}
+          {!loading && !error && programs.length < 10 && (
+            <div className='px-4 py-3 bg-gray-50 cursor-default select-none' title='This program is not available yet'>
+              <p className='text-xs font-semibold uppercase tracking-wide text-gray-400'>Program 10</p>
+              <p className='text-sm font-extrabold uppercase tracking-wide text-gray-500'>Coming Soon</p>
+            </div>
           )}
         </div>
       </div>

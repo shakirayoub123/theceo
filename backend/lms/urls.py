@@ -7,6 +7,8 @@ from . import client_views
 from . import people_views
 from . import referral_admin_views
 from . import learning_materials_views
+from . import coach_content_views
+from . import client_referral_views
 from . import meeting_views
 from . import media_control_views
 from . import trainer_meeting_views
@@ -137,6 +139,17 @@ urlpatterns = [
         views.AdminNewsletterDetailView.as_view(),
         name="admin-newsletter-detail",
     ),
+    path("staff/client-referrals/", client_referral_views.StaffClientReferralsView.as_view(), name="staff-client-referrals"),
+    path("staff/client-referrals/<int:referral_id>/", client_referral_views.StaffClientReferralDetailView.as_view(), name="staff-client-referral-detail"),
+    path("coach/programs/", coach_content_views.CoachProgramsView.as_view(), name="coach-programs"),
+    path("coach/programs/<int:service_id>/", coach_content_views.CoachProgramDetailView.as_view(), name="coach-program-detail"),
+    path("coach/programs/<int:service_id>/restore/", coach_content_views.CoachProgramRestoreView.as_view(), name="coach-program-restore"),
+    path("coach/programs/<int:service_id>/sessions/", coach_content_views.CoachSessionsView.as_view(), name="coach-program-sessions"),
+    path("coach/programs/<int:service_id>/files/", coach_content_views.CoachProgramFilesView.as_view(), name="coach-program-files"),
+    path("coach/sessions/<int:chapter_id>/", coach_content_views.CoachSessionDetailView.as_view(), name="coach-session-detail"),
+    path("coach/sessions/<int:chapter_id>/files/", coach_content_views.CoachSessionFilesView.as_view(), name="coach-session-files"),
+    path("coach/session-files/<int:file_id>/", coach_content_views.CoachSessionFileDetailView.as_view(), name="coach-session-file-detail"),
+    path("coach/program-files/<int:file_id>/", coach_content_views.CoachProgramFileDetailView.as_view(), name="coach-program-file-detail"),
     path(
         "programs/<int:service_id>/learning-materials/",
         learning_materials_views.ProgramLearningMaterialsView.as_view(),
