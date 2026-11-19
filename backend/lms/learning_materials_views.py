@@ -45,6 +45,14 @@ def _is_pdf(file_data):
     return file_data["fileExtension"] == "pdf" or str(file_data["url"] or "").lower().endswith(".pdf")
 
 
+def _plain_text(html):
+    import re
+    from html import unescape
+
+    text = re.sub(r"<[^>]+>", " ", html or "")
+    return re.sub(r"\s+", " ", unescape(text)).strip()
+
+
 def build_learning_materials(service, request=None):
     sessions = []
     chapters = service.chapters.all().prefetch_related("chapter_files")  # ordered by week, order
@@ -58,6 +66,8 @@ def build_learning_materials(service, request=None):
                 "number": number,
                 "title": chapter.title,
                 "subtitle": chapter.subtitle or "",
+                # Key selling points / summary shown under the session title.
+                "summary": _plain_text(chapter.short_description or chapter.description or "")[:300],
                 "pdf": pdf,
                 "toolkits": toolkits,
             }

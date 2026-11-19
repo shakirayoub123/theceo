@@ -1,4 +1,6 @@
 import DailyMeetingRoom from '@/components/DailyMeetingRoom'
+import MeetingClientInfo from '@/components/MeetingClientInfo'
+import SalesProgramBrowser from '@/components/SalesProgramBrowser'
 import { CreatePaymentLinkModal } from '@/components/CreatePaymentLinkModal'
 import { PrivateNotes } from '@/components/PrivateNotes'
 import { MeetingProvider } from '@/contexts/MeetingProvider'
@@ -51,6 +53,7 @@ const ClientMeetingContent = ({ meetingId, meetingRole, userRole }) => {
   const meetingAPIService =
     meetingRole === 'trainer' ? trainerAPIService : clientAPIService
   const isSalesUser = userRole === 'sales'
+  const isStaffUser = ['sales', 'trainer', 'admin'].includes(userRole)
 
   // Load meeting details on mount
   useEffect(() => {
@@ -305,9 +308,12 @@ const ClientMeetingContent = ({ meetingId, meetingRole, userRole }) => {
           {programId && (
             <Link
               to={`/client-dashboard/service/${programId}`}
+              target='_blank'
+              rel='noopener noreferrer'
+              title='Opens in a new tab so you stay in the call'
               className='inline-flex items-center justify-center px-4 py-2 rounded-lg bg-black text-white text-sm font-semibold hover:bg-gray-800 transition-colors'
             >
-              Open Program
+              Open Program ↗
             </Link>
           )}
         </div>
@@ -320,6 +326,15 @@ const ClientMeetingContent = ({ meetingId, meetingRole, userRole }) => {
             roomUrl={roomUrl}
             token={token}
           />
+
+          {isSalesUser && (
+            <div>
+              <p className='mb-2 text-sm font-extrabold uppercase tracking-wide text-gray-900'>
+                Programs &amp; Learning Sessions
+              </p>
+              <SalesProgramBrowser />
+            </div>
+          )}
 
           {serviceData && (
             <div className='border-2 border-[#F6B72D] rounded-xl bg-white p-4'>
@@ -372,6 +387,8 @@ const ClientMeetingContent = ({ meetingId, meetingRole, userRole }) => {
               allowUpload
               showModules={false}
             />
+
+            {isStaffUser && <MeetingClientInfo meetingId={meetingId} />}
 
             {isSalesUser && <SalesCallTools meetingDetails={meetingDetails} />}
 

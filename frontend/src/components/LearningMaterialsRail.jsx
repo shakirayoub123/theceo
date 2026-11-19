@@ -80,6 +80,9 @@ export default function LearningMaterialsRail({ programId, programName, classNam
             >
               <p className='text-xs text-gray-500 uppercase'>Learning Session {session.number}</p>
               <p className='text-sm font-semibold text-gray-900 group-hover:text-[#b8860b]'>{session.title}</p>
+              {session.summary && (
+                <p className='mt-0.5 text-xs text-gray-600 line-clamp-3'>{session.summary}</p>
+              )}
               <p className='mt-0.5 flex items-center gap-1 text-xs text-gray-500'>
                 <FileText className='h-3 w-3' />
                 {session.pdf ? 'Open PDF' : 'PDF not available yet'}

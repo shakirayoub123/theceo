@@ -3,9 +3,16 @@ import toast from 'react-hot-toast'
 import { useAuth } from '@/contexts/AuthContext'
 import authService from '@/services/authService'
 import { Clock } from 'lucide-react'
+import {
+  MEETING_CHANGE_EVENT,
+  isInMeetingThisTab,
+  isMeetingActiveAnywhere,
+} from '@/lib/activeMeeting'
 
 const DEFAULT_IDLE_TIMEOUT_MS = 15 * 60 * 1000
 const DEFAULT_HIDDEN_TIMEOUT_MS = 60 * 1000
+// During a video call: leave after 10 minutes without any interaction.
+const MEETING_IDLE_TIMEOUT_MS = 10 * 60 * 1000
 const ACTIVITY_EVENTS = [
   'mousemove',
   'mousedown',
@@ -45,6 +52,7 @@ export default function SessionGuard() {
   const logoutReasonRef = useRef(null)
 
   const [timeLeft, setTimeLeft] = useState(IDLE_TIMEOUT_MS)
+  const [inMeeting, setInMeeting] = useState(isInMeetingThisTab())
 
   const clearTimers = useCallback(() => {
     if (idleTimerRef.current) clearInterval(idleTimerRef.current)
@@ -58,7 +66,9 @@ export default function SessionGuard() {
       logoutReasonRef.current = reason
       clearTimers()
 
-      if (reason === 'idle') {
+      if (reason === 'meeting-idle') {
+        toast.error('You left the meeting after 10 minutes of inactivity.')
+      } else if (reason === 'idle') {
         toast.error('You were signed out due to inactivity.')
       } else if (reason === 'hidden') {
         toast.error('You were signed out after leaving the tab.')
@@ -81,14 +91,16 @@ export default function SessionGuard() {
       return
     }
 
-    setTimeLeft(IDLE_TIMEOUT_MS)
-    const endTime = Date.now() + IDLE_TIMEOUT_MS
+    const meetingNow = isInMeetingThisTab()
+    const timeoutMs = meetingNow ? MEETING_IDLE_TIMEOUT_MS : IDLE_TIMEOUT_MS
+    setTimeLeft(timeoutMs)
+    const endTime = Date.now() + timeoutMs
 
     idleTimerRef.current = window.setInterval(() => {
       const remaining = endTime - Date.now()
       if (remaining <= 0) {
         clearInterval(idleTimerRef.current)
-        void performLogout('idle')
+        void performLogout(meetingNow ? 'meeting-idle' : 'idle')
       } else {
         setTimeLeft(Math.max(0, remaining))
       }
@@ -101,6 +113,15 @@ export default function SessionGuard() {
       logoutReasonRef.current = null
     }
   }, [clearTimers, isAuthenticated])
+
+  useEffect(() => {
+    const handleMeetingChange = () => {
+      setInMeeting(isInMeetingThisTab())
+      scheduleIdleLogout()
+    }
+    window.addEventListener(MEETING_CHANGE_EVENT, handleMeetingChange)
+    return () => window.removeEventListener(MEETING_CHANGE_EVENT, handleMeetingChange)
+  }, [scheduleIdleLogout])
 
   useEffect(() => {
     if (!isAuthenticated || loading) {
@@ -136,7 +157,9 @@ export default function SessionGuard() {
       if (document.visibilityState === 'hidden') {
         if (idleTimerRef.current) clearInterval(idleTimerRef.current)
         clearTimer(hiddenTimerRef)
+        if (isMeetingActiveAnywhere()) return
         hiddenTimerRef.current = window.setTimeout(() => {
+          if (isMeetingActiveAnywhere()) return
           void performLogout('hidden')
         }, HIDDEN_TIMEOUT_MS)
         return
@@ -160,6 +183,8 @@ export default function SessionGuard() {
 
     const handleWindowExit = () => {
       if (logoutReasonRef.current) return
+      // A call is in progress (this tab or another): keep the session.
+      if (isMeetingActiveAnywhere()) return
 
       logoutReasonRef.current = 'window-exit'
       authService.clearStoredAuth()
@@ -181,7 +206,7 @@ export default function SessionGuard() {
   const seconds = Math.floor((timeLeft % 60000) / 1000)
   const isWarning = timeLeft <= 60000 // Under 1 minute left
 
-  return (
+  const timePill = (
     <div
       aria-label='Session time left'
       className={`fixed top-4 md:top-5 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-1.5 px-3 py-1 rounded-full border select-none leading-none ${
@@ -204,4 +229,33 @@ export default function SessionGuard() {
       </span>
     </div>
   )
+
+  // In a video call, warn clearly before the 10-minute inactivity timeout.
+  if (inMeeting && isWarning) {
+    return (
+      <>
+        {timePill}
+        <div className='fixed inset-0 z-[10000] flex items-center justify-center bg-black/50 p-4'>
+          <div className='w-full max-w-md rounded-xl border-2 border-[#F6B72D] bg-white p-6 text-center shadow-2xl font-exo'>
+            <Clock className='mx-auto mb-3 h-10 w-10 text-[#F6B72D]' />
+            <h2 className='text-xl font-extrabold text-gray-900'>Are you still there?</h2>
+            <p className='mt-2 text-sm text-gray-600'>
+              You will leave the meeting in{' '}
+              <span className='font-bold text-red-600'>{seconds}s</span> because there has been
+              no activity for almost 10 minutes.
+            </p>
+            <button
+              type='button'
+              onClick={() => scheduleIdleLogout()}
+              className='mt-5 inline-flex items-center justify-center rounded-lg bg-[#F6B72D] px-6 py-2.5 text-sm font-bold text-black hover:bg-[#e6b82a]'
+            >
+              Stay in meeting
+            </button>
+          </div>
+        </div>
+      </>
+    )
+  }
+
+  return timePill
 }

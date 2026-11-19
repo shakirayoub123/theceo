@@ -1,4 +1,5 @@
 import { CalendarComponent } from '@/components/CalendarComponent'
+import useAutoRefresh from '@/hooks/useAutoRefresh'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import authService from '@/services/authService'
 import { Calendar as CalendarIcon, Users, Clock, ShieldCheck } from 'lucide-react'
@@ -33,6 +34,9 @@ export default function MasterCalendar() {
   useEffect(() => {
     fetchCalendarData()
   }, [fetchCalendarData])
+
+  // Live sync: refresh every 30s and when returning to the tab.
+  useAutoRefresh(fetchCalendarData, 30000)
 
   if (loading && !hasLoadedCalendarOnce.current) {
     return (

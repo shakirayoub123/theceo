@@ -376,3 +376,75 @@ class MasterCalendarHoverDetailsTests(TestCase):
         details = self._calendar_meetings()[meeting.id]
         self.assertEqual(details["callType"], "Discovery Call")
         self.assertEqual(details["program"], "Not selected yet")
+
+
+class MeetingClientInfoTests(TestCase):
+    """Client details shown in the video call window for staff."""
+
+    def setUp(self):
+        self.sales = User.objects.create_user(
+            username="ci-sales", email="ci-sales@example.com", password="StrongPass123!",
+            first_name="Pete", last_name="Gates", role="sales", is_active=True,
+        )
+        self.other_sales = User.objects.create_user(
+            username="ci-other", email="ci-other@example.com", password="StrongPass123!",
+            role="sales", is_active=True,
+        )
+        self.client_user = User.objects.create_user(
+            username="ci-client", email="ci-client@example.com", password="StrongPass123!",
+            first_name="Peter", last_name="Prospect", role="client", is_active=True,
+        )
+        profile = Client.objects.get(user=self.client_user)
+        profile.position = "Acme Corp"
+        profile.industry = "Manufacturing"
+        profile.job_title = "COO"
+        profile.program_of_interest = "Executive Leadership"
+        profile.assigned_sales = self.sales
+        profile.save()
+        mtype = MeetingType.objects.create(name="Discovery", requires_trainers=False)
+        self.meeting = Meeting.objects.create(
+            title="Discovery Call with Peter Prospect", meeting_type=mtype, scheduled_by=self.sales,
+            scheduled_at=timezone.now() + timedelta(days=1), duration=timedelta(hours=1), status="scheduled",
+        )
+        MeetingAttendee.objects.create(meeting=self.meeting, user=self.sales, role="sales")
+        MeetingAttendee.objects.create(meeting=self.meeting, user=self.client_user, role="client")
+        self.url = f"/api/scheduling/meetings/{self.meeting.id}/client-info/"
+
+    def _get(self, user):
+        api = APIClient()
+        api.force_authenticate(user=user)
+        return api.get(self.url)
+
+    def test_salesperson_on_call_sees_client_details(self):
+        response = self._get(self.sales)
+        self.assertEqual(response.status_code, 200, response.content)
+        client = response.json()["client"]
+        self.assertEqual(client["name"], "Peter Prospect")
+        self.assertEqual(client["company"], "Acme Corp")
+        self.assertEqual(client["industry"], "Manufacturing")
+        self.assertEqual(client["jobTitle"], "COO")
+        self.assertEqual(client["programOfInterest"], "Executive Leadership")
+        self.assertEqual(response.json()["meeting"]["callType"], "Discovery Call")
+
+    def test_client_and_unrelated_staff_are_denied(self):
+        self.assertEqual(self._get(self.client_user).status_code, 403)
+        self.assertEqual(self._get(self.other_sales).status_code, 403)
+
+
+class CalendarDrillDownTests(MasterCalendarHoverDetailsTests):
+    """Calendar items carry Program #, coaches, salesperson and meeting topic."""
+
+    def test_drill_down_fields(self):
+        first = self._meeting("Sales Meeting with Peter Client", self.sales_type, self.sales, "sales", 0)
+        coaching = self._meeting(
+            "Weekly Coaching", self.coaching_type, self.coach, "trainer", 2, service=self.program
+        )
+        meetings = self._calendar_meetings()
+
+        self.assertEqual(meetings[first.id]["meetingTopic"], "New Client Sales Discovery Meeting")
+        self.assertEqual(meetings[first.id]["salesperson"], "Pete Gates")
+
+        details = meetings[coaching.id]
+        self.assertEqual(details["meetingTopic"], "Initial 2-Hour Coaching Discovery Meeting")
+        self.assertEqual(details["coaches"], "Jane Doe")
+        self.assertEqual(details["programNumber"], 1)

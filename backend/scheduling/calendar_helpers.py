@@ -134,6 +134,54 @@ def determine_program_name(meeting, client_user=None):
     return None
 
 
+def _person_name(user):
+    if not user:
+        return ""
+    return f"{user.first_name} {user.last_name}".strip() or user.username or user.email
+
+
+def program_number_for(title):
+    """1-based Program # (by display order) for a program title, or None."""
+    if not title:
+        return None
+    from lms.models import Service
+
+    clean = title.replace(" (interest)", "").strip().lower()
+    ordered = list(
+        Service.objects.filter(status="active").order_by("order", "id").values_list("title", flat=True)
+    )
+    for idx, name in enumerate(ordered, start=1):
+        if (name or "").strip().lower() == clean:
+            return idx
+    return None
+
+
+def meeting_topic_for(meeting, call_type, client_user=None):
+    """Plain-language topic, e.g. 'New Client Sales Discovery Meeting'."""
+    if call_type == "Discovery Call":
+        return "New Client Sales Discovery Meeting"
+    if call_type == "Sales Call":
+        return "Sales Follow-up Meeting"
+    if call_type == "Coaching Call":
+        if client_user is not None:
+            from .models import Meeting
+
+            earlier_coaching = (
+                Meeting.objects.filter(attendees__user=client_user)
+                .exclude(id=meeting.id)
+                .exclude(status="cancelled")
+                .filter(
+                    models.Q(scheduled_at__lt=meeting.scheduled_at)
+                    & (models.Q(service__isnull=False) | models.Q(attendees__role="trainer"))
+                )
+                .exists()
+            )
+            if not earlier_coaching:
+                return "Initial 2-Hour Coaching Discovery Meeting"
+        return "Weekly Coaching Session"
+    return meeting.title or "Administration Meeting"
+
+
 def format_meeting_for_calendar(meeting):
     """
     Format a Meeting instance for Master Calendar consumption with hover details.
@@ -185,7 +233,39 @@ def format_meeting_for_calendar(meeting):
 
     duration_min = int(meeting.duration.total_seconds() / 60) if meeting.duration else 30
 
+    # Drill-down details: coaches, salesperson, Program #, meeting topic.
+    coach_names, sales_names = [], []
+    for sa in staff_attendees:
+        if not sa.user:
+            continue
+        name = _person_name(sa.user)
+        if sa.role == "trainer" or getattr(sa.user, "role", "") == "trainer":
+            coach_names.append(name)
+        elif sa.role == "sales" or getattr(sa.user, "role", "") == "sales":
+            sales_names.append(name)
+    if not sales_names and getattr(meeting.scheduled_by, "role", "") == "sales":
+        sales_names.append(_person_name(meeting.scheduled_by))
+    if not sales_names and client_user is not None:
+        profile = getattr(client_user, "client_profile", None)
+        if profile is not None and profile.assigned_sales:
+            sales_names.append(_person_name(profile.assigned_sales))
+    if not coach_names and getattr(meeting, "service", None) is not None:
+        service = meeting.service
+        team = ([service.trainer] if service.trainer and service.trainer.role == "trainer" else [])
+        team += list(service.advisors.all())
+        coach_names = [_person_name(u) for u in team]
+    coach_names = list(dict.fromkeys(n for n in coach_names if n))
+    sales_names = list(dict.fromkeys(n for n in sales_names if n))
+    program_number = program_number_for(
+        meeting.service.title if getattr(meeting, "service", None) else program_display
+    )
+    meeting_topic = meeting_topic_for(meeting, call_type, client_user)
+
     return {
+        "coaches": ", ".join(coach_names),
+        "salesperson": ", ".join(sales_names),
+        "programNumber": program_number,
+        "meetingTopic": meeting_topic,
         "id": meeting.id,
         "title": meeting.title or meeting_type_name,
         "advisor": advisor_display,

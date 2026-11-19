@@ -50,3 +50,43 @@ class ClientNotesTests(TestCase):
 
     def test_unrelated_coach_is_denied(self):
         self.assertEqual(self._as(self.other_coach).get(self.url).status_code, 403)
+
+
+from unittest.mock import patch
+
+from django.core import mail
+from django.test import override_settings
+
+
+@override_settings(
+    EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+    DEFAULT_FROM_EMAIL="noreply@example.com",
+)
+class AssessmentAssignmentStaffEmailTests(TestCase):
+    """Assigning assessments also informs the client's coaches and the team inbox."""
+
+    @patch("people.views.send_ops_email", return_value=True)
+    def test_coaches_and_team_inbox_are_told(self, mock_ops):
+        from people.models import Client
+
+        sales = make_user("aa-sales", "sales", first_name="Pete", last_name="Gates")
+        coach = make_user("aa-coach", "trainer", is_approved=True)
+        client_user = make_user("aa-client", "client", first_name="Peter", last_name="Client")
+        program = Service.objects.create(title="P", description="x", price=Decimal("1"), trainer=coach)
+        Enrollment.objects.create(user=client_user, service=program)
+        profile = Client.objects.get(user=client_user)
+        profile.assigned_sales = sales
+        profile.program_status = "paid"
+        profile.save()
+
+        api = APIClient()
+        api.force_authenticate(sales)
+        response = api.post(f"/api/people/sales/clients/{client_user.id}/assign-assessments/")
+        self.assertEqual(response.status_code, 200, response.content)
+
+        recipients = [m.to for m in mail.outbox]
+        self.assertIn([client_user.email], recipients)
+        self.assertIn([coach.email], recipients)
+        self.assertTrue(
+            any("Assessments Assigned" in call.kwargs.get("subject", "") for call in mock_ops.call_args_list)
+        )

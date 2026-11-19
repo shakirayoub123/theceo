@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import NotificationBell from '@/components/NotificationBell'
 import { Link } from 'react-router-dom'
 import { URLS } from '@/config/urls'
+import { confirmLeaveMeeting } from '@/lib/activeMeeting'
 
 export function DashboardHeader({
   title,
@@ -41,7 +42,13 @@ export function DashboardHeader({
 
       <div className='flex items-center gap-2 lg:gap-3'>
         {/* <Button variant='ghost' size='icon'> */}
-        <Link to={URLS.chat} className='relative'>
+        <Link
+          to={URLS.chat}
+          className='relative'
+          onClick={(event) => {
+            if (!confirmLeaveMeeting()) event.preventDefault()
+          }}
+        >
           <MessagesSquare className='h-6 w-6 fill-black stroke-[#F6B72D]' />
         </Link>
         {/* </Button> */}

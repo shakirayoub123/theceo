@@ -870,6 +870,15 @@ class AuthService {
     return this.handleResponse(response)
   }
 
+  // Client details for the video call window (staff on the call only).
+  async getMeetingClientInfo(meetingId) {
+    const response = await this.fetchWithCredentials(
+      `${this.baseURL}/scheduling/meetings/${meetingId}/client-info/`,
+      { method: 'GET', headers: this.getAuthHeaders() },
+    )
+    return this.handleResponse(response)
+  }
+
   async createReferralPartner(payload) {
     const response = await this.fetchWithCredentials(
       `${this.baseURL}/lms/admin/referral-partners/`,

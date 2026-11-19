@@ -3210,6 +3210,25 @@ class CancelMeetingView(APIView):
         except Exception as exc:
             logger.warning(f"Failed to send cancellation emails for meeting {meeting_id}: {exc}")
 
+        # Backup copy for the whole team (e.g. if the assigned staff member is away).
+        try:
+            attendee_lines = [
+                f"- {(a.user.get_full_name() or a.user.email)} ({a.role})"
+                for a in meeting.attendees.select_related("user").all()
+                if a.user
+            ]
+            send_ops_email(
+                subject=f"Meeting Cancelled: {getattr(meeting, 'title', 'Meeting')}",
+                message=(
+                    f"Cancelled by: {request.user.get_full_name() or request.user.email}\n"
+                    f"Was scheduled for: {meeting.scheduled_at}\n"
+                    f"Meeting ID: {meeting.id}\n"
+                    "Attendees:\n" + "\n".join(attendee_lines)
+                ),
+            )
+        except Exception as exc:
+            logger.warning(f"Failed to send cancellation ops email for meeting {meeting_id}: {exc}")
+
         return Response(
             {"message": "Meeting cancelled successfully"},
             status=status.HTTP_200_OK,
@@ -3561,6 +3580,39 @@ class SalesAssignAssessmentsView(APIView):
             )
         except Exception as mail_err:
             logger.warning("Could not send assignment email to client: %s", mail_err)
+
+        # 4. Let the client's coaches and the shared team inbox know (the coaches
+        #    review the results with the client in the 2-hour Discovery meeting).
+        try:
+            coach_emails = sorted(
+                {
+                    email
+                    for email in User.objects.filter(role="trainer", is_active=True)
+                    .filter(
+                        models.Q(services_created__enrollments__user=client.user)
+                        | models.Q(services_advised__enrollments__user=client.user)
+                    )
+                    .values_list("email", flat=True)
+                    if email
+                }
+            )
+            staff_message = (
+                f"{salesperson_name} assigned the 6 TCI Executive Assessments to "
+                f"{client.full_name} ({client.email}).\n\n"
+                "Next step: the client completes the assessments, then the coaches review "
+                "the results with them in the initial 2-hour new Client Discovery meeting.\n"
+            )
+            if coach_emails:
+                send_mail(
+                    subject=f"Assessments Assigned: {client.full_name}",
+                    message=staff_message,
+                    recipient_list=coach_emails,
+                    fail_silently=True,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                )
+            send_ops_email(subject=f"Assessments Assigned: {client.full_name}", message=staff_message)
+        except Exception as staff_err:
+            logger.warning("Could not send assessment assignment staff emails: %s", staff_err)
 
         return Response(
             {

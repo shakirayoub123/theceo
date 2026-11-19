@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react'
 import DailyIframe from '@daily-co/daily-js'
+import { startMeetingPresence, stopMeetingPresence } from '@/lib/activeMeeting'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 const DailyPrebuiltMeeting = ({ roomUrl, token }) => {
@@ -153,12 +154,15 @@ const DailyPrebuiltMeeting = ({ roomUrl, token }) => {
         .on('joining-meeting', () =>
           console.log('[DailyPrebuiltMeeting] Joining meeting'),
         )
-        .on('joined-meeting', (event) =>
-          console.log('[DailyPrebuiltMeeting] Joined meeting:', event),
-        )
-        .on('left-meeting', (event) =>
-          console.log('[DailyPrebuiltMeeting] Left meeting:', event),
-        )
+        .on('joined-meeting', (event) => {
+          console.log('[DailyPrebuiltMeeting] Joined meeting:', event)
+          // Keeps the session alive while documents are opened elsewhere.
+          startMeetingPresence()
+        })
+        .on('left-meeting', (event) => {
+          console.log('[DailyPrebuiltMeeting] Left meeting:', event)
+          stopMeetingPresence()
+        })
         .on('error', (error) => {
           console.error('[DailyPrebuiltMeeting] Error:', error)
           setJoinError(
@@ -201,9 +205,19 @@ const DailyPrebuiltMeeting = ({ roomUrl, token }) => {
       }
     }
 
+    // Warn before a refresh/close of the tab would end the call.
+    const handleBeforeUnload = (event) => {
+      event.preventDefault()
+      event.returnValue = ''
+      return ''
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+
     // Cleanup when component unmounts
     return () => {
       console.log('[DailyPrebuiltMeeting] Component unmounting')
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+      stopMeetingPresence()
       if (callFrameRef.current) {
         try {
           callFrameRef.current.destroy()

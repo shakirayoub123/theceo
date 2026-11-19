@@ -1,11 +1,10 @@
-import { ClientDetails } from '@/components/Details'
 import { LiveTranscript } from '@/components/LiveTranscript'
 import DailyMeetingRoom from '@/components/DailyMeetingRoom'
+import MeetingClientInfo from '@/components/MeetingClientInfo'
 import { PrivateNotes } from '@/components/PrivateNotes'
 import { MeetingProvider } from '@/contexts/MeetingProvider'
 import { useMeetingContext } from '@/contexts/useMeetingContext'
 import trainerAPIService from '@/services/trainerAPIService'
-import { formatDate } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { MeetingAccessValidation } from '@/components/MeetingAccessValidation'
@@ -32,8 +31,6 @@ const CoachingMeetingContent = ({ meetingId }) => {
   const [roomUrl, setRoomUrl] = useState(null)
   const [token, setToken] = useState(null)
   const [roomUrlError, setRoomUrlError] = useState(null)
-  const [diagnosticInfo, setDiagnosticInfo] = useState(null)
-  const [isDiagnosing, setIsDiagnosing] = useState(false)
 
   // Load meeting details on mount (like ClientMeeting does)
 
@@ -197,18 +194,6 @@ const CoachingMeetingContent = ({ meetingId }) => {
     )
   }
 
-  const clientName = meetingDetails?.clientName || 'client'
-  const clientJoinedOn = meetingDetails?.clientJoinedOn
-    ? formatDate(meetingDetails?.clientJoinedOn)
-    : '-'
-  const clientEmail = meetingDetails?.clientEmail || 'client@example.com'
-
-  const clientFields = [
-    { label: 'Name', value: clientName },
-    { label: 'Joined On', value: clientJoinedOn },
-  ]
-
-  const clientCreds = [{ label: 'Email', value: clientEmail }]
 
   return (
     <div>
@@ -221,11 +206,8 @@ const CoachingMeetingContent = ({ meetingId }) => {
       </h2>
       <div className='mb-2 text-xs text-gray-500'>Role: trainer</div>
       <div className='grid grid-cols-12 gap-6 max-w-7xl mx-auto'>
-        <div className='col-span-12 lg:col-span-6 flex flex-col'>
-          <ClientDetails fields={clientFields} />
-        </div>
-        <div className='col-span-12 lg:col-span-6 flex flex-col'>
-          <ClientDetails fields={clientCreds} title='CLIENT CREDENTIALS' />
+        <div className='col-span-12 flex flex-col'>
+          <MeetingClientInfo meetingId={meetingId} />
         </div>
         <div className='col-span-12 lg:col-span-12 flex flex-col'>
           <DailyMeetingRoom

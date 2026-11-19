@@ -825,6 +825,16 @@ class ClientCalendarView(APIView):
                     "type": meeting_type_code,
                 }
 
+                # Same drill-down details as the staff calendars (existing keys kept).
+                try:
+                    from scheduling.calendar_helpers import format_meeting_for_calendar
+
+                    extra = format_meeting_for_calendar(meeting)
+                    for key in ("callType", "coaches", "salesperson", "programNumber", "meetingTopic"):
+                        meeting_data[key] = extra.get(key)
+                except Exception:
+                    logger.exception("Calendar details failed for meeting %s", meeting.id)
+
                 meetings_by_date[meeting_date].append(meeting_data)
 
             return Response(meetings_by_date, status=status.HTTP_200_OK)

@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { confirmLeaveMeeting } from '@/lib/activeMeeting'
 import { Button } from './ui/button'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -64,6 +65,8 @@ export function DashboardSidebar({
                   : 'hover:bg-gray-100',
               )}
               onClick={() => {
+                const isLogout = /logout/i.test(String(item.href || item.label))
+                if (!isLogout && !confirmLeaveMeeting()) return
                 navigate(item.href)
                 if (onItemClick) onItemClick(item)
               }}

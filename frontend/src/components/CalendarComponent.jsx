@@ -626,10 +626,16 @@ export function CalendarComponent({
               hoveredMeeting.clientName ||
               hoveredMeeting.client_name ||
               'No client attached'
-            const program =
+            const programName =
               hoveredMeeting.program ||
               hoveredMeeting.program_name ||
               'Not selected yet'
+            const program = hoveredMeeting.programNumber
+              ? `Program {hoveredMeeting.programNumber}: ${programName}`
+              : programName
+            const meetingTopic = hoveredMeeting.meetingTopic || hoveredMeeting.meeting_topic || ''
+            const coaches = hoveredMeeting.coaches || ''
+            const salesperson = hoveredMeeting.salesperson || hoveredMeeting.salesInfluencer || ''
             const time =
               hoveredMeeting.time ||
               hoveredMeeting.time_display ||
@@ -713,6 +719,31 @@ export function CalendarComponent({
                     </span>
                   </div>
 
+                  {meetingTopic && (
+                    <div className='flex items-start justify-between gap-2 py-0.5 border-b border-gray-50'>
+                      <span className='text-gray-500 font-medium shrink-0'>Meeting Topic:</span>
+                      <span className='font-semibold text-gray-900 text-right max-w-[170px]'>
+                        {meetingTopic}
+                      </span>
+                    </div>
+                  )}
+                  {coaches && (
+                    <div className='flex items-start justify-between gap-2 py-0.5 border-b border-gray-50'>
+                      <span className='text-gray-500 font-medium shrink-0'>Coaches:</span>
+                      <span className='font-medium text-gray-800 text-right truncate max-w-[170px]'>
+                        {coaches}
+                      </span>
+                    </div>
+                  )}
+                  {salesperson && (
+                    <div className='flex items-start justify-between gap-2 py-0.5 border-b border-gray-50'>
+                      <span className='text-gray-500 font-medium shrink-0'>Sales Influencer:</span>
+                      <span className='font-medium text-gray-800 text-right truncate max-w-[170px]'>
+                        {salesperson}
+                      </span>
+                    </div>
+                  )}
+
                   {/* Advisor / Staff */}
                   <div className='flex items-start justify-between gap-2 py-0.5'>
                     <span className='text-gray-500 font-medium shrink-0'>Staff / Advisor:</span>
@@ -765,10 +796,16 @@ export function CalendarComponent({
                 selectedMeeting.clientName ||
                 selectedMeeting.client_name ||
                 'No client attached'
-              const program =
+              const programName =
                 selectedMeeting.program ||
                 selectedMeeting.program_name ||
                 'Not selected yet'
+              const program = selectedMeeting.programNumber
+                ? `Program {selectedMeeting.programNumber}: ${programName}`
+                : programName
+              const meetingTopic = selectedMeeting.meetingTopic || selectedMeeting.meeting_topic || ''
+              const coaches = selectedMeeting.coaches || ''
+              const salesperson = selectedMeeting.salesperson || selectedMeeting.salesInfluencer || ''
               const time =
                 selectedMeeting.time ||
                 selectedMeeting.time_display ||
@@ -822,6 +859,24 @@ export function CalendarComponent({
                         {program}
                       </span>
                     </div>
+                    {meetingTopic && (
+                      <div className='flex justify-between gap-2'>
+                        <span className='font-semibold text-gray-500'>Meeting Topic:</span>
+                        <span className='font-bold text-gray-900 text-right max-w-[170px]'>{meetingTopic}</span>
+                      </div>
+                    )}
+                    {coaches && (
+                      <div className='flex justify-between gap-2'>
+                        <span className='font-semibold text-gray-500'>Coaches:</span>
+                        <span className='font-medium text-gray-800 text-right max-w-[170px]'>{coaches}</span>
+                      </div>
+                    )}
+                    {salesperson && (
+                      <div className='flex justify-between gap-2'>
+                        <span className='font-semibold text-gray-500'>Sales Influencer:</span>
+                        <span className='font-medium text-gray-800 text-right max-w-[170px]'>{salesperson}</span>
+                      </div>
+                    )}
                     <div className='flex justify-between gap-2'>
                       <span className='font-semibold text-gray-500'>Time:</span>
                       <span className='font-bold text-gray-900'>{time}</span>

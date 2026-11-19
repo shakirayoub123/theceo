@@ -1,4 +1,5 @@
 import { CalendarComponent } from '@/components/CalendarComponent'
+import useAutoRefresh from '@/hooks/useAutoRefresh'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import authService from '@/services/authService'
 import { Button } from '@/components/ui/button'
@@ -78,6 +79,9 @@ export default function CoachingCalendar() {
   useEffect(() => {
     fetchCalendarData()
   }, [fetchCalendarData])
+
+  // Live sync: refresh every 30s and when returning to the tab.
+  useAutoRefresh(fetchCalendarData, 30000)
 
   useEffect(() => {
     const fetchClients = async () => {

@@ -1,7 +1,14 @@
 from django.urls import path
 from . import views
+from . import meeting_client_info_views
 
 urlpatterns = [
+    # Client details shown in the video call window (staff only)
+    path(
+        "meetings/<int:meeting_id>/client-info/",
+        meeting_client_info_views.MeetingClientInfoView.as_view(),
+        name="meeting-client-info",
+    ),
     # Get available trainers
     path(
         "trainers/available/",
